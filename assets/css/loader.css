@@ -1,0 +1,218 @@
+/* ============================================================
+   Intro loader — a single title card.
+   Everything here is scoped to .pl-* and dies with #pageLoader.
+   ============================================================ */
+
+  .page-loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+    background:#05080D;transition:opacity .85s ease;}
+  .page-loader.done{opacity:0;pointer-events:none}
+  body.pl-lock{overflow:hidden}
+
+/* --- backdrop ------------------------------------------------
+   The career dial used to sit up here too. It's the Experience
+   section's centrepiece — spending it as intro wallpaper burned
+   the reveal before that section had earned it, and its spinning
+   hands were the intro's worst frames. It now appears once. */
+  .pl-bg{position:absolute;inset:0;z-index:0;overflow:hidden;
+    background:
+      radial-gradient(72% 62% at 10% 98%, rgba(46,86,140,.22), transparent 60%),
+      radial-gradient(62% 56% at 98% 4%, rgba(70,120,180,.15), transparent 60%),
+      #05080D;
+    animation:plBgIn .9s ease both}
+  .pl-orb{position:absolute;left:-17%;bottom:-21%;width:min(820px,96vh);aspect-ratio:1;z-index:1;opacity:.85;
+    -webkit-mask:radial-gradient(circle at 50% 50%,#000 54%,transparent 72%);
+            mask:radial-gradient(circle at 50% 50%,#000 54%,transparent 72%)}
+  .pl-orb canvas{display:block;width:100%;height:100%}
+  .pl-grat{position:absolute;inset:0;opacity:.16;
+    -webkit-mask:radial-gradient(125% 105% at 50% 50%, transparent 28%, #000 80%);
+            mask:radial-gradient(125% 105% at 50% 50%, transparent 28%, #000 80%)}
+  .pl-grat svg{display:block;width:100%;height:100%}
+  .pl-vignette{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 50% 50%, transparent 46%, rgba(2,4,8,.74) 100%)}
+  /* centre scrim — keeps the card off the globe's bright limb */
+  .pl-clear{position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background:radial-gradient(40% 32% at 50% 50%, rgba(5,8,13,.9), rgba(5,8,13,.4) 52%, transparent 74%)}
+  @keyframes plBgIn{from{opacity:0}to{opacity:1}}
+
+  .pl-inner{position:relative;z-index:2;width:min(620px,90vw);
+    display:flex;flex-direction:column;align-items:center}
+
+/* --- the title card ------------------------------------------ */
+  .pl-card{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;
+    gap:0;text-align:center;min-height:190px;justify-content:center;
+    opacity:0;visibility:hidden;will-change:opacity,transform;
+    transition:opacity .5s var(--ease), visibility 0s linear .5s}
+  .pl-card.on{opacity:1;visibility:visible;transition-delay:0s}
+  /* Leaving: the card lifts out over .55s while .page-loader.done fades the
+     veil over .85s, so the hero is already showing through behind it. Beats
+     the whole screen dissolving as one flat sheet. */
+  .page-loader.pl-out .pl-card{opacity:0;transform:translate3d(0,-16px,0);
+    transition:opacity .55s var(--ease), transform .55s var(--ease)}
+  .page-loader.pl-out .pl-skip{opacity:0;transition:opacity .25s ease;animation:none}
+
+  /* Doubled: 112px -> 224px. Sized off the container with a vh cap so a
+     short laptop viewport can't push the rest of the card off screen —
+     at 264px flat plus the beats and rail this needs ~640px of height. */
+  .pl-portrait{position:relative;width:min(264px,30vh);aspect-ratio:1;display:grid;place-items:center}
+  .pl-card.on .pl-portrait{animation:plRise .75s var(--ease) both}
+  /* A slow halo keeps the card alive through the ~1.75s hold — without it
+     the stillness reads as a freeze. ::before so it paints behind the img,
+     and transform+opacity only so it composites instead of repainting the
+     portrait every frame (the same trap the old spinning dial fell into). */
+  .pl-portrait::before{content:'';position:absolute;inset:-16%;border-radius:50%;
+    background:radial-gradient(circle, rgba(184,239,67,.18), transparent 68%);
+    opacity:0;pointer-events:none}
+  .pl-card.on .pl-portrait::before{animation:plHalo 3.4s ease-in-out infinite 1.5s}
+  @keyframes plHalo{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.75;transform:scale(1.07)}}
+  .pl-portrait img{width:85%;height:85%;border-radius:50%;object-fit:cover;object-position:50% 24%;
+    box-shadow:0 18px 44px rgba(0,0,0,.6), 0 0 0 1px rgba(150,180,220,.14)}
+  .pl-ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+  /* viewBox stays 132, so the stroke scales with it — 1.5 renders ~3px */
+  .pl-ring circle{fill:none;stroke-width:1.5;stroke-linecap:round}
+  .pl-ring-track{stroke:rgba(150,180,220,.12)}
+  .pl-ring-draw{stroke:var(--accent);stroke-dasharray:396;stroke-dashoffset:396;
+    filter:drop-shadow(0 0 8px rgba(184,239,67,.55))}
+  /* Closes at 1.35s, overlapping the role and quote — the card resolves as one
+     event rather than four things trickling in. */
+  .pl-card.on .pl-ring-draw{animation:plRing 1.10s var(--ease) both .25s}
+  @keyframes plRing{to{stroke-dashoffset:0}}
+  @keyframes plRise{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+
+  /* min-height reserves the line before loader.js fills in the letters,
+     so the card doesn't grow as the name decodes */
+  /* Sized for the full 17-character name: the old clamp was tuned to
+     "SANTHARAO" and overflowed .pl-inner (min(620px,90vw)) once the surname
+     was added. Tracking eased with it so the line still reads as one unit. */
+  .pl-name{margin-top:18px;font-family:'JetBrains Mono',monospace;font-weight:500;
+    font-size:clamp(16px,2.6vw,30px);letter-spacing:.13em;line-height:1.25;min-height:1.25em;
+    display:flex;justify-content:center;padding-left:.13em}
+  .pl-name span{color:#5C6675;transition:color .12s ease}
+  .pl-name span.on{color:var(--accent);text-shadow:0 0 18px rgba(184,239,67,.45)}
+  .pl-caret{color:var(--accent);animation:plBlink 1s steps(1) infinite}
+  @keyframes plBlink{50%{opacity:0}}
+
+  .pl-role{margin-top:10px;display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    letter-spacing:.26em;text-transform:uppercase;color:#7B8697;opacity:0}
+  .pl-role i{font-style:normal;color:var(--accent);opacity:.7;margin-right:10px}
+  .pl-quote{margin-top:18px;position:relative;font-family:var(--font-display);font-weight:500;
+    font-size:clamp(15px,3vw,19px);letter-spacing:-.01em;color:#C8D2DF;opacity:0}
+  /* The whole card must be settled well inside FLOOR (3800ms) or the line
+     nobody came for is the only one they get to read. Role lands 1.45s,
+     quote 1.75s, arc 2.05s — leaving ~1.75s of stillness. */
+  .pl-card.on .pl-role {animation:plUp .70s var(--ease) both .75s}
+  .pl-card.on .pl-quote{animation:plUp .75s var(--ease) both 1.00s}
+  .pl-quote::before,.pl-quote::after{content:'';position:absolute;top:50%;width:34px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--line-strong))}
+  .pl-quote::before{right:calc(100% + 16px);transform:scaleX(-1)}
+  .pl-quote::after{left:calc(100% + 16px)}
+  @keyframes plUp{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:none}}
+
+  /* --- the ownership arc ---
+     Deliberately not an icon grid. Connected stages read as one shape in
+     the ~1.5s this card has; a tile grid would be eight separate reading
+     targets. Three stages, not four — Design absorbs interaction and system
+     work, and the arc only has to land the two ends: it starts at research
+     and finishes in production code. Kept lighter than the quote so it
+     reads as a footnote to the claim, not a competing headline. */
+  .pl-chain{margin-top:22px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;
+    letter-spacing:.22em;text-transform:uppercase;color:#66707F;opacity:0}
+  .pl-chain span{display:inline-flex;align-items:center}
+  /* connector lives inside the following stage, so a wrap on a narrow
+     screen never leaves a dangling rule at the end of a line */
+  .pl-chain span+span::before{content:'';width:18px;height:1px;margin:0 10px;
+    background:var(--line-strong)}
+  .pl-chain .on{color:var(--accent);text-shadow:0 0 14px rgba(184,239,67,.3)}
+  .pl-card.on .pl-chain{animation:plUp .70s var(--ease) both 1.35s}
+
+/* --- the proof rotator ---------------------------------------
+   Fixed height so the card never reflows as beats swap. The
+   identity above this slot never moves for the whole intro —
+   that's what makes a long intro readable instead of a
+   slideshow you keep losing your place in. */
+  .pl-beats{position:relative;margin-top:26px;width:100%;height:66px}
+  .pl-beat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:6px;text-align:center;
+    opacity:0;visibility:hidden;transform:translate3d(0,12px,0);will-change:opacity,transform;
+    transition:opacity .42s var(--ease), transform .42s var(--ease), visibility 0s linear .42s}
+  .pl-beat.in{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+  .pl-beat.out{opacity:0;visibility:hidden;transform:translate3d(0,-12px,0)}
+  .pl-beat-n{font-family:var(--font-display);font-weight:700;line-height:1;
+    font-size:clamp(26px,6vw,38px);letter-spacing:-.02em;color:var(--accent);
+    text-shadow:0 0 24px rgba(184,239,67,.28)}
+  .pl-beat-l{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+    letter-spacing:.2em;text-transform:uppercase;color:#7B8697;max-width:34ch}
+  .pl-beat-l b{color:#C8D2DF;font-weight:500}
+
+/* --- progress rail -------------------------------------------
+   Honest this time: it counts real beats, not bytes or frames.
+   At 11s it's load-bearing — without a readout people assume the
+   page has hung. */
+  .pl-rail{margin-top:30px;display:flex;align-items:center;gap:14px;width:min(300px,64vw);
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#4E5867;
+    opacity:0;transition:opacity .6s ease}
+  .pl-rail.on{opacity:1}
+  .pl-step{color:var(--accent);min-width:2ch;text-align:right}
+  .pl-total{min-width:2ch}
+  .pl-track{flex:1;height:2px;border-radius:2px;background:rgba(150,180,220,.12);overflow:hidden}
+  /* duration is set from BEAT in loader.js, so the fill travels continuously
+     across each beat instead of stepping */
+  .pl-track i{display:block;height:100%;width:0;border-radius:2px;background:var(--accent);
+    box-shadow:0 0 12px rgba(184,239,67,.6);transition:width linear}
+  /* The quick path returns before beats are built, so both would otherwise
+     reserve ~130px of empty space under the card. */
+  .page-loader.pl-quick .pl-rail,
+  .page-loader.pl-quick .pl-beats{display:none}
+
+/* --- skip ----------------------------------------------------
+   Present almost immediately — an escape hatch discovered after
+   the reader has already decided isn't one. Hidden on the repeat
+   /reduced-motion path, where the card leaves in 400ms anyway. */
+  .pl-skip{position:absolute;z-index:3;right:clamp(16px,4vw,32px);bottom:clamp(16px,4vw,28px);
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+    background:rgba(12,17,25,.6);border:1px solid var(--line);cursor:pointer;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:#6B7686;
+    opacity:0;animation:plUp .3s var(--ease) both .25s;
+    transition:color .2s ease,border-color .2s ease,background .2s ease}
+  .pl-skip:hover,.pl-skip:focus-visible{color:var(--accent);border-color:var(--accent-glow);
+    background:rgba(184,239,67,.06)}
+  .pl-skip kbd{font:inherit;padding:1px 5px;border-radius:4px;
+    border:1px solid var(--line-strong);color:#8A94A2;letter-spacing:.08em}
+  .page-loader.pl-quick .pl-skip{display:none}
+  .pl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* --- small screens -------------------------------------------
+   The globe is sized off vh, so on a phone it swallows the card.
+   Pull it back and thicken the centre scrim. */
+  @media (max-width:520px){
+    .pl-card{min-height:250px}
+    .pl-quote::before,.pl-quote::after{display:none}
+    /* three stages hold one line down to ~320px; tightened here only so it
+       keeps clear margins rather than to avoid a wrap. flex-wrap on the base
+       rule is still the safety net if the accent font renders wide. */
+    .pl-chain{font-size:8.5px;letter-spacing:.16em;gap:6px 0;margin-top:18px}
+    .pl-chain span+span::before{width:14px;margin:0 8px}
+    .pl-orb{width:min(560px,62vh);left:-26%;bottom:-14%;opacity:.7}
+    .pl-clear{background:radial-gradient(78% 40% at 50% 50%,
+      rgba(5,8,13,.95), rgba(5,8,13,.78) 58%, transparent 86%)}
+    .pl-role{font-size:9.5px;letter-spacing:.16em;gap:2px 8px}
+    .pl-portrait{width:min(188px,26vh)}
+    .pl-beats{height:74px;margin-top:20px}
+    .pl-beat-l{font-size:9px;letter-spacing:.14em}
+    .pl-rail{margin-top:22px}
+  }
+
+/* --- reduced motion: the card, already resolved --------------- */
+  @media (prefers-reduced-motion:reduce){
+    .pl-name span,.pl-bg,.pl-card{transition:none}
+    .pl-caret,.pl-skip,.pl-card.on .pl-ring-draw,.pl-card.on .pl-portrait,
+    .pl-card.on .pl-role,.pl-card.on .pl-quote,.pl-card.on .pl-chain,
+    .pl-card.on .pl-portrait::before{animation:none}
+    .pl-ring-draw{stroke-dashoffset:0}
+    .pl-role,.pl-quote,.pl-chain{opacity:1}
+    .pl-beat{transition:none}
+    /* still fades, but doesn't travel */
+    .page-loader.pl-out .pl-card{transform:none;transition:opacity .3s ease}
+  }
