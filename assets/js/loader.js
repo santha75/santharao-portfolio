@@ -34,7 +34,7 @@
     { n:'−25%',   label:'design-to-dev handoff',  who:'Brightcone.ai' },
     { n:'100K+',  label:'users on the platform',  who:'RunCode.io' },
     { n:'2023',   label:'Startup of the Year',    who:'HackerNoon' },
-    { n:'13 yrs', label:'clinical · enterprise AI · dev platforms', who:'' },
+    { n:'11+ years', label:'clinical · enterprise AI · dev platforms', who:'' },
     { n:'05',     label:'continents — clients and teams',           who:'' }
   ];
 

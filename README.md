@@ -1,6 +1,6 @@
 # Santharao Nowpada — Portfolio
 
-Personal portfolio site for **Santharao Nowpada**, a product designer with 13 years in enterprise B2B SaaS — clinical decision support, human-in-the-loop AI workflows, and developer platforms.
+Personal portfolio site for **Santharao Nowpada**, a UI/UX designer with 11+ years in enterprise B2B SaaS — clinical decision support, human-in-the-loop AI workflows, and developer platforms.
 
 > **Complex systems, made obvious.**
 

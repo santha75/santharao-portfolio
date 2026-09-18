@@ -1,7 +1,62 @@
+  // About card tabs: preserve the profile as the initial view.
+  (function(){
+    const tablist=document.querySelector('.pf-tabs');
+    // Keep the alternate view in the source, but leave the profile standalone.
+    if(!tablist || tablist.dataset.tabsEnabled==='false') return;
+    const profile=document.getElementById('pf-panel-profile');
+    profile.setAttribute('role','tabpanel');
+    profile.setAttribute('aria-labelledby','pf-tab-profile');
+    profile.tabIndex=0;
+    const tabs=[...tablist.querySelectorAll('[role="tab"]')];
+    function select(tab){
+      tabs.forEach(item=>{
+        const active=item===tab;
+        item.setAttribute('aria-selected',String(active));
+        item.tabIndex=active?0:-1;
+        document.getElementById(item.getAttribute('aria-controls')).hidden=!active;
+      });
+    }
+    tabs.forEach((tab,index)=>{
+      tab.addEventListener('click',()=>select(tab));
+      tab.addEventListener('keydown',event=>{
+        let next;
+        if(event.key==='ArrowRight') next=(index+1)%tabs.length;
+        else if(event.key==='ArrowLeft') next=(index+tabs.length-1)%tabs.length;
+        else if(event.key==='Home') next=0;
+        else if(event.key==='End') next=tabs.length-1;
+        else return;
+        event.preventDefault();
+        select(tabs[next]);
+        tabs[next].focus();
+      });
+    });
+    tablist.hidden=false;
+  })();
+
   // sticky nav state
   const hdr=document.getElementById('hdr');
   const onScroll=()=>hdr.classList.toggle('scrolled',window.scrollY>24);
   onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+
+  /* ---------- NAV: menu sheet below 980px ---------- */
+  (function(){
+    const btn=document.getElementById('navToggle');
+    const sheet=document.getElementById('navLinks');
+    if(!btn || !sheet) return;
+    const set=open=>{
+      hdr.classList.toggle('nav-open',open);
+      btn.setAttribute('aria-expanded',open?'true':'false');
+      btn.setAttribute('aria-label',open?'Close menu':'Open menu');
+    };
+    const isOpen=()=>hdr.classList.contains('nav-open');
+    btn.addEventListener('click',()=>set(!isOpen()));
+    // a link is a destination — the sheet gets out of the way as the page scrolls to it
+    sheet.addEventListener('click',e=>{ if(e.target.closest('a')) set(false); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && isOpen()){ set(false); btn.focus(); } });
+    document.addEventListener('click',e=>{ if(isOpen() && !hdr.contains(e.target)) set(false); });
+    // rotating / widening past the breakpoint must not leave a stale open state behind
+    window.matchMedia('(min-width:981px)').addEventListener('change',e=>{ if(e.matches) set(false); });
+  })();
 
   // scroll reveal
   const io=new IntersectionObserver((entries)=>{
@@ -11,6 +66,131 @@
     el.style.transitionDelay=(Math.min(i%6,5)*55)+'ms';
     io.observe(el);
   });
+
+  // "explore more" strip: pointer spotlight (CSS reads --mx/--my)
+  (()=>{
+    const wm=document.getElementById('workMore'); if(!wm) return;
+    if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    wm.addEventListener('pointermove',e=>{
+      const r=wm.getBoundingClientRect();
+      wm.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      wm.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+    },{passive:true});
+  })();
+
+  /* ---------- WORK: card interaction layer ----------
+     Entrance stagger + counting outcome figure (all pointers), then for fine
+     pointers only: cursor spotlight on the card, 3D tilt + self-scrolling
+     capture on the screen frame, a cursor-riding "Explore screen" pill and a
+     magnetic visit link. CSS gates everything on .workstack.is-live. */
+  (()=>{
+    const stack=document.getElementById('workstack'); if(!stack) return;
+    const cards=[...stack.querySelectorAll('.wcard')]; if(!cards.length) return;
+    const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+    stack.classList.add('is-live');
+
+    // outcome figure: "~25%" -> prefix "~", 25, suffix "%"; multi-number
+    // figures like "0→1" and word figures are left as they are
+    const nums=new Map();
+    cards.forEach(card=>{
+      const n=card.querySelector('.wcard-outcome-n');
+      if(!n || n.classList.contains('is-word')) return;
+      const text=n.textContent.trim();
+      const m=text.match(/^([^\d]*)(\d[\d,]*)([^\d]*)$/);
+      if(!m) return;
+      const end=parseInt(m[2].replace(/,/g,''),10);
+      if(!end) return;
+      n.textContent='';
+      const sr=document.createElement('span'); sr.className='sr'; sr.textContent=text;
+      const vis=document.createElement('span'); vis.setAttribute('aria-hidden','true'); vis.textContent=m[1]+'0'+m[3];
+      n.append(sr,vis);
+      nums.set(card,{vis,pre:m[1],end,suf:m[3],text});
+    });
+    function countUp(card){
+      const d=nums.get(card); if(!d) return;
+      if(reduced.matches){ d.vis.textContent=d.text; return; }
+      const t0=performance.now(), dur=900+Math.min(600,d.end*6);
+      const frame=now=>{
+        const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+        d.vis.textContent=d.pre+Math.round(e*d.end).toLocaleString('en-US')+d.suf;
+        if(p<1) requestAnimationFrame(frame); else d.vis.textContent=d.text;
+      };
+      requestAnimationFrame(frame);
+    }
+    const seen=new IntersectionObserver(entries=>{
+      entries.forEach(en=>{
+        if(!en.isIntersecting) return;
+        en.target.classList.add('is-seen'); countUp(en.target); seen.unobserve(en.target);
+      });
+    },{threshold:.2});
+    cards.forEach(c=>seen.observe(c));
+
+    // tall captures (most are full-page exports) get a slow scroll-through on
+    // hover; the duration follows how much page sits below the fold
+    stack.querySelectorAll('.shot-body:not(.is-fit) .shot-img').forEach(img=>{
+      const mark=()=>{
+        const body=img.parentElement;
+        if(!img.naturalWidth || !body.clientHeight) return;
+        const ratio=(img.naturalHeight/img.naturalWidth)/(body.clientHeight/body.clientWidth);
+        img.classList.toggle('is-tall',ratio>1.25);
+        img.style.setProperty('--pan-dur',Math.min(14,Math.max(2.5,ratio*1.7)).toFixed(1)+'s');
+      };
+      if(img.complete) mark(); else img.addEventListener('load',mark,{once:true});
+      window.addEventListener('resize',mark,{passive:true});
+    });
+
+    if(!matchMedia('(hover:hover) and (pointer:fine)').matches || reduced.matches) return;
+
+    let raf=0, last=null;
+    const place=(btn,shotRect,e)=>{
+      btn.style.setProperty('--hx',(e.clientX-shotRect.left).toFixed(0)+'px');
+      btn.style.setProperty('--hy',(e.clientY-shotRect.top).toFixed(0)+'px');
+    };
+    function apply(){
+      raf=0; const e=last; if(!e) return;
+      const card=e.target.closest('.wcard'); if(!card) return;
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+      const shot=e.target.closest('.wcard-shot');
+      if(shot && shot.classList.contains('is-tilting')){
+        const s=shot.getBoundingClientRect();
+        const px=(e.clientX-s.left)/s.width-.5, py=(e.clientY-s.top)/s.height-.5;
+        shot.style.setProperty('--rx',(px*5).toFixed(2)+'deg');
+        shot.style.setProperty('--ry',(-py*5).toFixed(2)+'deg');
+        const btn=shot.querySelector('.shot-open'); if(btn) place(btn,s,e);
+      }
+    }
+    stack.addEventListener('pointermove',e=>{ last=e; if(!raf) raf=requestAnimationFrame(apply); },{passive:true});
+    stack.addEventListener('pointerover',e=>{
+      const card=e.target.closest('.wcard');
+      if(card && !card.classList.contains('is-lit')){ card.classList.add('is-lit'); card.style.setProperty('--spot','1'); }
+      const shot=e.target.closest('.wcard-shot');
+      if(shot){
+        shot.classList.add('is-tilting');
+        const btn=e.target.closest('.shot-open');
+        if(btn && !btn.classList.contains('is-tracking')){ place(btn,shot.getBoundingClientRect(),e); btn.classList.add('is-tracking'); }
+      }
+    });
+    stack.addEventListener('pointerout',e=>{
+      const to=e.relatedTarget, left=el=>el && !(to && el.contains(to));
+      const card=e.target.closest('.wcard');
+      if(left(card)){ card.classList.remove('is-lit'); card.style.setProperty('--spot','0'); }
+      const shot=e.target.closest('.wcard-shot');
+      if(left(shot)){ shot.classList.remove('is-tilting'); shot.style.removeProperty('--rx'); shot.style.removeProperty('--ry'); }
+      const btn=e.target.closest('.shot-open');
+      if(left(btn)) btn.classList.remove('is-tracking');
+    });
+    // magnetic visit link
+    stack.querySelectorAll('.wcard-link').forEach(a=>{
+      a.addEventListener('pointermove',e=>{
+        const r=a.getBoundingClientRect();
+        const x=(e.clientX-r.left-r.width/2)*.28, y=(e.clientY-r.top-r.height/2)*.35;
+        a.classList.add('is-magnet'); a.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)';
+      },{passive:true});
+      a.addEventListener('pointerleave',()=>{ a.classList.remove('is-magnet'); a.style.transform=''; });
+    });
+  })();
 
   /* ---------- FEEDBACK — night flight scene ---------- */
   (function(){
@@ -23,6 +203,8 @@
     const qli=root.querySelector('.af-li');
     const barFill=root.querySelector('.af-st-bar i');
     const barPlane=root.querySelector('.af-st-plane');
+    const autoplay=root.querySelector('.af-autoplay');
+    const quote=root.querySelector('.af-quote');
 
     /* ===================================================================
        EDIT ME — real, permissioned testimonials. Wrap a phrase in <b>...</b>
@@ -86,7 +268,7 @@
       coRail.appendChild(c); cos.push(c);
     });
 
-    let idx=-1, visible=false, paused=false, timer=null, swapT=null;
+    let idx=-1, visible=false, paused=REDUCE, keyboardFocus=false, timer=null, swapT=null;
 
     function paint(i){
       const d=TESTIMONIALS[i];
@@ -95,11 +277,23 @@
       qrole.textContent=d.role+' \u00b7 '+d.company;
       if(d.li){ qli.style.display=''; qli.href=d.li; qli.innerHTML=LI+' LinkedIn'; }
       else qli.style.display='none';
-      wins.forEach((w,k)=>w.setAttribute('aria-selected', k===i?'true':'false'));
-      cos.forEach((c,k)=>c.setAttribute('aria-selected', k===i?'true':'false'));
+      [...wins,...cos].forEach((tab,k)=>{
+        const active=k%TESTIMONIALS.length===i;
+        tab.setAttribute('aria-selected',String(active));
+        tab.tabIndex=active?0:-1;
+      });
       const pct=((i+1)/TESTIMONIALS.length)*100;
       if(barFill) barFill.style.width=pct+'%';
       if(barPlane) barPlane.style.left=pct+'%';
+      /* narrow screens: each rail is its own sideways scroller, so bring the
+         selected window / company into the middle of it. Scrolls the rail only —
+         scrollIntoView would also drag the page to the section on auto-advance. */
+      [wins[i],cos[i]].forEach(el=>{
+        const rail=el.parentElement;
+        if(rail.scrollWidth <= rail.clientWidth+2) return;
+        const left=el.offsetLeft - (rail.clientWidth - el.offsetWidth)/2;
+        rail.scrollTo({left:Math.max(0,left),behavior:REDUCE?'auto':'smooth'});
+      });
     }
     function go(i){
       i=((i%TESTIMONIALS.length)+TESTIMONIALS.length)%TESTIMONIALS.length;
@@ -112,24 +306,48 @@
       schedule();
     }
     function schedule(){
-      clearTimeout(timer); if(REDUCE) return;
-      timer=setTimeout(()=>{ (!paused && visible) ? go(idx+1) : schedule(); }, HOLD);
+      clearTimeout(timer);
+      const running=!paused && !keyboardFocus && visible && !document.hidden;
+      quote.setAttribute('aria-live',running?'off':'polite');
+      if(!running) return;
+      timer=setTimeout(()=>go(idx+1),HOLD);
     }
 
-    const pause=()=>{paused=true}; const resume=()=>{paused=false;schedule()};
-    root.addEventListener('mouseenter',pause);
-    root.addEventListener('mouseleave',resume);
-    root.addEventListener('focusin',pause);
-    root.addEventListener('focusout',resume);
+    // Pointer hover does not interrupt the tour; readers can pause explicitly.
+    // Keyboard navigation pauses rotation while a testimonial link/tab is focused.
+    root.addEventListener('focusin',event=>{
+      keyboardFocus=event.target!==autoplay && event.target.matches(':focus-visible');
+      schedule();
+    });
+    root.addEventListener('focusout',event=>{
+      if(!root.contains(event.relatedTarget)){
+        keyboardFocus=false;
+        schedule();
+      }
+    });
+    if(autoplay){
+      function updateControl(){
+        autoplay.querySelector('span').textContent=paused?'Play testimonials':'Pause testimonials';
+        autoplay.classList.toggle('is-paused',paused);
+      }
+      autoplay.hidden=false;
+      updateControl();
+      autoplay.addEventListener('click',()=>{
+        paused=!paused;
+        updateControl();
+        schedule();
+      });
+    }
     [winRow,coRail].forEach(el=>el.addEventListener('keydown',e=>{
       if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(idx+1);(el===coRail?cos:wins)[idx].focus();}
       else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(idx-1);(el===coRail?cos:wins)[idx].focus();}
     }));
     const vio=new IntersectionObserver(es=>es.forEach(en=>{
-      visible=en.isIntersecting; if(visible) schedule(); else clearTimeout(timer);
+      visible=en.isIntersecting;
+      schedule();
     }),{threshold:.25});
     vio.observe(root);
-    document.addEventListener('visibilitychange',()=>{document.hidden?pause():resume();});
+    document.addEventListener('visibilitychange',schedule);
 
     idx=0; paint(0);
   })();
@@ -155,50 +373,72 @@
     });
   })();
 
-  /* ---------- WORK: layered stacking depth (soft dim, minimal shrink) ---------- */
+  /* ---------- WORK: scroll-scrubbed perspective deck ---------- */
   (function(){
     const stack=document.getElementById('workstack'); if(!stack) return;
     const cards=[...stack.querySelectorAll('.wcard')]; if(!cards.length) return;
-    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const clip=(v,a,b)=>v<a?a:v>b?b:v;
-    let wtop=104, wstep=13;
-    function readVars(){
-      const cs=getComputedStyle(stack);
-      wtop=parseFloat(cs.getPropertyValue('--wtop'))||104;
-      wstep=parseFloat(cs.getPropertyValue('--wstep'))||13;
-    }
+    const reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+    const clamp=v=>Math.max(0,Math.min(1,v));
+    const ease=v=>{ const p=clamp(v); return p*p*(3-2*p); };
+    let wtop=150, metrics=[];
     let ticking=false;
     function update(){
       ticking=false;
+      if(reduced.matches) return;
       const vh=window.innerHeight;
+      // Measure normal flow, never transformed rectangles: motion must not feed
+      // back into its own progress or jump when reversing scroll direction.
+      const stackTop=stack.getBoundingClientRect().top;
       for(let i=0;i<cards.length;i++){
-        /* depth = how buried this card is under the cards stacked on top of it */
-        let depth=0;
-        for(let j=i+1;j<cards.length;j++){
-          const nr=cards[j].getBoundingClientRect();
-          const jStick=wtop + j*wstep;
-          const cov=clip((vh - nr.top)/(vh - jStick), 0, 1);
-          depth+=cov;
-          if(cov<1) break;
-        }
-        const d=Math.min(depth,2.4);
-        if(d>0.001){
-          /* gentle: cards keep their size (~2.5% max), depth reads via dim + peek */
-          const scale=(1 - d*0.011).toFixed(4);
-          const bright=(1 - Math.min(d*0.075,0.28)).toFixed(3);
-          cards[i].style.transform='scale('+scale+')';
-          cards[i].style.filter='brightness('+bright+')';
-        } else {
-          cards[i].style.transform='';
-          cards[i].style.filter='';
-        }
+        const card=cards[i], m=metrics[i];
+        const flowTop=stackTop+m.top;
+        const nextTop=i+1<cards.length ? stackTop+metrics[i+1].top : Infinity;
+        const bottom=Math.min(vh-16,m.pin+m.height);
+        // Browsers round scroll destinations to pixels; finish within that
+        // tolerance so a fully landed card never leaves a ghost edge behind.
+        const progress=nextTop<=wtop+1 ? 1 : clamp((bottom-nextTop)/Math.max(1,bottom-wtop));
+        const depth=ease(progress);
+        // Tall cards remain flat on arrival so the entire copy and screenshot
+        // can be read before the next project begins its takeover.
+        const arrival=i && !m.tall ? 1-ease((vh-flowTop)/Math.max(1,vh-wtop)) : 0;
+        const covered=progress>=1;
+        card.classList.toggle('is-covered',covered);
+        card.classList.toggle('is-moving',!covered && flowTop<vh && (depth>0 || arrival>0));
+        card.style.setProperty('--deck-y',(depth*18+arrival*28).toFixed(2)+'px');
+        card.style.setProperty('--deck-z',(-depth*100-arrival*36).toFixed(2)+'px');
+        card.style.setProperty('--deck-tilt',(depth*7-arrival*4).toFixed(3)+'deg');
+        card.style.setProperty('--deck-scale',(1-depth*.035).toFixed(4));
+        card.style.setProperty('--deck-opacity',(1-ease((progress-.58)/.42)).toFixed(4));
+        card.style.setProperty('--deck-shade',(depth*.8).toFixed(4));
       }
     }
+    function measure(){
+      wtop=parseFloat(getComputedStyle(stack).getPropertyValue('--wtop'))||150;
+      let top=parseFloat(getComputedStyle(stack).paddingTop)||0;
+      metrics=cards.map(card=>{
+        const height=card.offsetHeight;
+        const over=Math.max(0,height+16-(window.innerHeight-wtop));
+        const metric={top,height,pin:wtop-over,tall:over>0};
+        top+=height+(parseFloat(getComputedStyle(card).marginBottom)||0);
+        card.style.setProperty('--tall',-over+'px');
+        return metric;
+      });
+      onScroll();
+    }
     function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }
-    readVars();
+    function motionChange(){
+      cards.forEach(card=>{
+        card.classList.remove('is-covered','is-moving');
+        ['y','z','tilt','scale','opacity','shade'].forEach(key=>card.style.removeProperty('--deck-'+key));
+      });
+      measure();
+    }
     window.addEventListener('scroll',onScroll,{passive:true});
-    window.addEventListener('resize',()=>{ readVars(); update(); },{passive:true});
-    update();
+    window.addEventListener('resize',measure,{passive:true});
+    reduced.addEventListener('change',motionChange);
+    if('ResizeObserver' in window){ const ro=new ResizeObserver(measure); cards.forEach(c=>ro.observe(c)); }
+    if(document.fonts) document.fonts.ready.then(measure);
+    measure();
   })();
 
   /* ---------- WORK: sticky title bar — scroll-spy + click-to-scroll ---------- */
@@ -214,9 +454,21 @@
     function vars(){
       const cs=getComputedStyle(stack);
       return {
-        wtop:parseFloat(cs.getPropertyValue('--wtop'))||150,
-        wstep:parseFloat(cs.getPropertyValue('--wstep'))||13
+        wtop:parseFloat(cs.getPropertyValue('--wtop'))||150
       };
+    }
+
+    /* Where each card sits in normal flow. offsetTop can't be used for this: on a
+       position:sticky element it reports the *stuck* position, so for any card
+       already pinned it just echoes the current scroll offset — which is why
+       clicking a title behind you (Veridx -> Brightcone) went nowhere useful. */
+    function flowTops(){
+      let y=parseFloat(getComputedStyle(stack).paddingTop)||0;
+      return cards.map(c=>{
+        const top=y;
+        y+=c.offsetHeight + (parseFloat(getComputedStyle(c).marginBottom)||0);
+        return top;
+      });
     }
 
     // the bubble nub under the bar — slides to sit beneath the active title
@@ -238,31 +490,58 @@
     }
 
     function setActive(i){
-      links.forEach(a=> a.classList.toggle('is-active', a.dataset.i===String(i)));
+      links.forEach(a=>{
+        const active=a.dataset.i===String(i);
+        a.classList.toggle('is-active',active);
+        if(active) a.setAttribute('aria-current','true');
+        else a.removeAttribute('aria-current');
+      });
       // only nudge the bar horizontally when it actually overflows (mobile)
+      /* Scroll the BAR, never the page: scrollIntoView also moves every scrollable
+         ancestor, so on phones (where the bar overflows) the first spy() on load
+         dragged the document down to the work section, past the hero. */
       if(navList.scrollWidth > navList.clientWidth + 2){
         const a=links.find(l=>l.dataset.i===String(i));
-        if(a) a.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+        if(a){
+          const lr=navList.getBoundingClientRect(), ar=a.getBoundingClientRect();
+          const left=navList.scrollLeft + (ar.left - lr.left) - (lr.width - ar.width)/2;
+          navList.scrollTo({left:Math.max(0,left),behavior:scrollTarget!==null || window.matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+        }
       }
       placeTail();
     }
 
     // Which card is at the FRONT of the deck = highest-index card whose flow-top
-    // has reached its own pin line (--wtop + i*--wstep). That's the one on top.
-    let ticking=false, current=-1;
+    // has reached the shared reading line. Tall cards start at their heading.
+    let ticking=false, current=-1, scrollTarget=null, settleTimer;
     function spy(){
       ticking=false;
-      const {wtop,wstep}=vars();
+      const {wtop}=vars();
       const stackTop=stack.getBoundingClientRect().top; // viewport top of stack
+      const tops=flowTops();
       let cur=0;
       cards.forEach((c,i)=>{
-        const cardTop=stackTop + c.offsetTop;           // flow-position viewport top
-        if(cardTop <= wtop + i*wstep + 1) cur=+c.dataset.i;
+        const cardTop=stackTop + tops[i];               // flow-position viewport top
+        if(cardTop <= wtop + 1) cur=+c.dataset.i;
       });
-      if(cur!==current){ current=cur; setActive(cur); }
+      if(scrollTarget===null && cur!==current){ current=cur; setActive(cur); }
       placeTail();   // the stem tracks the deck every frame, not just on change
     }
-    function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(spy); } }
+    function onScroll(){
+      if(!ticking){ ticking=true; requestAnimationFrame(spy); }
+      if(scrollTarget!==null){
+        clearTimeout(settleTimer);
+        settleTimer=setTimeout(()=>{ scrollTarget=null; onScroll(); },180);
+      }
+    }
+    // Keep the destination selected during a jump. Re-centering the mobile
+    // rail on every intermediate card can interrupt the page's smooth scroll.
+    function cancelJump(){ scrollTarget=null; clearTimeout(settleTimer); onScroll(); }
+    window.addEventListener('wheel',cancelJump,{passive:true});
+    window.addEventListener('touchstart',cancelJump,{passive:true});
+    window.addEventListener('keydown',event=>{
+      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)) cancelJump();
+    });
     window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('resize',()=>{ onScroll(); placeTail(); },{passive:true});
     // keep the nub glued to its pill while the bar scrolls sideways / settles
@@ -275,18 +554,115 @@
         e.preventDefault();
         const card=document.querySelector(a.getAttribute('href'));
         if(!card) return;
-        const {wtop,wstep}=vars();
+        const {wtop}=vars();
         const i=+a.dataset.i;
         const stackDocTop=stack.getBoundingClientRect().top + window.scrollY;
-        const y=stackDocTop + card.offsetTop - (wtop + i*wstep);
-        window.scrollTo({top:y,behavior:'smooth'});
+        const y=stackDocTop + flowTops()[i] - wtop;
+        scrollTarget=i;
         current=i; setActive(i);
+        window.scrollTo({top:y,behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+        onScroll();
         history.replaceState(null,'',a.getAttribute('href'));
       });
     });
 
     spy();
   })();
+  /* ---------- WORK: accessible, animated screenshot preview ---------- */
+  (function(){
+    const dialog=document.getElementById('workLightbox');
+    if(!dialog || typeof dialog.showModal!=='function') return;
+    const cards=[...document.querySelectorAll('#workstack .wcard')];
+    const image=dialog.querySelector('#workLightboxImage');
+    const visual=dialog.querySelector('.work-lightbox-visual');
+    const error=dialog.querySelector('.work-lightbox-error');
+    const closeButton=dialog.querySelector('.work-lightbox-close');
+    const reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+    let opener=null, closing=false, closeTimer, frame;
+
+    function finishClose(){
+      clearTimeout(closeTimer);
+      cancelAnimationFrame(frame);
+      dialog.classList.remove('is-open');
+      document.documentElement.classList.remove('work-preview-open');
+      if(dialog.open) dialog.close();
+      closing=false;
+      if(opener?.isConnected) opener.focus({preventScroll:true});
+      opener=null;
+    }
+    function close(){
+      if(!dialog.open || closing) return;
+      closing=true;
+      cancelAnimationFrame(frame);
+      dialog.classList.remove('is-open');
+      if(reduced.matches) finishClose();
+      else closeTimer=setTimeout(finishClose,300);
+    }
+    function open(card,button,index){
+      const source=card.querySelector('.shot-img');
+      if(!source || dialog.open) return;
+      opener=button;
+      closing=false;
+      error.hidden=true;
+      image.hidden=false;
+      image.alt=source.alt;
+      image.src=source.currentSrc || source.src;
+      const heading=card.querySelector('h3');
+      const subtitle=heading.querySelector('.wcard-sub');
+      dialog.querySelector('#workLightboxTitle').textContent=subtitle
+        ? heading.firstChild.textContent.trim()+' \u2014 '+subtitle.textContent.trim()
+        : heading.textContent;
+      dialog.querySelector('#workLightboxDescription').textContent=card.querySelector('.wcard-summary').textContent;
+      dialog.querySelector('#workLightboxDomain').textContent=card.querySelector('.domain').textContent;
+      dialog.querySelector('#workLightboxCount').textContent=String(index+1).padStart(2,'0')+' / '+String(cards.length).padStart(2,'0');
+      const sourceLink=card.querySelector('.wcard-link');
+      const website=dialog.querySelector('#workLightboxLink');
+      website.href=sourceLink.href;
+      website.setAttribute('aria-label',sourceLink.getAttribute('aria-label'));
+      document.documentElement.classList.add('work-preview-open');
+      dialog.showModal();
+      dialog.scrollTop=0;
+      visual.scrollTop=0;
+      closeButton.focus({preventScroll:true});
+      // Paint the initial pose first, then ease into the top-layer preview.
+      frame=requestAnimationFrame(()=>{
+        frame=requestAnimationFrame(()=>{ if(dialog.open && !closing) dialog.classList.add('is-open'); });
+      });
+    }
+    cards.forEach((card,index)=>{
+      const button=card.querySelector('.shot-open'), source=card.querySelector('.shot-img');
+      if(!button || !source) return;
+      button.classList.add('is-ready');
+      if(source.complete && !source.naturalWidth) button.disabled=true;
+      source.addEventListener('error',()=>{ button.disabled=true; });
+      button.addEventListener('click',()=>open(card,button,index));
+    });
+    image.addEventListener('error',()=>{ image.hidden=true; error.hidden=false; });
+    closeButton.addEventListener('click',close);
+    dialog.addEventListener('cancel',event=>{ event.preventDefault(); close(); });
+    dialog.addEventListener('keydown',event=>{
+      if(event.key!=='Tab') return;
+      const controls=[...dialog.querySelectorAll('button:not(:disabled),a[href],[tabindex="0"]')];
+      const first=controls[0],last=controls[controls.length-1];
+      if(event.shiftKey && document.activeElement===first){
+        event.preventDefault(); last.focus();
+      } else if(!event.shiftKey && document.activeElement===last){
+        event.preventDefault(); first.focus();
+      }
+    });
+    const outside=event=>{
+      const rect=dialog.getBoundingClientRect();
+      return event.clientX<rect.left || event.clientX>rect.right || event.clientY<rect.top || event.clientY>rect.bottom;
+    };
+    let backdropDown=false;
+    dialog.addEventListener('pointerdown',event=>{ backdropDown=event.target===dialog && outside(event); });
+    dialog.addEventListener('click',event=>{
+      if(backdropDown && event.target===dialog && outside(event)) close();
+      backdropDown=false;
+    });
+    reduced.addEventListener('change',()=>{ if(reduced.matches && closing) finishClose(); });
+  })();
+
   /* ---------- CAREER DIAL ---------- */
   (function(){
     const ARC0 = 10, ARC1 = 170, C = 320;
@@ -568,7 +944,7 @@
   })();
 
 
-  /* ---------- HERO: NIGHT-EARTH GLOBE (rebuilt from scratch, flicker-free) ----------
+  /* ---------- NIGHT-EARTH GLOBE (clients section + loader) ----------
      Design notes (why this version cannot flicker):
        • One continuous rotation at a constant angular velocity. No stop-and-go
          state machine, no eased "hops", no ±breathe oscillation — those were the
@@ -768,9 +1144,7 @@
     const clamp01=x=>x<0?0:x>1?1:x;
     const ss=(e0,e1,x)=>{ const t=clamp01((x-e0)/(e1-e0)); return t*t*(3-2*t); };
 
-    const heroEl=document.querySelector('.hero');
-    function splitMode(){ return !!heroEl && heroEl.dataset.hero==='split'; }
-    let rightAnchored=false;
+    const rightAnchored=false;
     const inClients = BARE || !!host.closest('.clients-band');   // globe is a background here
     function size(){
       const dpr=Math.min(Math.max(window.devicePixelRatio||1,1), 2);
@@ -779,46 +1153,16 @@
       DPR=dpr; W=cw; H=ch;
       cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
       cv.style.width=W+'px'; cv.style.height=H+'px';
-      rightAnchored = splitMode() && W < H*1.3;   // tall right column (desktop split)
-      if(rightAnchored){
-        /* full-height globe hugging the right edge: sphere diameter ≈ hero
-           height, centre pushed toward the right so ~65% of the disc shows and
-           the rest bleeds off-screen. R is capped by width so the left limb
-           always stays inside the canvas (needs W ≥ 1.30·R). */
-        R = Math.min(H*0.54, W*0.72);
-        CX = W - R*0.30;                 // 65% of the sphere visible from the right
-        CY = H/2;
-      } else if(splitMode()){
-        /* stacked band (mobile split): a fuller centred globe */
-        CX=W/2; CY=H/2; R=Math.min(W,H)*0.46;
-      } else {
-        CX=W/2; CY=H/2; R=Math.min(W,H)*RF;
-      }
+      CX=W/2; CY=H/2; R=Math.min(W,H)*RF;
       positionHud();
     }
 
-    /* Anchor the Impact/Toolkit panel to the globe's live left limb so its right
-       edge overlaps the sphere (no gap between panel and globe). Recomputed on
-       every size()/resize/tab-switch, so it tracks the globe at any viewport. */
+    /* Reset any inline positioning left by an older layout. */
     const hudEl=BARE?null:document.getElementById('orbHud');
     function positionHud(){
       if(!hudEl) return;
-      if(rightAnchored){
-        const hr=host.getBoundingClientRect();       // the canvas/orb box
-        const heroR=heroEl.getBoundingClientRect();
-        const limbX=hr.left + (CX - R);              // globe left limb, viewport px
-        const pw=hudEl.getBoundingClientRect().width || 232;
-        const overlap=Math.max(40, R*0.14);          // how far the panel sits over the globe
-        let left=limbX + overlap - pw - heroR.left;
-        const contentEl=heroEl.querySelector('.hero-mini');
-        const minLeft=(contentEl?contentEl.getBoundingClientRect().right - heroR.left:0) + 24;
-        if(left<minLeft) left=minLeft;               // never slide under the copy
-        hudEl.style.left=Math.round(left)+'px';
-        hudEl.style.right='auto';
-      } else {
-        hudEl.style.left='';                          // hand back to CSS (stacked / center)
-        hudEl.style.right='';
-      }
+      hudEl.style.left='';
+      hudEl.style.right='';
     }
 
     /* ---- HUD (impact + toolkit) ---- */
@@ -1400,7 +1744,7 @@
       if(BARE) return;
       const box=document.getElementById('flipw'); if(!box) return;
       const inner=box.firstElementChild;
-      const WORDS=['understand','rely on','trust','believe in'];
+      const WORDS=['meaningful','effortless','trusted','usable'];
       let k=0, widths=[];
       function measure(){
         const cs=getComputedStyle(box);
@@ -1466,23 +1810,23 @@
     if(REDUCE){ updateTracking(); draw(); }   // one static frame
     requestAnimationFrame(frame);
   }
-  /* The hero globe sits behind the intro loader, so running it during the
+  /* The clients globe sits behind the intro loader, so running it during the
      intro is a second full-canvas redraw per frame that nobody can see —
      it was costing the loader roughly half its long frames. Hold it until
      the loader signals it's gone, with a timeout so it can never be lost. */
   (function(){
-    const hero = ()=>createNightGlobe(document.getElementById('orb'));
+    const mainGlobe=()=>createNightGlobe(document.getElementById('orb'));
     const loaderUp = document.getElementById('pageLoader');
     createNightGlobe(document.getElementById('plOrb'), {bare:true, rf:0.46});
-    if(!loaderUp){ hero(); return; }
+    if(!loaderUp){ mainGlobe(); return; }
     let started=false;
-    const go=()=>{ if(started) return; started=true; hero(); };
+    const go=()=>{ if(started) return; started=true; mainGlobe(); };
     window.addEventListener('pl:done', go, {once:true});
     setTimeout(go, 9000);
   })();
 
 
-  /* ---------- HERO DECISION CARD ---------- */
+  /* ---------- AI DECISION CARD ---------- */
   (function(){
     const pipe=document.getElementById('pipe'); if(!pipe) return;
     const caps=['What the model returns.','What I design.','What the human is accountable for.'];
@@ -1558,5 +1902,106 @@
       }),{threshold:0.3}).observe(card);
 
       show(0);
+    });
+  })();
+
+  /* ---- short version: scroll parallax for the night scene ----
+     Writes --sp (0 when the section's top reaches the bottom of the viewport,
+     1 when its bottom leaves the top) onto .nv-scene; main.css turns it into
+     per-layer translateY so the moon rises and the ridges separate. Only
+     runs while the section is near the viewport. */
+  (function(){
+    const scene=document.querySelector('#short .nv-scene');
+    if(!scene) return;
+    const sec=scene.parentElement;
+    // Convert a visible sky position into the SVG's cropped 1600x900 space.
+    // Keep positioning outside the motion guard so the static moon is visible too.
+    function placeCelestialBodies(){
+      const width=scene.clientWidth, height=scene.clientHeight;
+      if(!width||!height) return;
+      const scale=Math.max(width/1600,height/900);
+      const cropX=(width-1600*scale)/2, cropY=(height-900*scale)/2;
+      const bodyRadius=width>880?80:width>600?62:46;
+      // Anchor to the profile card: centred a little past the card's right
+      // edge. It used to rest on the card's top-right corner; it now rides 30%
+      // higher, floating in the open sky beside the statement (never closer to
+      // the section's top edge than its own radius + 20px).
+      // Offsets (not bounding boxes) so the card's reveal transform can't skew it.
+      const wrap=sec.querySelector('.wrap'), card=sec.querySelector('.pf');
+      let targetX,targetY;
+      if(wrap&&card){
+        const cardTop=wrap.offsetTop+card.offsetTop, cardRight=wrap.offsetLeft+card.offsetLeft+card.offsetWidth;
+        targetX=Math.min(cardRight-bodyRadius*.5,width-bodyRadius-16); targetY=Math.max(bodyRadius+20,(cardTop-bodyRadius*.85)*.7);
+        // Phones: no room beside the copy, so it sits small in the top-right corner by the label.
+        if(width<=600) targetY=bodyRadius+20;
+        // The near ridge's summit sits ~322 units down the SVG. Lower the ridges
+        // (capped) so it stays tucked behind the card rather than peeking over its top edge.
+        const drop=Math.min(120,Math.max(0,(cardTop+36-cropY)/scale-322));
+        scene.style.setProperty('--nv-mtn-drop',drop.toFixed(2)+'px');
+      } else {
+        const skyHeight=parseFloat(getComputedStyle(sec).paddingTop)||160;
+        targetX=Math.min(width-bodyRadius-20,width*(width>880?.85:.74)); targetY=Math.max(136,Math.min(152,skyHeight-20));
+      }
+      scene.style.setProperty('--nv-body-x',((targetX-cropX)/scale-1200).toFixed(2)+'px');
+      scene.style.setProperty('--nv-body-y',((targetY-cropY)/scale-180).toFixed(2)+'px');
+      scene.style.setProperty('--nv-body-scale',Math.min(1.6,bodyRadius/(66*scale)).toFixed(4));
+    }
+    placeCelestialBodies();
+    if('ResizeObserver' in window){
+      new ResizeObserver(placeCelestialBodies).observe(sec);
+    }else{
+      window.addEventListener('resize',placeCelestialBodies,{passive:true});
+    }
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    let on=false,queued=false;
+    function update(){
+      queued=false;
+      const r=sec.getBoundingClientRect(), vh=window.innerHeight;
+      const p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
+      scene.style.setProperty('--sp',p.toFixed(4));
+    }
+    function onScroll(){ if(on&&!queued){queued=true;requestAnimationFrame(update);} }
+    new IntersectionObserver(es=>es.forEach(en=>{on=en.isIntersecting;if(on)update();}),{rootMargin:'20% 0px'}).observe(sec);
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',onScroll,{passive:true});
+  })();
+
+  /* ---- short version: profile card extras ----
+     A live Hyderabad clock in the window bar (so a remote hiring manager can
+     see the overlap at a glance) and a copy button on the email tile. */
+  (function(){
+    const clock=document.querySelector('[data-nv-clock]');
+    if(clock){
+      let fmt=null;
+      try{ fmt=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',hour:'2-digit',minute:'2-digit',hour12:false}); }catch(e){}
+      const tick=()=>{ if(fmt) clock.textContent=fmt.format(new Date()); };
+      tick(); setInterval(tick,15000);
+    }
+    document.querySelectorAll('.nv-copy[data-copy]').forEach(btn=>{
+      const label=btn.querySelector('span'); const originalLabel=label.textContent; let t=null;
+      const status=document.querySelector('.pf-copy-status');
+      const originalName=btn.getAttribute('aria-label');
+      btn.addEventListener('click',()=>{
+        clearTimeout(t);
+        if(status) status.textContent='';
+        const done=()=>{
+          btn.classList.add('is-done'); label.textContent='Copied';
+          btn.setAttribute('aria-label','Email address copied');
+          if(status) status.textContent='Email address copied.';
+          clearTimeout(t); t=setTimeout(()=>{
+            btn.classList.remove('is-done');label.textContent=originalLabel;
+            btn.setAttribute('aria-label',originalName);
+            if(status) status.textContent='';
+          },4000);
+        };
+        const failed=()=>{
+          btn.classList.remove('is-done');label.textContent=originalLabel;
+          btn.setAttribute('aria-label',originalName);
+          if(status) status.textContent='Could not copy. Select the email address and copy it manually.';
+        };
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+          navigator.clipboard.writeText(btn.dataset.copy).then(done,failed);
+        } else { failed(); }
+      });
     });
   })();
