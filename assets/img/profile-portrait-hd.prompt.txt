@@ -1,0 +1,6 @@
+Tool: built-in ImageGen (image_gen.imagegen)
+References: Profile.jpg (original), profile-portrait.jpg (crop reference)
+Output: profile-portrait-hd.jpg (1122 x 1402; generated PNG converted to JPEG, quality 92)
+
+Final prompt:
+Use case: identity-preserve. Edit the supplied real portrait for a professional portfolio website. Image 1 is the high-resolution original photo and identity/detail reference. Image 2 is the desired existing 4:5 portrait crop and framing reference. Create a high-resolution 4:5 portrait, ideally 1536 x 1920 or larger: same exact person, facial proportions, hairstyle, facial hair, expression, skin tone, same blue shirt, same frontal pose, and same crop as Image 2. Remove ONLY the cast shadow on the turquoise wall behind the person; use an evenly lit, flat turquoise wall of the same hue. Improve clarity carefully using the original detail, no plastic skin, no beautification or facial reconstruction, no age change. Keep natural lighting and all facial identity features. No new accessories, no text, no watermark, no frame, no drop shadows or halos. This is a faithful restoration and upscale, not a redesigned headshot. Save the final edited image as a local file and return its file path for integrating into the website.

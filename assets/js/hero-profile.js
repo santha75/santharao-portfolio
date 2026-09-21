@@ -22,6 +22,7 @@
   if(!hero) return;
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
   const fine=matchMedia('(hover:hover) and (pointer:fine)');
+  const simpleMotion=matchMedia('(max-width:860px), (hover:none)');
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   const lerp=(a,b,t)=>a+(b-a)*t;
   const HDR=68;
@@ -213,7 +214,7 @@
     if(!m) return;
     const y=window.scrollY;
     const p=clamp((y-m.s0)/(m.s1-m.s0),0,1);
-    if(reduced.matches){
+    if(reduced.matches || simpleMotion.matches){
       hero.classList.remove('is-flying');
       if(flight) flight.classList.remove('is-on');
       showGuide(p>=1);
@@ -307,6 +308,7 @@
   window.addEventListener('scroll',onScroll,{passive:true});
   window.addEventListener('resize',onResize,{passive:true});
   reduced.addEventListener('change',onResize);
+  simpleMotion.addEventListener('change',onResize);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
   const pimg=photo?photo.querySelector('img'):null;
   if(pimg && !pimg.complete) pimg.addEventListener('load',onResize,{once:true});

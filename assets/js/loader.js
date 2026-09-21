@@ -35,7 +35,7 @@
     { n:'100K+',  label:'users on the platform',  who:'RunCode.io' },
     { n:'2023',   label:'Startup of the Year',    who:'HackerNoon' },
     { n:'11+ years', label:'clinical · enterprise AI · dev platforms', who:'' },
-    { n:'05',     label:'continents — clients and teams',           who:'' }
+    { n:'04',     label:'countries — clients and teams',            who:'' }
   ];
 
   /* Timing. The card assembles over ~2.05s:

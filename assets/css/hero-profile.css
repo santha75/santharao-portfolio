@@ -1,4 +1,8 @@
 /* Portrait-led introduction and a small, contextual section guide. */
+.hero-summary-mobile{display:none}
+.hero-mobile-reach{display:none}
+.hero-availability{display:contents}
+.hero-cv{display:none}
 .hero[data-hero="portrait"]{padding:128px 0 86px}
 .hero[data-hero="portrait"] .hero-mini{width:100%;display:flex;flex-direction:column;align-items:stretch;text-align:left}
 .hero[data-hero="portrait"] h1{font-size:clamp(40px,5.5vw,100px);margin:0;line-height:1.04}
@@ -43,26 +47,24 @@
 .hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:clamp(28px,4vh,44px)}
 .hero-marg{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin:0;text-align:right;
   font:11.5px/1.6 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
-.hero-marg span:first-child{color:var(--fg);font-size:12.5px;font-weight:500}
-/* the portrait lives inside the headline as a tilted photo tile, taller than
-   the cap height so it breaks the line a little; it levels out and grows on
-   hover. Negative vertical margins keep it from stretching the line box. */
-.hero-pic-wrap{position:relative;display:inline-block;vertical-align:middle;line-height:0;margin:-.3em .1em -.3em .06em}
+.hero-marg>span:first-child{color:var(--fg);font-size:12.5px;font-weight:500}
+/* Reserve space around the larger tilted portrait so it never overlaps the
+   next headline line, including when it levels out on hover or focus. */
+.hero-pic-wrap{position:relative;display:inline-block;vertical-align:middle;line-height:0;margin:.08em .1em .25em .06em}
 .hero[data-hero="portrait"] .hero-pic{
   position:relative;display:block;overflow:hidden;
-  width:1.55em;height:1.3em;margin:0;aspect-ratio:auto;
+  width:clamp(60px,1.85em,200px);height:clamp(54px,1.65em,180px);margin:0;aspect-ratio:auto;
   border-radius:.26em;border:1px solid rgba(184,239,67,.55);background:#285464;
-  box-shadow:0 22px 44px -22px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.18);
+  box-shadow:none;
   transform:rotate(-6deg);
   transition:width .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .35s ease;
 }
 .hero[data-hero="portrait"] .hero-pic::after{display:none}
-.hero[data-hero="portrait"] .hero-pic::before{content:"";position:absolute;left:.12em;top:.12em;width:.16em;height:.16em;border-radius:50%;
-  background:var(--accent);box-shadow:0 0 12px var(--accent-glow);z-index:1}
-.hero[data-hero="portrait"] .hero-pic img{width:100%;height:100%;object-fit:cover;object-position:center 18%;filter:saturate(.85);
-  transform:scale(1.06);transition:transform .8s var(--ease),filter .4s ease}
-.hero[data-hero="portrait"] .hero-pic:hover,.hero[data-hero="portrait"] .hero-pic:focus-visible{width:2.1em;transform:rotate(0deg) scale(1.04);border-color:var(--accent);
-  box-shadow:0 26px 50px -22px rgba(0,0,0,.85),0 0 0 4px rgba(184,239,67,.16),inset 0 1px 0 rgba(255,255,255,.18)}
+.hero[data-hero="portrait"] .hero-pic::before{display:none}
+.hero[data-hero="portrait"] .hero-pic img{width:100%;height:100%;object-fit:cover;object-position:center 12%;filter:none;
+  transform:none;transition:transform .8s var(--ease)}
+.hero[data-hero="portrait"] .hero-pic:hover,.hero[data-hero="portrait"] .hero-pic:focus-visible{width:clamp(68px,2.1em,220px);transform:rotate(0deg) scale(1.04);border-color:var(--accent);
+  box-shadow:none}
 .hero[data-hero="portrait"] .hero-pic:hover img{transform:scale(1);filter:saturate(1)}
 .hero[data-hero="portrait"] .hero-pic:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 /* the sticker sits beside "Designing"; the cursor tags hang off the pill and the last word */
@@ -286,12 +288,10 @@ body .guide-toggle:hover{border-color:rgba(184,239,67,.45);background:#111c29}
 .portrait-flight{
   position:fixed;z-index:95;left:0;top:0;overflow:hidden;pointer-events:none;display:none;
   border:1px solid rgba(151,204,218,.28);background:#285464;
-  box-shadow:0 30px 70px -35px rgba(0,0,0,.75);
+  box-shadow:none;
 }
 .portrait-flight.is-on{display:block}
-.portrait-flight img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:saturate(.78)}
-.portrait-flight::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,transparent 42%,rgba(5,12,20,.16) 58%,rgba(5,12,20,.92) 100%);opacity:var(--cap,1)}
+.portrait-flight img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 12%}
 .portrait-flight .portrait-caption{opacity:var(--cap,1);transform-origin:left bottom;transform:scale(var(--cs,1))}
 
 /* section guide: no longer toggled with [hidden]; it fades in when the portrait lands */
@@ -328,4 +328,46 @@ body .guide-toggle:hover{border-color:rgba(184,239,67,.45);background:#111c29}
   .section-guide,.section-guide.is-hidden{transition:none}
   .section-guide.is-landed .guide-avatar::after{animation:none;display:none}
   .hero[data-hero="portrait"] .hero-grid::after{display:none}
+}
+
+/* Phone introduction: identity, message, two actions and compact evidence.
+   Detailed domains and clients remain available elsewhere on the page. */
+@media(max-width:640px){
+  .hero[data-hero="portrait"]{padding:84px 0 48px}
+  .hero[data-hero="portrait"] .hero-top{flex-direction:column;align-items:flex-start;gap:14px;margin-bottom:26px}
+  .hero[data-hero="portrait"] .hero-availability{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:400px}
+  .hero[data-hero="portrait"] .hero-cv{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-height:44px;padding:0 2px;font:500 12px/1.4 'Inter',sans-serif;color:var(--fg);white-space:nowrap;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:4px}
+  .hero[data-hero="portrait"] .hero-cv:is(:hover,:focus-visible){text-decoration-color:currentColor}
+  .hero[data-hero="portrait"] .hero-pill{font-size:9px;letter-spacing:.06em;padding:7px 10px}
+  .hero[data-hero="portrait"] .hero-pill .live{flex-shrink:0}
+  .hero[data-hero="portrait"] .hero-marg{display:flex;align-items:flex-start;text-align:left;gap:2px;letter-spacing:.02em;text-transform:none;font-size:11px}
+  .hero[data-hero="portrait"] .hero-marg>span:first-child{font-size:13px}
+  .hero[data-hero="portrait"] .hero-mobile-reach{display:inline;white-space:nowrap}
+  .hero[data-hero="portrait"] .hero-marg>span:last-child,
+  .hero[data-hero="portrait"] .cursor-tag,
+  .hero[data-hero="portrait"] .hero-summary-desktop,
+  .hero[data-hero="portrait"] .hero-for,
+  .hero[data-hero="portrait"] .hero-actions a[download]{display:none}
+  .hero[data-hero="portrait"] .hero-summary-mobile{display:inline}
+  .hero[data-hero="portrait"] h1{font-size:clamp(24px,7.6vw,46px);line-height:1.24}
+  /* line three is solid on a phone: at this size the outline reads as a blur, and
+     there is no hover to fill it. Plain text colour, not background-clip:text, so
+     it cannot drop out on a browser that fails to clip through the split characters.
+     It is the highlighted line of the headline: the accent, solid. */
+  .hero[data-hero="portrait"] .hl-outline .hw>span,
+  .hero[data-hero="portrait"]:hover .hl-outline .hw>span{
+    -webkit-text-stroke:0;background:none;-webkit-background-clip:border-box;background-clip:border-box;letter-spacing:inherit;
+    color:var(--accent-text,var(--accent));-webkit-text-fill-color:currentColor}
+  /* a larger portrait on a phone, where the em-based size bottoms out */
+  .hero[data-hero="portrait"] .hero-pic{width:clamp(72px,2.5em,112px);height:clamp(64px,2.2em,100px)}
+  .hero[data-hero="portrait"] .hero-pic:hover,.hero[data-hero="portrait"] .hero-pic:focus-visible{width:clamp(80px,2.75em,122px)}
+  .hero[data-hero="portrait"] .hero-foot{margin-top:24px;padding-top:0;border-top:0;gap:20px}
+  .hero[data-hero="portrait"] .hero-sub{max-width:36ch;font:400 15px/1.6 'Inter',sans-serif;letter-spacing:0}
+  .hero[data-hero="portrait"] .hero-actions{display:grid;grid-template-columns:1.2fr 1fr;gap:8px;width:100%;max-width:400px}
+  .hero[data-hero="portrait"] .hero-actions .btn{justify-content:center;min-height:44px;padding:11px 8px;font-family:'Inter',sans-serif;font-size:12px}
+  .hero[data-hero="portrait"] .hero-side{width:100%;gap:20px}
+  .hero[data-hero="portrait"] .hero-read{display:none}
+  .hero[data-hero="portrait"] .hero-side .hero-proof{width:100%;gap:12px;padding:18px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent}
+  .hero[data-hero="portrait"] .hero-proof-t{font-size:11px;line-height:1.5;max-width:32ch}
+  .hero[data-hero="portrait"] .hero-proof-n{font-size:20px}
 }

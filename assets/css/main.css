@@ -284,6 +284,9 @@
   .hud-row span{font-size:12.5px;color:var(--fg-muted)}
   .hud-row b{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;
     color:var(--accent);letter-spacing:-.01em}
+  /* full / short wording pair — the short form is the phone stat strip's */
+  .hud-row i{font-style:normal}
+  .hud-row .hud-s{display:none}
   .hud-chips{display:flex;flex-wrap:wrap;gap:6px}
   .hud-chips i{font-style:normal;font-size:11.5px;padding:5px 10px 5px 7px;
     border:1px solid var(--line);border-radius:8px;color:var(--fg-muted);
@@ -293,30 +296,6 @@
   .hud-chips svg{width:14px;height:14px;flex:0 0 auto;opacity:.72}
   .hud-chips i:first-child svg{opacity:1;color:var(--accent)}
   .hud-t .hud-chips i:first-child{border-color:rgba(184,239,67,.30);color:var(--fg)}
-
-  /* ---------- RELOCATED GLOBE (in the clients section) ---------- */
-  .globe-block{position:relative;margin-top:56px;--orb:min(540px,80vw);--orbF:1;
-    display:flex;flex-direction:column;align-items:center}
-  .globe-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:500;
-    letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim);display:block;
-    text-align:center;margin-bottom:22px}
-  .globe-eyebrow .dot{color:var(--accent)}
-  .globe-block .orb-hud{position:static;display:flex;justify-content:center;flex-wrap:wrap;
-    gap:14px;height:auto;width:100%;max-width:620px;margin-bottom:8px;pointer-events:none}
-  .globe-block .hud{position:static;top:auto;left:auto;right:auto;width:auto;
-    flex:1 1 240px;max-width:288px;animation:none}
-  .globe-block .orb-stage{position:relative;width:var(--orb);height:var(--orb);
-    margin-top:0;display:flex;justify-content:center;z-index:1}
-  .globe-block .orb{position:relative;left:auto;top:auto;transform:none;
-    width:var(--orb);height:var(--orb)}
-  .globe-block .orb canvas{opacity:.96;filter:saturate(.98)}
-  .globe-block .orb-note{position:absolute;left:0;right:0;bottom:-2px;display:block}
-  @media (max-width:640px){
-    .globe-block{--orb:min(420px,86vw);margin-top:40px}
-    .globe-block .orb-hud{flex-direction:column;align-items:center}
-    .globe-block .hud{width:min(340px,86vw);max-width:none;flex:0 0 auto}
-    .globe-block .orb-note{display:none}
-  }
 
   @media (max-width:1180px){
     .orb-hud{display:flex;flex-direction:row;align-items:flex-start;justify-content:center;
@@ -361,39 +340,32 @@
   .logo:hover{border-color:var(--line-strong);color:var(--fg);transform:translateY(-3px)}
   .logo small{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);margin-top:5px}
 
-  /* ---------- CLIENTS SECTION: short 75%-wide globe band + scrolling logos ---------- */
+  /* ---------- CLIENTS SECTION: rotating globe backdrop + scrolling logos ---------- */
   .clients-band{position:relative;overflow:hidden;border-top:0;border-bottom:0}
   .clients-pattern{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.9;
     -webkit-mask:linear-gradient(180deg, transparent 0, #000 14%, #000 52%, transparent 86%);
     mask:linear-gradient(180deg, transparent 0, #000 14%, #000 52%, transparent 86%)}
   .clients-pattern .cli-grat{width:100%;height:100%;display:block}
-  .clients-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .clients-band .clients-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;
+    width:100%;max-width:var(--maxw);padding:0 28px}
   /* nudged down without pushing the globe band — relative offset, no flow change */
-  .clients-inner .eyebrow{display:block;margin-bottom:2px;position:relative;top:24px}
+  .clients-inner .eyebrow{display:block;margin-bottom:2px;padding:0 20px;position:relative;top:24px}
 
-  /* the band = a wide horizon slice of a big globe. Content (logo row +
-     Impact/Toolkit) sits ON the globe, so no extra space is used below it. */
+  /* The globe is an oversized horizon backdrop, never a separate content row.
+     Keep the carousel and its cards in flow above it so nothing is clipped. */
   .globe-band{position:relative;width:100%;overflow:hidden;
-    --orb:min(1040px,120vw,150vh); --orbF:.46;
-    height:calc(var(--orb) * var(--orbF));
-    display:flex;align-items:center;justify-content:center}
+    --orb:min(1040px,120vw,150svh);
+    min-height:max(440px,calc(var(--orb) * .46));padding:64px 0 30px}
   .clients-orb{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .clients-band .orb-stage{position:absolute;left:0;right:0;bottom:0;margin:0;z-index:0;
-    width:100%;height:calc(var(--orb) * var(--orbF))}
-  /* lift the globe further so the top glow sits right up near the heading */
-  .clients-band .orb{position:absolute;left:50%;top:calc(var(--orb) * -0.11);
+  .clients-band .orb-stage{position:absolute;left:0;right:0;top:0;margin:0;z-index:0;
+    width:100%;height:100%}
+  .clients-band .orb{position:absolute;left:50%;top:calc(var(--orb) * -.11);
     width:calc(var(--orb) * 1.32);height:calc(var(--orb) * 1.32);transform:translateX(-50%)}
   .clients-band .orb canvas{display:block;width:100%;height:100%;opacity:.9;filter:saturate(.95)}
   .clients-band .orb-note{display:none}
 
-  /* overlay: logo row (up) + Impact/Toolkit card (below), both on the globe,
-     shifted down so they sit over the globe's surface.
-     The overlay is pinned (not flex-centred) and the Impact/Toolkit card is out
-     of flow — otherwise every HUD swap (2 vs 3 impact rows, chips wrapping)
-     changed the overlay's height and slid the logo row up/down with it.
-     Pinned 64px below the band's top edge, which puts exactly 48px between
-     the eyebrow's baseline box and the first logo chip at every width. */
-  .globe-overlay{position:absolute;z-index:2;left:0;right:0;top:64px;
+  /* Top-aligned content keeps the logo row stable as active clients change. */
+  .globe-overlay{position:relative;z-index:2;
     display:flex;flex-direction:column;align-items:center;padding:0 4%}
 
   /* scrolling clients — over the globe, right → left, pause on hover */
@@ -460,8 +432,8 @@
 
   /* Impact & Toolkit — the well-spaced rounded glass card, sitting on the globe */
   .clients-band .orb-hud{
-    position:absolute;top:calc(100% + 22px);left:50%;transform:translateX(-50%);
-    right:auto;bottom:auto;height:auto;margin:0;pointer-events:auto;
+    position:relative;top:auto;left:auto;transform:none;
+    right:auto;bottom:auto;height:auto;margin:22px auto 0;pointer-events:auto;
     width:min(560px,94%);overflow:hidden;text-align:left;
     border:1px solid rgba(255,255,255,.1);border-radius:16px;
     background:linear-gradient(180deg,rgba(18,21,23,.92),rgba(10,12,14,.86));
@@ -480,23 +452,52 @@
   .clients-band .hud-cols .hud .hud-l{margin-bottom:11px;color:var(--fg-dim)}
 
   @media (max-width:640px){
-    /* Stacked, the Impact/Toolkit card is taller than the horizon slice, and
-       the band's overflow:hidden was cutting Toolkit off entirely. On phones
-       the overlay goes back into flow so the band grows to hold it; the globe
-       hangs from the top edge instead, so the logo row still sits on the
-       horizon. Each column reserves its tallest state (3 rows / 2 chip lines)
-       so a client swap doesn't move the page underneath the reader. */
-    .globe-band{--orb:min(940px,168vw); --orbF:.56;
-      display:block;height:auto;min-height:calc(var(--orb) * var(--orbF));padding:64px 0 30px}
-    .clients-band .orb-stage{top:0;bottom:auto;height:100%}
-    .globe-overlay{position:relative;top:auto}
-    .clients-band .orb-hud{position:relative;top:auto;left:auto;transform:none;margin:16px auto 0}
+    .clients-band .clients-inner{max-width:none;padding:0}
+    .clients-band .globe-overlay{padding:0}
+    /* Preserve the desktop layering on phones: the carousel and stacked HUD
+       sit on the rotating globe, with no separate space reserved above them. */
+    .globe-band{--orb:min(940px,168vw);min-height:calc(var(--orb) * .56)}
+    /* block, not the centred flex column from the ≤1180 rule: the no-wrap chip
+       row must be sized by the card, never widen it */
+    .clients-band .orb-hud{display:block;margin-top:16px;padding:0}
     .clients-band .hud-cols{flex-direction:column}
+    .clients-band .hud-cols .hud{min-width:0}
+    .clients-band .hud-cols .hud{padding:12px 14px 13px}
     .clients-band .hud-cols .hud.hud-t{border-left:0;border-top:1px solid rgba(255,255,255,.09)}
-    .clients-band .hud-a .hud-swap{min-height:104px}
-    .clients-band .hud-t .hud-swap{min-height:66px}
+    .clients-band .hud-cols .hud .hud-l{margin-bottom:9px;font-size:9px}
+
+    /* header: one line — live dot + product left, place right */
+    .clients-band .hud-active{display:flex;align-items:center;gap:8px;padding:10px 14px;
+      text-align:left;font-size:10.5px;white-space:nowrap}
+    .clients-band .hud-active .ha-k{display:none}
+    .clients-band .hud-active b{display:inline-flex;align-items:center;gap:8px;font-size:11.5px}
+    .clients-band .hud-active b::before{content:"";width:6px;height:6px;border-radius:50%;
+      background:currentColor;box-shadow:0 0 0 3px rgba(184,239,67,.16)}
+    .clients-band .hud-active .ha-p{margin-left:auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+    /* impact: stat strip — figure on top, short label under it */
+    .clients-band .hud-a .hud-swap{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);
+      min-height:41px}
+    .clients-band .hud-row{flex-direction:column-reverse;align-items:flex-start;justify-content:flex-end;
+      gap:3px;padding:0 8px 0 12px;border-bottom:0;border-left:1px solid var(--line);min-width:0}
+    .clients-band .hud-row:first-child{padding-left:0;border-left:0}
+    .clients-band .hud-row span{font-size:10.5px;line-height:1.25;color:var(--fg-dim)}
+    .clients-band .hud-row b{display:flex;align-items:flex-end;min-height:24px;
+      font-size:19px;line-height:1.1;letter-spacing:-.03em}
+    .clients-band .hud-row.is-word b{font-size:12px;line-height:1.2;letter-spacing:-.01em;padding-bottom:3px}
+    .clients-band .hud-row .hud-s{display:inline}
+    .clients-band .hud-row .hud-f{position:absolute;width:1px;height:1px;overflow:hidden;
+      clip-path:inset(50%);white-space:nowrap}
+
+    /* toolkit: one compact row; a long stack scrolls sideways instead of wrapping */
+    .clients-band .hud-chips{flex-wrap:nowrap;gap:5px;overflow-x:auto;scrollbar-width:none;
+      margin:0 -14px;padding:0 14px;overscroll-behavior-x:contain;
+      -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);
+              mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
+    .clients-band .hud-chips::-webkit-scrollbar{display:none}
+    .clients-band .hud-chips i{flex:0 0 auto;font-size:11px;padding:4px 8px 4px 6px;gap:5px;white-space:nowrap}
+    .clients-band .hud-chips svg{width:13px;height:13px}
   }
-  /* Landscape phones: the 150vh cap shrinks the slice below the card's height. */
   @media (min-width:641px) and (max-height:560px){
     .globe-band{--orb:min(1040px,120vw)}
   }
@@ -678,20 +679,20 @@
     opacity:var(--deck-shade,0);
   }
   .wcard-in{
-    --cardpad:clamp(28px,3.6vw,52px);
-    position:relative;z-index:1;padding:var(--cardpad);
+    --cardpad:clamp(28px,3.6vw,52px);--cardpad-y:clamp(24px,2.8vw,40px);
+    position:relative;z-index:1;padding:var(--cardpad-y) var(--cardpad);
     min-height:clamp(320px,44vh,480px);
     display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);
     gap:clamp(26px,3.2vw,52px);align-items:stretch;
   }
   .wcard-copy{min-width:0;display:flex;flex-direction:column;justify-content:center}
-  .wcard .domain{font-family:'JetBrains Mono',monospace;font-size:clamp(10.5px,1vw,12px);
+  .wcard .domain{font-family:'JetBrains Mono',monospace;font-size:clamp(9.5px,.82vw,10.5px);
     letter-spacing:.16em;text-transform:uppercase;color:var(--accent);display:block}
   .wcard-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
   /* two-tier title: product name carries the weight, descriptor sits under it */
-  .wcard h3{font-size:clamp(24px,2.6vw,34px);letter-spacing:-.02em;margin-top:14px;
+  .wcard h3{font-size:clamp(20px,2vw,27px);letter-spacing:-.02em;margin-top:12px;
     max-width:20ch;line-height:1.1}
-  .wcard-sub{display:block;margin-top:7px;font-size:clamp(14px,1.15vw,17px);font-weight:500;
+  .wcard-sub{display:block;margin-top:6px;font-size:clamp(13px,1vw,14.5px);font-weight:500;
     letter-spacing:-.01em;line-height:1.3;color:var(--fg-muted)}
   .wcard p{color:var(--fg-muted);font-size:clamp(14px,1.05vw,15.5px);line-height:1.6;
     margin-top:14px}
@@ -837,7 +838,7 @@
   /* same fixed-height / width-driven box as .logo-mark, so every wordmark reads
      at one optical size regardless of its lockup ratio */
   .wcard-logo{
-    --mark-k:1.12;
+    --mark-k:.9;
     display:block;flex:0 0 auto;
     height:calc(34px * var(--mark-k));
     width:calc(var(--mark-w,130) * 1px * var(--mark-k));
@@ -894,7 +895,7 @@
   .wcard-shot{
     position:relative;display:flex;flex-direction:column;
     /* bleed to the card's TOP & RIGHT edges; keep the gap on the left; only 24px at the bottom */
-    margin:calc(var(--cardpad) * -1) calc(var(--cardpad) * -1) calc(24px - var(--cardpad)) 0;
+    margin:calc(var(--cardpad-y) * -1) calc(var(--cardpad) * -1) calc(24px - var(--cardpad-y)) 0;
     border:1px solid var(--line-strong);border-top:0;border-right:0;
     border-radius:0 0 0 14px;overflow:hidden;
     background:var(--bg-2);
@@ -953,12 +954,12 @@
     .wcard-shot{margin:0;border:1px solid var(--line-strong);border-radius:12px}
     /* no spare column height to absorb, so the mark just follows the tags */
     .wcard-brand{margin-top:0;padding-top:24px;gap:14px}
-    .wcard-logo{--mark-k:.94}
+    .wcard-logo{--mark-k:.82}
   }
   @media (max-width:640px){
     .workstack{--wtop:140px}
-    .wcard-logo{--mark-k:.82}
-    .wcard-in{min-height:auto;padding:24px 22px}
+    .wcard-logo{--mark-k:.74}
+    .wcard-in{min-height:auto;padding:20px 22px}
     .work-nav{padding:6px;border-radius:14px}
     .work-nav-list a{padding:7px 13px;font-size:12.5px}
     .work-nav-tail{width:18px;height:9px;bottom:-8px;
@@ -1070,6 +1071,191 @@
     .wcard-in::before{display:none}
   }
 
+  /* ---------- WORK: spec-grid copy column (.wcard.is-spec) ----------
+     Trial layout, one card for now. The outcome and the Role/Scope facts share
+     one two-column grid (--rail + content), so the figure, the labels and both
+     text blocks sit on two left edges instead of four, and Role/Scope stand
+     side by side instead of stacking. The lime rule moves from the outcome's
+     left side to a short segment over the rail. Markup is unchanged, so rolling
+     this out is just the class. Sits after the interaction layer on purpose:
+     the ::before below ties with its is-live rule on specificity. */
+  .wcard.is-spec{--rail:clamp(96px,8.6vw,124px);--railgap:clamp(16px,1.6vw,24px)}
+  .wcard.is-spec p.wcard-summary{max-width:60ch}
+  .wcard.is-spec .wcard-outcome{
+    grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--railgap);align-items:center;
+    margin-top:clamp(20px,2.6vh,26px);padding:16px 0;
+    border-left:0;border-top:1px solid var(--line);
+  }
+  .wcard.is-spec .wcard-outcome::before{
+    content:"";position:absolute;left:0;top:-1px;bottom:auto;width:var(--rail);height:2px;
+    background:var(--accent);transform-origin:left;
+  }
+  .workstack.is-live .wcard.is-spec .wcard-outcome::before{transform:scaleX(0)}
+  .workstack.is-live .wcard.is-spec.is-seen .wcard-outcome::before{transform:scaleX(1)}
+  .wcard.is-spec .wcard-outcome-n{font-size:clamp(32px,3vw,42px)}
+  .wcard.is-spec .wcard-outcome-n.is-word{font-size:clamp(20px,1.8vw,25px)}
+  /* the lime figure already says "outcome"; keep the word for screen readers only */
+  .wcard.is-spec .wcard-outcome-t span{
+    position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+  }
+  .wcard.is-spec .wcard-ledger{
+    display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--railgap);
+    margin:0;padding:14px 0 16px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .wcard.is-spec .wcard-ledger>div{display:block;padding:0;border:0}
+  .wcard.is-spec .wcard-ledger dt{margin-bottom:7px}
+  .wcard.is-spec .wcard-footer{padding-top:clamp(16px,2.2vh,22px)}
+  .wcard.is-spec .wcard-brand{gap:10px}
+  @media (min-width:861px){
+    .wcard.is-spec .wcard-logo{--mark-k:.9}
+  }
+  /* stacked: the screen moves up under the title block, so a phone opens on
+     name + product instead of a full column of text; proof and facts follow */
+  @media (max-width:860px){
+    .wcard.is-spec .wcard-in{gap:0}
+    .wcard.is-spec .wcard-copy{display:contents}
+    .wcard.is-spec .wcard-copy>*{position:relative;z-index:1}
+    .wcard.is-spec .wcard-shot{order:1;margin-top:20px}
+    .wcard.is-spec .wcard-outcome,.wcard.is-spec .wcard-ledger,.wcard.is-spec .wcard-footer{order:2}
+  }
+  @media (max-width:640px){
+    .wcard.is-spec{--rail:88px;--railgap:14px}
+    .wcard.is-spec .wcard-outcome{padding:14px 0}
+    .wcard.is-spec .wcard-outcome-n{font-size:30px}
+  }
+  /* smallest phones: the content column drops under ~150px, so the grid folds
+     to one column — figure over its sentence, Role over Scope */
+  @media (max-width:380px){
+    .wcard.is-spec .wcard-outcome,.wcard.is-spec .wcard-ledger{grid-template-columns:minmax(0,1fr)}
+    .wcard.is-spec .wcard-outcome{gap:10px}
+    .wcard.is-spec .wcard-ledger{gap:14px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .workstack.is-live .wcard.is-spec .wcard-outcome::before{display:block;transform:none;transition:none}
+  }
+
+  /* ---------- WORK: case block (.wcard.has-case) ----------
+     Trial, one card for now. Lives in the copy column in place of the summary
+     and the single .wcard-outcome: three small figures, then challenge /
+     solution side by side. Role rides in the head row as a tag, opposite the
+     eyebrow. The figures stay in text ink; lime is only the short tick over
+     each one and the tag's icon. */
+  .wcard-head{flex-wrap:wrap;align-items:center;gap:10px 16px}
+  .wcard-role{
+    display:inline-flex;align-items:center;gap:8px;min-width:0;
+    padding:5px 12px 5px 6px;border:1px solid var(--line-strong);border-radius:999px;
+    background:rgba(255,255,255,.03);color:var(--fg);
+    font-size:12px;font-weight:500;line-height:1.2;letter-spacing:-.005em;
+  }
+  .wcard-role svg{
+    flex:0 0 auto;width:20px;height:20px;padding:4px;border-radius:50%;
+    color:var(--accent);background:rgba(184,239,67,.1);
+  }
+  .wcard-role-k{
+    font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--fg-dim);
+    padding-right:8px;border-right:1px solid var(--line-strong);
+  }
+  /* phones: the role rides on the project screen instead of the head row.
+     .shot-role is a JS copy of the tag; dark glass in both themes, like the
+     "Explore screen" hint it shares the screen with. */
+  .shot-role{display:none}
+  @media (max-width:640px){
+    .wcard.has-shot-role .wcard-head .wcard-role{display:none}
+    .wcard .wcard-shot .wcard-role.shot-role{
+      display:inline-flex;position:absolute;left:10px;bottom:10px;z-index:4;max-width:calc(100% - 64px);
+      min-height:34px;pointer-events:none;padding:4px 12px 4px 6px;font-size:11.5px;color:#F2F5F8;
+      border-color:rgba(255,255,255,.22);background:rgba(9,15,23,.86);
+      -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+      box-shadow:0 6px 24px rgba(0,0,0,.25);
+    }
+    .wcard .wcard-shot .wcard-role.shot-role svg{color:var(--accent);background:rgba(184,239,67,.14)}
+    /* same row, other end: "Explore screen" shrinks to its icon (the button
+       keeps its aria-label) */
+    .wcard .shot-open-hint{right:10px;bottom:10px;width:34px;height:34px;padding:0;gap:0;
+      justify-content:center;font-size:0}
+    .wcard .shot-open-hint svg{width:16px;height:16px}
+    .wcard .wcard-shot .wcard-role.shot-role .wcard-role-k{color:rgba(242,245,248,.62);border-right-color:rgba(255,255,255,.22)}
+  }
+  /* smallest phones: the mono "Role" key goes (the icon says it), so the longest
+     roles still sit on one line */
+  @media (max-width:380px){
+    .wcard .wcard-shot .wcard-role.shot-role{white-space:nowrap}
+    .wcard .wcard-shot .wcard-role.shot-role .wcard-role-k{display:none}
+  }
+  .wcard-case{min-width:0;margin-top:clamp(18px,2.4vh,24px)}
+  .wcard-stats{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(14px,1.6vw,24px);margin:0;padding:0;
+  }
+  .wcard-stats>div{position:relative;padding-top:12px;border-top:1px solid var(--line)}
+  .wcard-stats>div::before{
+    content:"";position:absolute;left:0;top:-1px;width:24px;height:2px;background:var(--accent);
+  }
+  .wcard-stat-n{
+    font-family:var(--font-display);font-weight:600;color:var(--fg);
+    font-size:clamp(24px,2.1vw,30px);line-height:1;letter-spacing:-.04em;white-space:nowrap;
+    /* proportional figures on purpose: Space Grotesk's tabular "1" grows a slab foot */
+  }
+  .wcard-stat-n .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .wcard-stats dd{margin:6px 0 0;color:var(--fg-muted);font-size:12px;line-height:1.45;text-wrap:pretty}
+  .wcard-brief{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:clamp(16px,1.8vw,26px);margin-top:clamp(16px,2.2vh,22px);
+  }
+  .wcard-brief h4{margin:0;font-family:var(--font-display);font-size:14.5px;
+    font-weight:600;letter-spacing:-.01em;line-height:1.25;color:var(--fg)}
+  .wcard .wcard-brief p{margin-top:6px;font-size:12.5px;line-height:1.55;text-wrap:pretty}
+  /* brief icons: the challenge sits in muted ink (a peak with a flag still to
+     reach), the solution is the lit one. Both draw themselves in when the card
+     arrives, then keep a small idle motion: the flag flutters, the rays pulse. */
+  .wcard-brief h4{display:flex;align-items:center;gap:9px}
+  .brief-ico{flex:0 0 auto;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+    color:var(--fg-muted);background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px var(--line)}
+  .brief-ico.is-solution{color:var(--accent);background:rgba(184,239,67,.1);
+    box-shadow:inset 0 0 0 1px rgba(184,239,67,.22)}
+  .brief-ico svg{width:16.5px;height:16.5px;overflow:visible}
+  .bi-flag{fill:currentColor;fill-opacity:.35;transform-box:fill-box;transform-origin:left center}
+  @media (prefers-reduced-motion:no-preference){
+    .workstack.is-live .brief-ico .bi-draw{stroke-dasharray:1;stroke-dashoffset:1}
+    .workstack.is-live .wcard.is-seen .brief-ico .bi-draw{stroke-dashoffset:0;
+      transition:stroke-dashoffset 1s var(--ease) .45s}
+    .workstack.is-live .wcard.is-seen .brief-ico.is-solution .bi-draw{transition-delay:.75s}
+    .workstack.is-live .brief-ico .bi-flag,.workstack.is-live .brief-ico .bi-rays{opacity:0}
+    .workstack.is-live .wcard.is-seen .brief-ico .bi-flag{opacity:1;transition:opacity .4s ease 1.2s;
+      animation:biFlag 2.6s ease-in-out 1.4s infinite}
+    .workstack.is-live .wcard.is-seen .brief-ico .bi-rays{opacity:1;transition:opacity .4s ease 1.6s}
+    .workstack.is-live .wcard.is-seen .brief-ico .bi-rays path{animation:biRay 2.4s ease-in-out 1.8s infinite}
+    .bi-rays path:nth-child(2),.bi-rays path:nth-child(3){animation-delay:2.1s!important}
+    .bi-rays path:nth-child(4),.bi-rays path:nth-child(5){animation-delay:2.4s!important}
+    .workstack.is-live .wcard.is-seen .brief-ico.is-solution{animation:biGlow 2.4s ease-in-out 1.8s infinite}
+  }
+  @keyframes biFlag{0%,100%{transform:skewY(0) scaleX(1)}35%{transform:skewY(-9deg) scaleX(.86)}70%{transform:skewY(6deg) scaleX(1.04)}}
+  @keyframes biRay{0%,100%{opacity:.3}45%{opacity:1}}
+  @keyframes biGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(184,239,67,.22),0 0 0 0 rgba(184,239,67,0)}
+    45%{box-shadow:inset 0 0 0 1px rgba(184,239,67,.45),0 0 12px 0 rgba(184,239,67,.28)}}
+  .wcard.has-case .wcard-footer{margin-top:clamp(18px,2.6vh,26px);border-top:1px solid var(--line)}
+  @media (max-width:860px){
+    .wcard.has-case .wcard-case{order:2;margin-top:22px}
+  }
+  /* full / short wording pair — the short label is the phone strip's */
+  .wcard-stats .dd-s{display:none}
+  /* phones: the three figures stay one aligned strip (figure over a short label),
+     the brief folds to one column */
+  @media (max-width:640px){
+    .wcard-stats{gap:12px}
+    .wcard-stats>div{padding-top:11px}
+    .wcard-stats>div::before{width:20px}
+    .wcard-stat-n{font-size:23px}
+    .wcard-stats dd{margin-top:6px;font-size:11.5px;line-height:1.35;color:var(--fg-dim)}
+    .wcard-stats .dd-s{display:inline}
+    .wcard-stats .dd-f{position:absolute;width:1px;height:1px;overflow:hidden;
+      clip-path:inset(50%);white-space:nowrap}
+    .wcard-brief{grid-template-columns:minmax(0,1fr);gap:16px;margin-top:20px}
+    .wcard .wcard-brief p{font-size:13px}
+  }
+
   /* ---------- EXPERIENCE ---------- */
   .xp{display:flex;flex-direction:column}
   .xp-item{
@@ -1133,6 +1319,20 @@
   .cap-bar i:nth-child(1){background:#ff5f57aa}.cap-bar i:nth-child(2){background:#febc2eaa}.cap-bar i:nth-child(3){background:#28c840aa}
   .cap-bar span{margin-left:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-dim);letter-spacing:.04em}
   .cap-tiles{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;padding:16px}
+  /* two groups: tools & languages in a single row on top, skills in an even 7-up grid below */
+  .cap-group{display:flex;align-items:center;gap:12px;padding:16px 16px 0;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--fg-dim)}
+  .cap-group::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+  .cap-group + .cap-tiles{padding-top:12px}
+  .cap-tiles.cap-tools{grid-template-columns:repeat(10,minmax(0,1fr));padding-bottom:4px}
+  .cap-tiles.cap-skills{grid-template-columns:repeat(7,minmax(0,1fr))}
+  @media (max-width:860px){
+    /* ten tiles cannot share a row here — the row scrolls sideways instead of wrapping */
+    .cap-tiles.cap-tools{display:flex;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;
+      overscroll-behavior-x:contain;scroll-padding-left:16px}
+    .cap-tiles.cap-tools::-webkit-scrollbar{display:none}
+    .cap-tools .captile{flex:0 0 94px;scroll-snap-align:start}
+  }
   .captile{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 6px;
     border:1px solid var(--line);border-radius:13px;background:var(--bg-2);opacity:0;min-width:0;
     transition:box-shadow .35s var(--ease),color .3s var(--ease)}
@@ -1148,18 +1348,76 @@
   .captile-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
     border:1px solid var(--line-strong);background:var(--surface);color:var(--accent)}
   .captile-ic svg{width:20px;height:20px;display:block}
-  .captile-ic .bic{width:20px;height:20px;display:block;fill:var(--bic,#b8bcbe);transition:fill .3s var(--ease)}
+  /* brand tiles — original full-colour logos; the badge never floods lime behind them */
+  .captile-ic--brand{--brand-ring:rgba(184,239,67,.7);--brand-halo:rgba(184,239,67,.14)}
+  .captile-ic .cap-logo{width:22px;height:22px;display:block;object-fit:contain}
+  .captile-ic .cap-logo--light{display:none}
+  :root[data-theme="light"] .captile-ic .cap-logo--light{display:block}
+  :root[data-theme="light"] .captile-ic .cap-logo--dark{display:none}
   .cap-panel.in .captile .captile-ic{animation:iconglow 9.6s ease-in-out calc(1.6s + var(--i,0)*0.3s) infinite}
-  @keyframes iconglow{0%,4%,16%,100%{background:var(--surface);border-color:var(--line-strong);color:var(--accent);--bic:#b8bcbe;transform:none}
-    8%,12%{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);--bic:var(--accent-ink);transform:rotate(-6deg) scale(1.1)}}
+  .cap-panel.in .captile .captile-ic--brand{animation-name:brandglow}
+  @keyframes iconglow{0%,4%,16%,100%{background:var(--surface);border-color:var(--line-strong);color:var(--accent);transform:none}
+    8%,12%{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:rotate(-6deg) scale(1.1)}}
+  @keyframes brandglow{0%,4%,16%,100%{border-color:var(--line-strong);box-shadow:0 0 0 0 transparent;transform:none}
+    8%,12%{border-color:var(--brand-ring);box-shadow:0 0 0 3px var(--brand-halo);transform:rotate(-6deg) scale(1.1)}}
   .captile span{font-size:11px;color:var(--fg-muted);text-align:center;line-height:1.28;font-weight:500;transition:color .3s var(--ease);overflow-wrap:anywhere;hyphens:auto}
   .captile:hover span{color:var(--fg)}
+  @media (max-width:640px){
+    /* phones: all ten logos at a glance — a 5×2 app-icon grid, not a tall row that scrolls sideways.
+       The tile chrome drops away so the badge is the tile; long names swap to their data-short form. */
+    .cap-tiles.cap-tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px 4px;
+      overflow:visible;padding:14px 12px 10px}
+    .cap-tools .captile{flex:none;gap:7px;padding:0;border:0;border-radius:0;background:none;overflow:visible}
+    .cap-panel.in .cap-tools .captile{animation:tilein .55s var(--ease) calc(var(--i,0)*40ms) both}
+    .cap-tools .captile::after{display:none}
+    .cap-panel .cap-tiles.cap-tools .captile:hover{box-shadow:none}
+    .cap-tools .captile-ic{width:46px;height:46px;border-radius:13px}
+    .cap-tools .captile-ic .cap-logo{width:24px;height:24px}
+    .cap-tools .captile span:not(.captile-ic){font-size:10.5px;line-height:1.25;letter-spacing:-.01em;
+      overflow-wrap:normal;hyphens:manual}
+    .cap-tools .captile span[data-short]{font-size:0;letter-spacing:0}
+    .cap-tools .captile span[data-short]::after{content:attr(data-short);font-size:10.5px;letter-spacing:-.01em}
+  }
+  @media (max-width:360px){
+    .cap-tiles.cap-tools{gap:14px 2px;padding-left:8px;padding-right:8px}
+    .cap-tools .captile-ic{width:42px;height:42px;border-radius:12px}
+    .cap-tools .captile span:not(.captile-ic),
+    .cap-tools .captile span[data-short]::after{font-size:9.5px}
+    .cap-tools .captile span[data-short]{font-size:0}
+  }
+  /* skills — horizontal tiles (icon left, label right): half the height of the stacked tile.
+     Desktop keeps a strict 7×3 grid; from 1100px down the tiles become a justified chip wall
+     that packs by label length, so 21 skills cost a few short rows instead of seven tall ones. */
+  .cap-skills .captile{flex-direction:row;justify-content:flex-start;gap:10px;padding:9px 10px;border-radius:12px}
+  .cap-skills .captile-ic{flex:0 0 auto;width:32px;height:32px;border-radius:9px}
+  .cap-skills .captile-ic svg{width:17px;height:17px}
+  .cap-skills .captile span:not(.captile-ic){text-align:left;font-size:11.5px;line-height:1.25;
+    overflow-wrap:normal;hyphens:manual;min-width:0}
+  @media (max-width:1100px){
+    .cap-tiles.cap-skills{display:flex;flex-wrap:wrap;gap:8px}
+    /* soaks up the last row so its chips keep their natural width */
+    .cap-tiles.cap-skills::after{content:"";flex:999 1 0}
+    .cap-skills .captile{flex:1 1 auto;gap:9px;padding:6px 14px 6px 6px}
+    .cap-skills .captile-ic{width:28px;height:28px;border-radius:8px}
+    .cap-skills .captile-ic svg{width:15px;height:15px}
+    .cap-skills .captile span:not(.captile-ic){font-size:12px;white-space:nowrap}
+  }
+  @media (max-width:640px){
+    .cap-tiles.cap-skills{gap:6px;padding:12px 12px 14px}
+    /* phones: the badge shrinks to a bare glyph so three chips fit a row */
+    .cap-skills .captile{gap:5px;padding:5px 9px 5px 6px;border-radius:9px}
+    .cap-skills .captile-ic{width:17px;height:17px;border:0;border-radius:5px}
+    .cap-skills .captile-ic svg{width:12.5px;height:12.5px}
+    .cap-skills .captile span:not(.captile-ic){font-size:10.5px;letter-spacing:-.01em}
+  }
   @media (prefers-reduced-motion:reduce){ .orbit-spin,.orbit-sweep,.ob-in{animation:none} }
 
   /* process band */
   .process{margin-top:22px;border:1px solid var(--line);border-radius:16px;overflow:hidden;
-    display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,var(--surface),var(--bg-2))}
-  .pstep{position:relative;padding:30px 26px;border-left:1px solid var(--line);transition:background .3s var(--ease)}
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:linear-gradient(180deg,var(--surface),var(--bg-2))}
+  /* each step shares the band's row tracks (header / title / copy) so the four line up */
+  .pstep{position:relative;padding:28px 26px 30px;border-left:1px solid var(--line);transition:background .3s var(--ease);
+    display:grid;grid-row:span 3;grid-template-rows:subgrid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:0;align-content:start;min-width:0}
   .pstep:first-child{border-left:0}
   .pstep:hover{background:var(--surface)}
   .pstep::after{content:"";position:absolute;left:26px;right:26px;bottom:0;height:2px;
@@ -1167,14 +1425,53 @@
     transition:transform .45s var(--ease)}
   .pstep:hover::after{transform:scaleX(1)}
   .pnum{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--accent);display:block;margin-bottom:18px}
+    color:var(--accent);grid-area:1/2;align-self:center;display:flex;align-items:center;gap:12px;white-space:nowrap;margin-bottom:20px}
+  .pnum::before{content:"";flex:1;min-width:12px;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
   .pico{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
-    border:1px solid var(--line-strong);background:var(--bg-2);color:var(--accent);margin-bottom:18px;
+    border:1px solid var(--line-strong);background:var(--bg-2);color:var(--accent);margin-bottom:20px;grid-area:1/1;
     transition:border-color .3s var(--ease),color .3s var(--ease),transform .3s var(--ease)}
   .pico svg{width:22px;height:22px;display:block}
   .pstep:hover .pico{border-color:rgba(184,239,67,.45);color:#cff56b;transform:translateY(-2px)}
-  .pstep h3{font-size:clamp(18px,1.55vw,21px);letter-spacing:-.015em;line-height:1.22;color:var(--fg);margin-bottom:12px}
-  .pstep p{font-size:13.5px;line-height:1.62;color:var(--fg-muted)}
+  .pstep h3{font-size:clamp(18px,1.55vw,21px);letter-spacing:-.015em;line-height:1.22;color:var(--fg);margin-bottom:10px;text-wrap:balance;grid-column:1/-1}
+  .pstep p{font-size:13.5px;line-height:1.62;color:var(--fg-muted);grid-column:1/-1;max-width:34ch;text-wrap:pretty}
+  @media (max-width:1100px){
+    .process{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .pstep:nth-child(odd){border-left:0}
+    .pstep:nth-child(n+3){border-top:1px solid var(--line)}
+  }
+
+  /* the four steps light up in order on one shared 10s clock; each icon plays its own
+     small gesture during its turn (talk / wireframe draws / click / brackets open) */
+  .pico{--step-ring:rgba(184,239,67,.55);--step-halo:rgba(184,239,67,.1)}
+  .pico svg *{transform-box:fill-box;transform-origin:center}
+  .process.in .pstep{--sd:calc(1.2s + var(--n,0)*2.5s)}
+  .pstep:nth-child(2){--n:1}.pstep:nth-child(3){--n:2}.pstep:nth-child(4){--n:3}
+  .process.in .pico{animation:stepglow 10s var(--ease) var(--sd) infinite}
+  .process.in .pico [class^="pi-"]{animation:10s var(--ease) var(--sd) infinite}
+  @keyframes stepglow{0%,24%,100%{border-color:var(--line-strong);box-shadow:0 0 0 0 transparent;transform:none}
+    4%,18%{border-color:var(--step-ring);box-shadow:0 0 0 4px var(--step-halo);transform:translateY(-2px)}}
+  .pico--talk .pi-a{transform-origin:0% 100%}
+  .process.in .pico--talk .pi-a{animation-name:pi-pop}
+  @keyframes pi-pop{0%,2%{transform:scale(0);opacity:0}7%{transform:scale(1.15);opacity:1}10%,100%{transform:none;opacity:1}}
+  .pico--plan [class^="pi-"]{stroke-dasharray:1;stroke-dashoffset:0}
+  .process.in .pico--plan .pi-a{animation-name:pi-draw-a}
+  .process.in .pico--plan .pi-b{animation-name:pi-draw-b}
+  .process.in .pico--plan .pi-c{animation-name:pi-draw-c}
+  @keyframes pi-draw-a{0%,2%{stroke-dashoffset:1}8%,100%{stroke-dashoffset:0}}
+  @keyframes pi-draw-b{0%,7%{stroke-dashoffset:1}13%,100%{stroke-dashoffset:0}}
+  @keyframes pi-draw-c{0%,12%{stroke-dashoffset:1}18%,100%{stroke-dashoffset:0}}
+  .process.in .pico--test .pi-b{animation-name:pi-cursor}
+  .process.in .pico--test .pi-a{animation-name:pi-click}
+  @keyframes pi-cursor{0%,2%{transform:translate(5px,5px)}9%{transform:none}11%{transform:scale(.88)}14%,100%{transform:none}}
+  @keyframes pi-click{0%,9%{opacity:0;transform:scale(.4)}12%{opacity:1;transform:scale(1.15)}16%,100%{opacity:1;transform:none}}
+  .pico--test .pi-a{transform-origin:100% 100%}
+  .process.in .pico--code .pi-a{animation-name:pi-open-l}
+  .process.in .pico--code .pi-b{animation-name:pi-open-r}
+  .process.in .pico--code .pi-c{animation-name:pi-slash}
+  @keyframes pi-open-l{0%,2%,20%,100%{transform:none}8%,14%{transform:translateX(-2px)}}
+  @keyframes pi-open-r{0%,2%,20%,100%{transform:none}8%,14%{transform:translateX(2px)}}
+  @keyframes pi-slash{0%,2%,20%,100%{opacity:1}6%{opacity:.15}10%{opacity:1}13%{opacity:.15}17%{opacity:1}}
+  @media (prefers-reduced-motion:reduce){ .process.in .pico,.process.in .pico svg [class^="pi-"]{animation:none} }
 
   /* ---------- SHORT VERSION ---------- */
   .shortv{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(38px,6vw,86px);align-items:start}
@@ -1877,14 +2174,32 @@
     .pf--refined .pf-fact:nth-child(odd){border-right:0}
     .pf--refined .pf-fact:not(:last-child){border-bottom:1px solid var(--nv-card-line)}
     .pf--refined .pf-fact:last-child{border-bottom:0}
+    /* actions: two equal buttons on one line (never wrapped labels), with the
+       CV link centred on its own row beneath them */
     .pf--refined .pf-cta{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .pf--refined .pf-cta .btn{padding:10px 12px;white-space:normal}
-    .pf--refined .pf-cta .pf-cv{grid-column:2;justify-self:end;padding:6px 0}
+    .pf--refined .pf-cta .btn{padding:10px 12px;white-space:nowrap}
+    #short .pf--refined .pf-cta .btn-ghost{justify-content:center;padding-left:12px;
+      border-color:var(--nv-card-line);color:var(--nv-ink)}
+    #short .pf--refined .pf-cta .btn-ghost:hover{text-decoration:none;border-color:var(--nv-accent)}
+    .pf--refined .pf-cta .pf-cv{grid-column:1/-1;justify-self:center;justify-content:center;padding:6px 0}
   }
-  @container profile-content (max-width:360px){
-    .pf--refined .pf-head{grid-template-columns:minmax(0,1fr);gap:10px}
-    .pf--refined .pf-social{justify-self:end}
-    #short .pf--refined .pf-cta .btn-ghost{justify-content:center;padding-left:12px}
+  /* phones: status on its own line, then LinkedIn and Behance as one even pair
+     spanning the card's measure, the same edges the facts box keeps */
+  @container profile-content (max-width:440px){
+    .pf--refined .pf-head{grid-template-columns:minmax(0,1fr);gap:12px}
+    .pf--refined .pf-social{justify-self:stretch;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .pf--refined .pf-brand{display:grid;grid-template-columns:24px auto;justify-content:center;min-height:44px}
+  }
+  /* too narrow for two unwrapped labels side by side: stack the actions */
+  @container profile-content (max-width:380px){
+    .pf--refined .pf-cta{grid-template-columns:minmax(0,1fr);gap:10px}
+    .pf--refined .pf-cta .btn{min-height:48px}
+  }
+  /* 320px phones: the address is one word, so it shrinks to fit rather than
+     breaking after "gmail.co" */
+  @container profile-content (max-width:300px){
+    .pf--refined .pf-mailrow a{font-size:13px;letter-spacing:-.01em;white-space:nowrap}
+    .pf--refined .pf-mailrow .nv-copy{min-width:40px;padding:8px}
   }
   @container profile-content (max-width:280px){
     .pf--refined .pf-role>*{white-space:normal}
@@ -2097,11 +2412,18 @@
   @keyframes afTwinkle{0%,100%{opacity:.18}50%{opacity:.95}}
   .af-cloud{position:absolute;border-radius:50%;filter:blur(26px);pointer-events:none;
     background:radial-gradient(closest-side, rgba(120,140,170,.55), transparent 72%)}
-  .af-cloud.c1{width:420px;height:150px;left:2%;top:56%;opacity:.20;animation:afDrift 78s linear infinite}
-  .af-cloud.c2{width:340px;height:130px;left:60%;top:8%;opacity:.16;animation:afDrift 96s linear infinite reverse}
-  .af-cloud.c3{width:500px;height:170px;left:70%;top:64%;opacity:.18;animation:afDrift 120s linear infinite}
-  .af-cloud.c4{width:300px;height:110px;left:32%;top:78%;opacity:.12;animation:afDrift 104s linear infinite reverse}
-  @keyframes afDrift{from{transform:translateX(-60px)}to{transform:translateX(140px)}}
+  /* the plane flies right, so the sky streams left: clouds cross the whole
+     scene (negative delays start them mid-journey) and thin wind streaks pass
+     faster in front of them */
+  .af-cloud.c1{width:420px;height:150px;left:0;top:56%;opacity:.20;animation:afDrift 64s linear -18s infinite}
+  .af-cloud.c2{width:340px;height:130px;left:0;top:8%;opacity:.16;animation:afDrift 88s linear -52s infinite}
+  .af-cloud.c3{width:500px;height:170px;left:0;top:64%;opacity:.18;animation:afDrift 104s linear -80s infinite}
+  .af-cloud.c4{width:300px;height:110px;left:0;top:78%;opacity:.12;animation:afDrift 76s linear -40s infinite}
+  @keyframes afDrift{from{transform:translateX(100vw)}to{transform:translateX(-520px)}}
+  .af-streak{position:absolute;left:100%;top:var(--y);height:1px;width:clamp(90px,16vw,300px);border-radius:1px;
+    background:linear-gradient(90deg,transparent,rgba(205,224,248,.55),transparent);opacity:var(--o,.5);
+    animation:afStreak var(--d,4s) linear var(--dl,0s) infinite}
+  @keyframes afStreak{from{transform:translateX(0)}to{transform:translateX(calc(-100vw - 320px))}}
 
   /* ---- header over the sky ---- */
   .af-top{position:relative;z-index:4;display:grid;grid-template-columns:1.06fr .94fr;
@@ -2119,9 +2441,11 @@
   .af-autoplay[hidden]{display:none}
   .af-autoplay:hover{color:var(--fg);border-color:var(--accent)}
   .af-autoplay:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-  .af-quote{padding-left:20px;border-left:2px solid rgba(184,239,67,.45);min-height:126px;
-    display:flex;flex-direction:column;justify-content:flex-start}
-  .af-qbody{transition:opacity .4s var(--ease),transform .4s var(--ease)}
+  /* main.js reserves the tallest quote's height here so nothing below jumps on
+     auto-advance; the lime rule sits on the text, so it never outruns a short quote */
+  .af-quote{min-height:126px;display:flex;flex-direction:column;justify-content:flex-start}
+  .af-qbody{padding-left:20px;border-left:2px solid rgba(184,239,67,.45);
+    transition:opacity .4s var(--ease),transform .4s var(--ease)}
   .af.is-swapping .af-qbody{opacity:0;transform:translateY(7px)}
   .af-qtext{font-family:var(--font-display);font-weight:500;font-size:clamp(15.5px,1.45vw,19px);
     line-height:1.5;letter-spacing:-.015em;color:var(--fg);margin:0}
@@ -2138,8 +2462,13 @@
 
   /* ---- aircraft ---- */
   .af-plane{position:relative;z-index:2;margin-top:clamp(38px,5vw,64px);
-    animation:afBob 8s ease-in-out infinite}
-  @keyframes afBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    --af-rise:14px;--af-tilt:.3deg;--af-surge:0px;
+    animation:afBob 6.5s ease-in-out infinite}
+  /* climb with the nose up, settle with it down. The desktop fuselage is
+     flush with the left edge, so only the whole-aircraft drawing surges. */
+  @keyframes afBob{
+    0%,100%{transform:translate(calc(var(--af-surge)*-1),calc(var(--af-rise)*.45)) rotate(var(--af-tilt))}
+    50%{transform:translate(var(--af-surge),calc(var(--af-rise)*-1)) rotate(calc(var(--af-tilt)*-1.2))}}
 
   /* tail fin, far left, behind the fuselage */
   .af-tail{position:absolute;left:1vw;bottom:calc(100% - 18px);z-index:-1;
@@ -2193,6 +2522,28 @@
     border-top:1.5px dotted rgba(180,200,225,.30)}
   .af-fuse::after{content:"";position:absolute;left:0;right:9vw;bottom:12px;height:0;
     border-top:1px dotted rgba(180,200,225,.14)}
+
+  /* whole-aircraft side profile: only shown ≤1024px, where the box-built
+     plane above can't keep its tail, wing and nose on screen */
+  .af-craft{display:none;width:100%;height:auto;overflow:visible}
+  .afc-hull{fill:url(#afcBody);stroke:rgba(200,216,238,.24);stroke-width:.8}
+  .afc-fin{fill:url(#afcFin);stroke:rgba(200,216,238,.16);stroke-width:.7;stroke-linejoin:round}
+  .afc-stab{fill:#0d131c;stroke:rgba(200,216,238,.16);stroke-width:.7;stroke-linejoin:round}
+  .afc-stripe{fill:var(--accent);filter:drop-shadow(0 0 4px rgba(184,239,67,.5))}
+  .afc-sheen{fill:none;stroke:rgba(255,255,255,.10);stroke-width:1.6}
+  .afc-cheat{fill:none;stroke:var(--accent);stroke-width:1.1;opacity:.5}
+  .afc-belly{fill:none;stroke:#000;stroke-width:12;opacity:.32}
+  .afc-door{fill:none;stroke:rgba(200,216,238,.22);stroke-width:1}
+  .afc-door-h{fill:none;stroke:rgba(200,216,238,.42);stroke-width:1.4;stroke-linecap:round}
+  .afc-glass{fill:url(#afcGlass);filter:drop-shadow(0 0 4px rgba(190,220,255,.5))}
+  .afc-wing{fill:url(#afcWing);stroke:rgba(200,216,238,.18);stroke-width:.7;stroke-linejoin:round}
+  .afc-flap{fill:none;stroke:rgba(200,216,238,.13);stroke-width:.8}
+  .afc-pylon{fill:#0d131b}
+  .afc-eng{fill:url(#afcEng);stroke:rgba(200,216,238,.2);stroke-width:.7}
+  .afc-eng-hi{fill:none;stroke:rgba(255,255,255,.13);stroke-width:1.6;stroke-linecap:round}
+  .afc-intake{fill:#05080d;stroke:var(--accent);stroke-width:1.3;filter:drop-shadow(0 0 4px rgba(184,239,67,.55))}
+  .afc-nose{fill:#f2f9ff;filter:drop-shadow(0 0 5px rgba(220,240,255,.9))}
+  .afc-nav{fill:#eaf4ff;filter:drop-shadow(0 0 4px rgba(220,238,255,.9));animation:afBlink 2.8s steps(1,end) infinite}
 
   /* door + cockpit + nose light */
   .af-door{position:absolute;right:13.5vw;top:50%;transform:translateY(-50%);
@@ -2265,25 +2616,47 @@
   .af-co[aria-selected="true"]::after{transform:scaleX(1)}
   .af-sep{color:#3A424E;font-size:12px;user-select:none}
 
-  /* ---- status card ---- */
-  .af-status{position:relative;z-index:4;margin-left:auto;margin-top:clamp(30px,4vw,54px);
-    width:min(440px,100%);padding:16px 18px;border-radius:14px;
-    border:1px solid rgba(200,216,238,.14);
-    background:linear-gradient(180deg, rgba(18,24,33,.72), rgba(10,14,20,.66));
+  /* ---- boarding pass: the open sixth seat ---- */
+  .af-pass{--stub:60px;position:relative;z-index:4;display:flex;
+    margin-left:auto;margin-top:clamp(28px,3.6vw,48px);width:min(456px,100%);
+    border:1px solid rgba(200,216,238,.16);border-radius:12px;
+    background:linear-gradient(180deg, rgba(20,27,37,.82), rgba(10,14,20,.74));
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    box-shadow:0 30px 60px -40px #000}
-  .af-st-top{display:flex;align-items:center;gap:10px}
-  .af-st-ic{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
-    background:rgba(184,239,67,.10);border:1px solid rgba(184,239,67,.25);color:var(--accent)}
-  .af-st-ic svg{width:14px;height:14px}
-  .af-st-title{font-size:14px;font-weight:600;color:var(--fg);letter-spacing:-.01em}
-  .af-st-sub{margin-top:12px;font-size:12.5px;color:var(--fg-dim)}
-  .af-st-bar{position:relative;margin-top:9px;height:2px;border-radius:2px;background:rgba(200,216,238,.12)}
-  .af-st-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--accent);
-    box-shadow:0 0 10px rgba(184,239,67,.6);width:0;transition:width .5s var(--ease)}
-  .af-st-plane{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);color:var(--accent);
-    transition:left .5s var(--ease)}
-  .af-st-plane svg{width:17px;height:17px;display:block;filter:drop-shadow(0 0 6px rgba(184,239,67,.6))}
+    /* the two bites where the stub tears off */
+    -webkit-mask:radial-gradient(circle 6px at calc(100% - var(--stub)) 0,transparent 97%,#000),
+                 radial-gradient(circle 6px at calc(100% - var(--stub)) 100%,transparent 97%,#000);
+    -webkit-mask-composite:source-in;
+    mask:radial-gradient(circle 6px at calc(100% - var(--stub)) 0,transparent 97%,#000),
+         radial-gradient(circle 6px at calc(100% - var(--stub)) 100%,transparent 97%,#000);
+    mask-composite:intersect}
+  /* the desktop wing and engine hang beside the pass; keep the scene tall enough for them */
+  @media (min-width:1025px){.af-pass{margin-bottom:34px}}
+  .af-pass-main{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px}
+  .af-pass-txt{flex:1 1 auto;min-width:0}
+  .af-pass-k{display:block;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim)}
+  .af-pass-t{display:block;margin-top:3px;white-space:nowrap;font-family:var(--font-display);font-weight:600;font-size:14.5px;
+    line-height:1.3;letter-spacing:-.015em;color:var(--fg)}
+  .af-pass-t em{font-style:normal;color:var(--accent)}
+  .af-pass-d{margin:2px 0 0;font-size:11.5px;line-height:1.45;color:var(--fg-muted)}
+  .af-pass-go{flex:0 0 auto;font-size:12px;padding:7px 11px;gap:6px;border-radius:8px}
+  .af-pass-stub{flex:0 0 var(--stub);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:8px 6px;border-left:1.5px dashed rgba(200,216,238,.24);color:var(--fg)}
+  .af-pass-sk{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+  .af-pass-seat{font-family:var(--font-display);font-weight:600;font-size:20px;line-height:1.15;letter-spacing:-.03em;color:var(--accent)}
+  .af-pass-bars{display:block;margin-top:4px;width:38px;height:9px;opacity:.5;
+    background:repeating-linear-gradient(90deg,currentColor 0 1.5px,transparent 1.5px 3px,currentColor 3px 4px,transparent 4px 6px,currentColor 6px 8.5px,transparent 8.5px 10px)}
+  @media (max-width:1024px){.af-pass{margin-right:auto}}
+  /* phones: label, two-line title, button beside it, thin stub */
+  @media (max-width:560px){
+    .af-pass{--stub:48px;width:min(320px,100%);margin-top:22px}
+    .af-pass-main{gap:8px;padding:9px 10px 9px 12px}
+    .af-pass-k2,.af-pass-d,.af-pass-bars{display:none}
+    .af-pass-t{font-size:13.5px;margin-top:2px;white-space:normal}
+    .af-pass-t em{display:block}
+    .af-pass-go{font-size:11.5px;padding:6px 9px}
+    .af-pass-seat{font-size:17px}
+  }
+  @media (max-width:360px){.af-pass-go .bi{display:none}}
 
   .tnote{margin-top:34px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--fg-dim)}
   .tnote code{color:var(--accent);background:rgba(184,239,67,.08);padding:1px 6px;border-radius:5px}
@@ -2300,28 +2673,62 @@
     .af-win:first-child .af-rolelab{left:0;transform:none}
   }
   @media (max-width:1024px){
-    .af-tail,.af-wing,.af-engine,.af-navlight{display:none}
+    .af-tail,.af-wing,.af-engine,.af-navlight,.af-door,.af-cockpit,.af-noselight{display:none}
+    .af-plane{--af-rise:12px;--af-tilt:.7deg;--af-surge:4px}
+    /* The fuselage box hands over to the drawn aircraft (.af-craft). Everything
+       inside is sized in cqw against the 390-unit drawing, so the five
+       portholes always sit in the cabin, nose to tail, with nothing to scroll:
+       1cqw = 3.9 drawing units. */
+    .af-fuse{display:block;container-type:inline-size;margin:0 auto;width:min(100% - 28px,660px);min-height:0;
+      padding:0;background:none;border:0;border-radius:0;box-shadow:none}
+    .af-fuse::before,.af-fuse::after{content:none}
+    .af-craft{display:block}
+    .af-windows{position:absolute;left:16.92cqw;top:16.67cqw;width:60cqw;
+      justify-content:space-between;gap:0;padding:0}
+    .af-win{width:9.23cqw;gap:0}
+    .af-win:hover{transform:translateY(-2px)}
+    /* the porthole is smaller than a fingertip; the hit area isn't */
+    .af-win::after{content:"";position:absolute;inset:-8px -1.6cqw}
+    .af-port{height:11.4cqw;border-radius:4cqw;border-width:1.5px;
+      box-shadow:inset 0 2px 6px rgba(0,0,0,.75)}
+    .af-port::before{content:none}
+    .af-photo{inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);border-radius:calc(4cqw - 3px);opacity:.86}
+    .af-dotup,.af-rolelab{display:none}
+    .af-win[aria-selected="true"] .af-port{
+      box-shadow:inset 0 2px 6px rgba(0,0,0,.6), 0 0 0 1px rgba(184,239,67,.4), 0 0 18px -1px rgba(184,239,67,.65)}
+    /* Companies sit under the wing as their own sideways rail (main.js centres
+       the selected one); the auto margins centre the row when it all fits. */
+    .af-corail{position:relative;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+      overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+      margin:clamp(14px,4cqw,26px) calc(50cqw - 50vw) 0;padding:6px 32px 10px;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 28px calc(100% - 28px),transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 28px calc(100% - 28px),transparent)}
+    .af-corail::-webkit-scrollbar{display:none}
+    .af-co:first-child{margin-left:auto}
+    .af-co:last-child{margin-right:auto}
   }
   @media (max-width:900px){
     .af-top{grid-template-columns:1fr;gap:24px}
     .af-quote{min-height:0}
-    .af-door,.af-cockpit,.af-noselight{display:none}
-    .af-fuse{border-radius:8px 120px 120px 8px / 8px 84px 84px 8px;padding-right:14vw;overflow:hidden}
-    /* Each rail scrolls on its own (main.js centres the selected item), so an
-       auto-advance to the fifth passenger is never parked off-screen. The
-       padding/negative-margin pair keeps the lit window's glow and the
-       underline from being clipped by the scroller. */
-    .af-windows,.af-corail{position:relative;overflow-x:auto;scrollbar-width:none;
-      overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
-      margin:-14px -14vw -6px -14px;padding:14px 14vw 6px 14px}
-    .af-windows{padding-bottom:34px}
-    .af-windows::-webkit-scrollbar,.af-corail::-webkit-scrollbar{display:none}
-    .af-corail{flex-wrap:nowrap}
-    .af-status{margin-left:0}
+    /* Phones read top to bottom: heading, the flight, then what the selected
+       passenger said, then the pass. The quote lives inside .af-top, so both
+       wrappers dissolve and the scene orders the pieces itself. The company
+       row goes: the byline under the quote already names the company. */
+    .af-scene{display:flex;flex-direction:column}
+    .af-scene>.wrap:has(>.af-top),.af-top{display:contents}
+    .af-top-l,.af-quote{position:relative;z-index:4;margin-inline:28px}
+    .af-top-l{order:1}
+    .af-plane{order:2;margin-top:30px}
+    .af-quote{order:3;margin-top:26px}
+    .af-scene>.wrap:not(:has(>.af-top)){order:4;width:100%}
+    .af-corail{display:none}
   }
   @media (prefers-reduced-motion:reduce){
-    .af-plane,.af-cloud,.af-stars .t,.af-navlight{animation:none}
-    .af-qbody,.af-st-bar i,.af-st-plane{transition:none}
+    .af-plane,.af-cloud,.af-stars .t,.af-navlight,.afc-nav{animation:none}
+    .af-streak{display:none}
+    .af-cloud.c1{transform:translateX(3vw)}.af-cloud.c2{transform:translateX(60vw)}
+    .af-cloud.c3{transform:translateX(70vw)}.af-cloud.c4{transform:translateX(32vw)}
+    .af-qbody{transition:none}
   }
 
   /* ---------- FAQ (crisp numbered cards) ---------- */
@@ -2513,55 +2920,157 @@
   .pane-list li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;
     border-radius:1px;background:var(--accent);opacity:.65}
 
-  .kits{margin-top:26px;display:flex;flex-direction:column;gap:14px}
-  .kit-lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--fg-dim);display:block;margin-bottom:8px}
-  .marks{display:flex;flex-wrap:wrap;gap:7px}
-  .mk{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 4px;
-    border:1px solid var(--line);border-radius:100px;background:var(--surface);
-    font-size:11.5px;color:var(--fg-muted);transition:border-color .25s,color .25s,transform .25s var(--ease)}
-  .mk:hover{border-color:var(--line-strong);color:var(--fg);transform:translateY(-2px);box-shadow:0 8px 22px -14px rgba(0,0,0,.9)}
-  .mk b{flex:0 0 auto;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
-    background:var(--surface-2);border:1px solid var(--line-strong);
-    font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:500;color:var(--fg-dim);letter-spacing:0}
-  .kit.stack .mk b{color:var(--accent);border-color:rgba(184,239,67,.26);background:rgba(184,239,67,.06)}
+  .kits{margin:26px 0 0;display:flex;flex-direction:column;gap:18px}
+  .kit-lbl{font-size:12px;font-weight:600;line-height:1.5;color:var(--fg);margin-bottom:4px}
+  .kit-tools{margin:0;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;line-height:1.8;color:var(--fg-muted)}
+  .kit-tool{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .kit-logo{display:block;width:18px;height:18px;flex:0 0 18px;object-fit:contain}
+  .kit-logo--light{display:none}
+  :root[data-theme="light"] .kit-logo--light{display:block}
+  :root[data-theme="light"] .kit-logo--dark{display:none}
 
   .clock-tail{height:64px}
 
+  /* phone-only parts: docked mini dial, figure line, "read more" */
+  .dial-dock,.hint-m,.pane-figs,.pane-more{display:none}
+
   @media (max-width:980px){
-    /* the dial rides along pinned under the header, so it is also capped by
-       viewport height — on a short phone it must leave most of the screen to
-       the chapter being read */
-    .clock-sec{--dial:min(72vw,340px,36vh);padding-top:80px}
+    /* the full dial is shown once under the heading and scrolls away with it;
+       from there a slim docked bar (.dial-dock) carries the hands, so the
+       chapter being read keeps nearly the whole screen */
+    /* 72vw max: the rotating .fx-sweep's bounding box is ~1.32x the dial, and
+       anything wider pushes the page into horizontal scroll */
+    .clock-sec{--dial:min(72vw,340px,46svh);padding-top:80px}
+    .hint-d{display:none}
+    .hint-m{display:inline}
     .clock-track{height:auto}
     .clock-stage{position:static;height:auto;display:block;overflow:visible}
-    /* top = header height exactly: a 10px gap here let the scrolling copy show
-       through between the header and the dial */
-    .dial-col{position:sticky;top:68px;height:auto;display:flex;justify-content:center;
-      padding:16px 0 22px;z-index:2;
-      background:linear-gradient(180deg,var(--bg-2) 0%,var(--bg-2) 88%,rgba(12,13,14,0) 100%)}
+    .dial-col{position:relative;height:auto;display:flex;justify-content:center;
+      padding:6px 0 26px;z-index:1}
     .dial-wrap{position:relative;top:auto;left:auto;width:var(--dial);height:var(--dial);
       transform:none}
-    .deck{display:block;height:auto;padding:0 28px}
+    .deck{display:block;height:auto;padding:0 28px;z-index:2}
     .rail{display:none}
+
+    /* docked dial: a zero-height sticky anchor, so it never takes flow space;
+       the bar hangs off it and fades in once the big dial is behind the header */
+    .dial-dock{display:block;position:sticky;top:68px;height:0;z-index:5}
+    .dock-bar{
+      appearance:none;-webkit-appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;
+      position:absolute;top:8px;left:-16px;right:-16px;height:56px;
+      display:flex;align-items:center;gap:12px;padding:0 14px 0 8px;
+      border-radius:16px;border:1px solid var(--line-strong);
+      background:rgba(13,18,27,.82);
+      -webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);
+      box-shadow:0 18px 40px -22px #000,inset 0 1px 0 rgba(255,255,255,.07);
+      opacity:0;visibility:hidden;transform:translateY(-10px);
+      transition:opacity .32s var(--ease),transform .32s var(--ease),visibility 0s .32s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .dial-dock.on .dock-bar{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+    .dock-dial{flex:0 0 42px;width:42px;height:42px;display:block}
+    .dd-face{fill:#0A1019;stroke:rgba(255,255,255,.24);stroke-width:1.2}
+    .dd-track{stroke:rgba(255,255,255,.14);stroke-width:2.4;stroke-linecap:round}
+    .dd-prog{stroke:var(--accent);stroke-width:2.4;stroke-linecap:round}
+    .dd-h{stroke:var(--accent);stroke-width:2.8;stroke-linecap:round}
+    .dd-m{stroke:#E8EDF0;stroke-width:1.7;stroke-linecap:round}
+    .dd-hub{fill:var(--accent)}
+    .dock-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+    .dock-txt.swap{animation:dockSwap .42s var(--ease)}
+    .dock-when{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--accent);line-height:1.2}
+    .dock-role{font-size:14px;font-weight:500;letter-spacing:-.01em;line-height:1.2;color:var(--fg);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dock-idx{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
+      font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--fg-muted)}
+    .dock-idx svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+    .dock-bar[aria-expanded="true"] .dock-idx svg{transform:rotate(180deg)}
+    /* one tick per chapter, spaced into eras */
+    .dock-segs{position:absolute;left:62px;right:16px;bottom:-1px;height:2px;display:flex;gap:3px}
+    .dock-segs i{flex:1;border-radius:2px;background:var(--line-strong);transition:background .4s var(--ease)}
+    .dock-segs i.newera{margin-left:5px}
+    .dock-segs i.on{background:var(--accent)}
+    .dock-menu{
+      position:absolute;top:72px;left:-16px;right:-16px;padding:6px;
+      border-radius:16px;border:1px solid var(--line-strong);
+      background:rgba(13,18,27,.96);
+      -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+      box-shadow:0 30px 60px -24px #000;
+      animation:dockMenuIn .26s var(--ease);
+    }
+    .dock-menu button{
+      appearance:none;-webkit-appearance:none;background:none;border:0;font:inherit;color:inherit;
+      width:100%;display:flex;align-items:baseline;gap:12px;padding:11px 12px;border-radius:11px;
+      text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    }
+    .dock-menu button.newera{margin-top:5px}
+    .dock-menu button b{flex:0 0 42px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:12px;color:var(--fg-dim)}
+    .dock-menu button span{flex:1;min-width:0;font-size:14px;line-height:1.3;color:var(--fg-muted)}
+    .dock-menu button small{display:block;margin-top:2px;font-size:11.5px;color:var(--fg-dim)}
+    .dock-menu button.on{background:rgba(184,239,67,.09)}
+    .dock-menu button.on b{color:var(--accent)}
+    .dock-menu button.on span{color:var(--fg)}
+
     .panes{height:auto;overflow:visible;-webkit-mask-image:none;mask-image:none}
     .pane{position:relative;top:auto;transform:none;opacity:1;filter:none;
-      max-width:none;padding:36px 0 40px;background:none;border:0;
-      border-top:1px solid var(--line);border-radius:0;box-shadow:none}
-    .pane-cols{grid-template-columns:1fr;gap:22px}
+      max-width:none;padding:34px 0 36px;background:none;border:0;
+      border-top:1px solid var(--line);border-radius:0;box-shadow:none;
+      scroll-margin-top:152px}
+    /* chapters inside one employer read as a group: no rule, tighter gap */
+    .pane.same-era{border-top:0;padding-top:6px}
+    .pane-cols{grid-template-columns:1fr;gap:20px}
     .pane-side{border-left:0;padding-left:0}
     .pane:first-child{border-top:0}
+    /* outcome figures, skimmable without opening the bullets */
+    .pane-figs{display:flex;flex-wrap:wrap;gap:10px 22px;margin:16px 0 0}
+    .pane-fig{display:flex;flex-direction:column;gap:2px}
+    .pane-fig b{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:20px;
+      letter-spacing:-.02em;line-height:1.1;color:var(--accent)}
+    .pane-fig span{font-size:11.5px;line-height:1.3;color:var(--fg-dim)}
     .clock-tail{height:70px}
   }
-  /* landscape phones: no height to spare for a pinned dial — it scrolls away
-     with the heading and the chapters read as a plain list */
+  @media (max-width:640px){
+    .pane{padding:28px 0 30px}
+    /* same employer as the chapter above: the company line would only repeat,
+       and the docked bar already carries the 02/06 count */
+    .pane.same-era .pane-k{display:none}
+    .pane-head{margin-bottom:16px}
+    .pane-list{margin-top:16px}
+    /* bullets fold to two lines until opened */
+    .pane:not(.is-open) .pane-list li{display:-webkit-box;-webkit-box-orient:vertical;
+      -webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+    .pane-more{
+      appearance:none;-webkit-appearance:none;background:none;border:0;padding:6px 0;margin:8px 0 0 19px;
+      display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+      font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--accent);-webkit-tap-highlight-color:transparent;
+    }
+    .pane-more[hidden]{display:none}
+    .pane-more svg{width:13px;height:13px;transition:transform .3s var(--ease)}
+    .pane.is-open .pane-more svg{transform:rotate(180deg)}
+    /* tools: two compact logo rows, names kept for screen readers only */
+    .kits{gap:10px}
+    .kit{display:flex;align-items:center;gap:12px}
+    .kit-lbl{flex:0 0 58px;margin:0;font-family:'JetBrains Mono',monospace;font-weight:400;
+      font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+    .kit-lbl .kl-full{display:none}
+    .kit-tools{gap:10px;line-height:1}
+    .kit-tool{gap:0;position:relative}
+    .kit-logo{width:22px;height:22px;flex-basis:22px}
+    .kit-name{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  }
+  @media (min-width:641px){ .kit-lbl .kl-short{display:none} }
+  /* landscape phones: keep the full dial small, the dock does the rest */
   @media (max-width:980px) and (max-height:520px){
     .clock-sec{--dial:min(44vw,300px)}
-    .dial-col{position:static}
   }
+  @keyframes dockSwap{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  @keyframes dockMenuIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){
     .fx-sweep{animation:none;opacity:.25}
     .dial-wrap{--ry:0deg;--rx:0deg}
+    .dock-bar{transition:none}
+    .dock-txt.swap,.dock-menu{animation:none}
   }
 
   /* ---------- MOBILE APPS ---------- */
@@ -2816,19 +3325,55 @@
     .pstep{border-left:0;border-top:1px solid var(--line)}
     .pstep:first-child{border-top:0}
   }
+  /* 320-360px: brand, CTA, theme toggle and menu no longer fit at full size,
+     so the CTA drops its glyph and everything tightens a step */
+  @media (max-width:360px){
+    .nav-cta{gap:5px}
+    .nav-cta .btn{padding:8px 9px;font-size:12px}
+    .nav-cta .btn .bi{display:none}
+    .nav-toggle{width:36px;height:36px}
+    .brand{font-size:13.5px;gap:6px;letter-spacing:-.03em}
+  }
   @media (max-width:400px){
     /* small phones: a 20px gutter buys every section 16px of measure */
     .wrap{padding:0 20px}
+    .af-top-l,.af-quote{margin-inline:20px}
     .nav-links{padding-left:20px;padding-right:20px}
     .deck{padding:0 20px}
-    .af-fuse{padding-left:20px}
     .nv-phase{right:20px}
   }
   /* touch: hover-lift states stick after a tap, so they are pointer-only */
   @media (hover:none){
     .card:hover,.tcard:hover,.rec-card:hover,.logo:hover,.btn-primary:hover,.btn-ghost:hover,
-    .hero-proof:hover,.mk:hover,.af-win:hover,.portrait:hover{transform:none}
+    .hero-proof:hover,.af-win:hover,.portrait:hover{transform:none}
     .mob-card:hover .phone{transform:translateY(16px)}
+  }
+  /* Mobile content stays in normal flow. Avoid moving/fading large composited
+     sections or recalculating sticky card geometry as the address bar moves. */
+  @media (max-width:860px), (hover:none){
+    body{background-attachment:scroll}
+    .reveal,.reveal.in{opacity:1;transform:none;transition:none}
+    .workstack{--wgap:28px;padding-bottom:24px}
+    .work-nav{margin-bottom:28px}
+    .wcard,.wcard.is-covered{position:relative;top:auto;transform:none;opacity:1;visibility:visible;pointer-events:auto;will-change:auto}
+    .wcard::before{display:none}
+    .wcard::after{animation:none}
+    .wcard-in{min-height:0}
+    .workstack.is-live .wcard-copy>*,.workstack.is-live .wcard-shot{opacity:1;transform:none;translate:none;transition:none}
+    .workstack.is-live .wcard-outcome::before{transform:none;transition:none}
+    .wcard-outcome,.wcard.is-spec .wcard-outcome{margin-top:20px}
+    .wcard-ledger{margin-top:18px}
+    .wcard-footer{padding-top:20px}
+    .wcard.is-spec .wcard-footer{padding-top:16px}
+    .wcard.has-case .wcard-footer{margin-top:18px}
+    .wcard-brand{padding-top:24px;gap:14px}
+    .wcard-brief{margin-top:16px}
+    .cap-panel.in .captile,.cap-panel.in .cap-tools .captile,.cap-panel.in .captile .captile-ic{opacity:1;transform:none;animation:none}
+    .pane{will-change:auto}
+    .work-lightbox{transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
+    .work-lightbox.is-open{transform:none}
+    .work-lightbox::backdrop,.work-lightbox.is-open::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none;transition:background .2s ease}
+    .pscreen,.pscreen.on{transform:none;transition:opacity .25s ease}
   }
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important;scroll-behavior:auto!important}

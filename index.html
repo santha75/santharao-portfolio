@@ -23,8 +23,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/main.css">
 <link rel="stylesheet" href="assets/css/hero-profile.css">
+<link rel="stylesheet" href="assets/css/theme-light.css">
+<!-- Section seams paused: remove hidden from the .seam links and re-enable journey.css + journey.js to restore. -->
+<!-- <link rel="stylesheet" href="assets/css/journey.css"> -->
+<meta name="theme-color" content="#05080D">
 <script>document.documentElement.classList.add("js")</script>
-<link rel="preload" as="image" href="assets/img/profile-portrait.jpg">
+<!-- Theme is applied before first paint so a saved light choice never flashes dark.
+     Dark is the default; only an explicit choice (or ?theme=light) changes it. -->
+<script>(function(){var t="dark";try{var q=/[?&]theme=(light|dark)/.exec(location.search);t=q?q[1]:(localStorage.getItem("theme")||t)}catch(e){}if(t!=="light")t="dark";document.documentElement.setAttribute("data-theme",t);if(t==="light"){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content="#F4F7FB"}})()</script>
+<link rel="preload" as="image" href="assets/img/profile-portrait-hd.jpg">
 <link rel="preload" as="image" href="assets/img/profile-avatar.jpg">
 </head>
 <body>
@@ -50,6 +57,7 @@
     <div class="nav-cta">
       <a class="btn btn-ghost" href="https://behance.net/santha75" target="_blank" rel="noopener"><svg class="bi bi-be" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5H8a3 3 0 0 1 0 6H2.5Zm0 6H8a3.5 3.5 0 0 1 0 7H2.5Zm13-5h6M14 15h8a4 4 0 0 0-8 0v1a4 4 0 0 0 7.4 2"/></svg>Behance</a>
       <a class="btn btn-primary" href="mailto:san.nowpada@gmail.com"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm-.5 1.5L12 13l8.5-5.5"/></svg>Get in touch</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode"><svg class="tt-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2m0 14.6v2.2M2.5 12h2.2m14.6 0h2.2M5.3 5.3l1.5 1.5m10.4 10.4 1.5 1.5m0-13.4-1.5 1.5M6.8 17.2l-1.5 1.5"/></svg><svg class="tt-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8 8 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2Z"/></svg></button>
       <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu"><span aria-hidden="true"></span></button>
     </div>
   </div>
@@ -63,12 +71,15 @@
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="wrap hero-mini">
       <div class="hero-top">
-        <span class="hero-pill reveal"><span class="live" aria-hidden="true"></span>Open to Lead / Principal roles</span>
-        <p class="hero-marg reveal"><span>Santharao Nowpada</span><span>UI/UX designer &middot; 11+ years</span><span>Hyderabad &rarr; on-site &middot; remote</span></p>
+        <div class="hero-availability">
+          <span class="hero-pill reveal"><span class="live" aria-hidden="true"></span>Open to Lead / Principal roles</span>
+          <a class="hero-cv reveal" href="assets/downloads/Santharao-Nowpada-Senior-UIUX-Designer.pdf" download="Santharao-Nowpada-Senior-UIUX-Designer.pdf" aria-label="Download Santharao Nowpada's CV (PDF)">Download CV <svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg></a>
+        </div>
+        <p class="hero-marg reveal"><span>Santharao Nowpada</span><span>UI/UX designer &middot; 11+ years<span class="hero-mobile-reach"> &middot; 100K+ users</span></span><span>Hyderabad &rarr; on-site &middot; remote</span></p>
       </div>
 
       <h1 id="heroTitle" aria-label="Designing meaningful experiences. Making complex simple.">
-        <span class="hl"><span class="hw" style="--d:0"><span>Designing</span></span> <span class="hero-pic-wrap"><a class="portrait-photo hero-pic" href="#short" aria-label="Meet Santharao Nowpada, the designer"><img src="assets/img/profile-portrait.jpg" alt="" width="480" height="600" fetchpriority="high" decoding="async"></a><span class="cursor-tag ct-a" aria-hidden="true"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.2 1.4 13.6 6.6l-4.9 1.5-2.1 4.7z"/></svg><b>Brightcone.ai</b></span></span> <span class="portrait-stamp" aria-hidden="true"><span>&#10022;</span> Made with intent</span></span>
+        <span class="hl"><span class="hw" style="--d:0"><span>Designing</span></span> <span class="hero-pic-wrap"><a class="portrait-photo hero-pic" href="#short" aria-label="Meet Santharao Nowpada, the designer"><img src="assets/img/profile-portrait-hd.jpg" alt="" width="1122" height="1402" fetchpriority="high" decoding="async"></a><span class="cursor-tag ct-a" aria-hidden="true"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.2 1.4 13.6 6.6l-4.9 1.5-2.1 4.7z"/></svg><b>Brightcone.ai</b></span></span> <span class="portrait-stamp" aria-hidden="true"><span>&#10022;</span> Made with intent</span></span>
         <span class="hl"><span class="hl-w"><span class="hw hw-flip" style="--d:1"><span><span class="u flipw" id="flipw"><span class="flipi">meaningful</span></span></span></span> <span class="hw" style="--d:2"><span>experiences.</span></span><span class="ct-pin" aria-hidden="true"><span class="cursor-tag ct-c"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.2 1.4 13.6 6.6l-4.9 1.5-2.1 4.7z"/></svg><b>Refactored.ai</b></span></span></span></span>
         <span class="hl hl-outline"><span class="hw" style="--d:3"><span>Making</span></span><span class="ct-pin" aria-hidden="true"><span class="cursor-tag ct-d"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.2 1.4 13.6 6.6l-4.9 1.5-2.1 4.7z"/></svg><b>RunCode.io</b></span></span> <span class="hw" style="--d:4"><span>complex</span></span> <span class="hw" style="--d:5"><span>simple.</span></span><span class="cursor-tag ct-b" aria-hidden="true"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2.2 1.4 13.6 6.6l-4.9 1.5-2.1 4.7z"/></svg><b>InpharmD</b></span></span>
       </h1>
@@ -77,8 +88,8 @@
         <!-- Years, role and reach already sit in the marginalia and the numbers
              below, so this says only what a hiring manager still needs: what
              I design, and who it shipped for. -->
-        <p class="hero-sub reveal">I design AI and B2B SaaS products people trust: <b>clinical decision support</b>, <b>enterprise AI workflows</b> and <b>developer platforms</b>.
-          <span class="hero-for"><i>Shipped for</i><b>InpharmD</b><b>Medongo &middot; R-Clinic</b><b>Micropyramid</b></span></p>
+        <p class="hero-sub reveal"><span class="hero-summary-desktop">I design AI and B2B SaaS products people trust: <b>clinical decision support</b>, <b>enterprise AI workflows</b> and <b>developer platforms</b>.</span><span class="hero-summary-mobile">I design <b>AI and B2B SaaS products</b> people trust.</span>
+          <span class="hero-for"><i>Shipped for</i><b>InpharmD</b><b>MedOnGo &middot; R-Clinic</b><b>MicroPyramid</b></span></p>
         <div class="hero-actions reveal">
           <a class="btn btn-primary" href="#work">See selected work <svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
           <a class="btn btn-ghost" href="mailto:san.nowpada@gmail.com"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm-.5 1.5L12 13l8.5-5.5"/></svg>Get in touch</a>
@@ -95,8 +106,8 @@
                one replays it (hero-profile.js). -->
           <dl class="hero-read reveal" id="heroRead">
             <div class="hs" style="--i:0"><dt>Years</dt><dd class="hs-n"><span data-count="11">11</span><em>+</em></dd></div>
-            <div class="hs" style="--i:1"><dt>Engagements</dt><dd class="hs-n"><span data-count="6" data-pad="2">06</span></dd></div>
-            <div class="hs" style="--i:2"><dt>Continents</dt><dd class="hs-n"><span data-count="5" data-pad="2">05</span></dd></div>
+            <div class="hs" style="--i:1"><dt>Products</dt><dd class="hs-n"><span data-count="12">12</span><em>+</em></dd></div>
+            <div class="hs" style="--i:2"><dt>Countries</dt><dd class="hs-n"><span data-count="4" data-pad="2">04</span></dd></div>
             <div class="hs" style="--i:3"><dt>Users reached</dt><dd class="hs-n"><span data-count="100">100</span><em>K+</em></dd></div>
           </dl>
         </div>
@@ -111,20 +122,30 @@
        CTA and the first case study, and compete with "Complex systems, made
        obvious." for the first h2 slot. It still needs an accessible *name*,
        so the eyebrow is promoted to that role via aria-labelledby. -->
+  <a class="seam" hidden href="#clients" data-glyph="globe" data-label="Clients &amp; teams">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>01 / 09</b> An idea is only the beginning.</span>
+        <strong class="seam-q">Where did it go?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Meet the teams behind the work <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band band-alt clients-band" id="clients"
            aria-labelledby="clients-lbl" style="padding:16px 0 0">
     <div class="clients-pattern" aria-hidden="true"><svg class="cli-grat" viewBox="0 0 1600 540" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" stroke-linecap="round"><path d="M62,20 Q26,270 62,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M185,20 Q155,270 185,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M308,20 Q284,270 308,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M431,20 Q413,270 431,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M554,20 Q542,270 554,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M677,20 Q671,270 677,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M800,20 Q800,270 800,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M923,20 Q929,270 923,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M1046,20 Q1058,270 1046,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M1169,20 Q1187,270 1169,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M1292,20 Q1316,270 1292,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M1415,20 Q1445,270 1415,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M1538,20 Q1574,270 1538,520" stroke="rgba(150,180,220,0.08)" fill="none"/><path d="M40,77 Q800,85 1560,77" stroke="rgba(150,180,220,0.05)" fill="none"/><path d="M40,154 Q800,169 1560,154" stroke="rgba(150,180,220,0.05)" fill="none"/><path d="M40,231 Q800,254 1560,231" stroke="rgba(150,180,220,0.05)" fill="none"/><path d="M40,309 Q800,331 1560,309" stroke="rgba(150,180,220,0.05)" fill="none"/><path d="M40,386 Q800,401 1560,386" stroke="rgba(150,180,220,0.05)" fill="none"/><path d="M40,463 Q800,470 1560,463" stroke="rgba(150,180,220,0.05)" fill="none"/><circle cx="967" cy="349" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1201" cy="428" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1126" cy="420" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="159" cy="242" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1403" cy="313" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1345" cy="104" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="758" cy="156" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="860" cy="284" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="138" cy="145" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="500" cy="417" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1161" cy="122" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1204" cy="114" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="960" cy="109" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="122" cy="400" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="405" cy="144" r="1.6" fill="rgba(150,180,220,0.30)"/><circle cx="1456" cy="400" r="1.6" fill="rgba(150,180,220,0.30)"/><path d="M300,150 Q510,38 720,110" stroke="rgba(150,180,220,0.20)" stroke-width="1.2" fill="none" stroke-dasharray="2 5"/><circle cx="300" cy="150" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="300" cy="150" r="1.3" fill="rgba(180,205,235,0.55)"/><circle cx="720" cy="110" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="720" cy="110" r="1.3" fill="rgba(180,205,235,0.55)"/><path d="M720,110 Q900,71 1080,190" stroke="rgba(184,239,67,0.34)" stroke-width="1.2" fill="none" stroke-dasharray="2 5"/><circle cx="720" cy="110" r="3" fill="none" stroke="rgba(184,239,67,0.85)" stroke-width="1.2"/><circle cx="720" cy="110" r="1.3" fill="rgba(184,239,67,0.85)"/><circle cx="1080" cy="190" r="3" fill="none" stroke="rgba(184,239,67,0.85)" stroke-width="1.2"/><circle cx="1080" cy="190" r="1.3" fill="rgba(184,239,67,0.85)"/><path d="M1080,190 Q1220,103 1360,140" stroke="rgba(150,180,220,0.20)" stroke-width="1.2" fill="none" stroke-dasharray="2 5"/><circle cx="1080" cy="190" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="1080" cy="190" r="1.3" fill="rgba(180,205,235,0.55)"/><circle cx="1360" cy="140" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="1360" cy="140" r="1.3" fill="rgba(180,205,235,0.55)"/><path d="M300,150 Q430,168 560,300" stroke="rgba(150,180,220,0.20)" stroke-width="1.2" fill="none" stroke-dasharray="2 5"/><circle cx="300" cy="150" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="300" cy="150" r="1.3" fill="rgba(180,205,235,0.55)"/><circle cx="560" cy="300" r="3" fill="none" stroke="rgba(180,205,235,0.55)" stroke-width="1.2"/><circle cx="560" cy="300" r="1.3" fill="rgba(180,205,235,0.55)"/></svg></div>
     <div class="wrap clients-inner">
-      <span class="eyebrow reveal" id="clients-lbl"><span class="dot" aria-hidden="true">◆</span> Products &amp; teams I've designed for</span>
+      <span class="eyebrow reveal" id="clients-lbl"><span class="dot" aria-hidden="true">◆</span> Products &amp; teams I’ve designed for</span>
 
-      <!-- horizon globe with the logo row + Impact/Toolkit sitting on top of it -->
+      <!-- Rotating globe backdrop with the client carousel and Impact/Toolkit layered over it at every screen size. -->
       <div class="globe-band reveal">
         <div class="clients-orb" aria-hidden="true">
           <div class="orb-stage">
             <div class="orb" id="orb">
-              <canvas id="orbCanvas" role="img" aria-label="Globe showing client and team locations across five continents"></canvas>
+              <canvas id="orbCanvas" role="img" aria-label="Globe showing client and team locations across four countries"></canvas>
             </div>
-            <p class="orb-note">Built this globe from scratch in canvas — I couldn't find one that read like a night photo of Earth.</p>
+            <p class="orb-note">Built this globe from scratch in canvas — I couldn’t find one that read like a night photo of Earth.</p>
           </div>
         </div>
 
@@ -159,6 +180,16 @@
   </section>
 
   <!-- WORK -->
+  <a class="seam" hidden href="#work" data-glyph="window" data-label="Selected work">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>02 / 09</b> Different teams. One design question.</span>
+        <strong class="seam-q">How do you make complex feel simple?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Step inside the products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band" id="work">
     <div class="wrap">
       <div class="shead reveal">
@@ -175,28 +206,31 @@
           <li><a href="#w-runcode" data-i="4">RunCode</a></li>
           <li><a href="#w-veridx" data-i="5">Veridx</a></li>
           <li><a href="#w-ezmedtech" data-i="6">EzMedTech</a></li>
-          <li><a href="#w-pietrack" data-i="7">Pietrack</a></li>
+          <li><a href="#w-pietrack" data-i="7">PieTrack</a></li>
           <li><a href="#w-refactored" data-i="8">Refactored</a></li>
         </ol>
         <span class="work-nav-tail" aria-hidden="true"></span>
       </nav>
       <div class="workstack" id="workstack">
-        <article class="wcard" id="w-brightcone" style="--i:0" data-i="0">
+        <article class="wcard is-spec has-case" id="w-brightcone" style="--i:0" data-i="0">
           <div class="wcard-in">
             <div class="wcard-copy">
             <div class="wcard-head">
-              <span class="domain">Enterprise AI &middot; Healthcare / Transport / Comms</span>
+              <span class="domain">Enterprise AI &middot; 3 verticals</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>Lead UI/UX, end&#8209;to&#8209;end</span>
             </div>
             <h3>Brightcone.ai <span class="wcard-sub">Enterprise AI Workflow Platform</span></h3>
-            <p class="wcard-summary">Agent workflows and AI recommendations, redesigned as dashboards that surface the decision in seconds and keep a human in the loop.</p>
-            <div class="wcard-outcome">
-              <strong class="wcard-outcome-n">~25%</strong>
-              <div class="wcard-outcome-t"><span>Outcome</span><p>faster design-to-dev handoff, with one design system carrying three verticals.</p></div>
+            <div class="wcard-case">
+              <dl class="wcard-stats">
+                <div><dt class="wcard-stat-n">~25%</dt><dd><span class="dd-f">faster design-to-dev handoff</span><span class="dd-s" aria-hidden="true">faster dev handoff</span></dd></div>
+                <div><dt class="wcard-stat-n">3</dt><dd><span class="dd-f">verticals: healthcare, transport, comms</span><span class="dd-s" aria-hidden="true">verticals shipped</span></dd></div>
+                <div><dt class="wcard-stat-n">1</dt><dd><span class="dd-f">design system, shipped in code</span><span class="dd-s" aria-hidden="true">design system</span></dd></div>
+              </dl>
+              <div class="wcard-brief">
+                <div><h4><span class="brief-ico is-challenge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path class="bi-draw" pathLength="1" d="M2.5 20 9 9.5l3.6 5.6 2.2-3.1L21.5 20z"/><path class="bi-draw" pathLength="1" d="M9 9.5V3.4"/><path class="bi-flag" d="M9 3.6l4.8 1.7L9 7.2z"/></svg></span>The challenge</h4><p>Agent workflows had grown into a tangle. Enterprise buyers couldn&rsquo;t see what an agent had done or why, so they didn&rsquo;t trust it.</p></div>
+                <div><h4><span class="brief-ico is-solution" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(12 13.6) scale(.78) translate(-12 -12)" stroke-width="2.15"><path class="bi-draw" pathLength="1" d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/><path class="bi-draw" pathLength="1" d="M9 18h6"/><path class="bi-draw" pathLength="1" d="M10 22h4"/></g><g class="bi-rays"><path d="M12 1.3v1.9"/><path d="M4 4.2l1.35 1.35"/><path d="M20 4.2l-1.35 1.35"/><path d="M1.6 10.6h1.9"/><path d="M20.5 10.6h1.9"/></g></svg></span>The solution</h4><p>Lead with the decision, not the data: each agent action shows what it did and why, and the final call stays with a person.</p></div>
+              </div>
             </div>
-            <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>Lead UI/UX, end-to-end</dd></div>
-              <div><dt>Scope</dt><dd>Workspace, agent actions, human-in-the-loop review, dashboards, design system, design&rarr;code</dd></div>
-            </dl>
             <div class="wcard-footer">
             <div class="wcard-brand">
               <span class="wcard-brand-k"><i aria-hidden="true"></i>Shipped for</span>
@@ -227,6 +261,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">Clinical Decision Support</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI/UX + front end</span>
             </div>
             <h3>Formulary IQ <span class="wcard-sub">InpharmD &middot; Drug Spend &amp; Savings Analysis</span></h3>
             <p class="wcard-summary">Drug spend, savings opportunities and therapeutic alternatives for hospital pharmacy teams, brought into focus as one clinical dashboard.</p>
@@ -235,7 +270,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>screen a pharmacy committee can act on, shipped as HTML/CSS across three breakpoints.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI/UX + front end</dd></div>
               <div><dt>Scope</dt><dd>Savings dashboard, ranked drug alternatives, clinical data viz, responsive landing</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -251,7 +285,7 @@
             </div>
             </div>
             <div class="wcard-shot">
-              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: InpharmD — Formulary IQ">
+              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: Formulary IQ — InpharmD · Drug Spend &amp; Savings Analysis">
                 <span class="shot-open-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg> Explore screen</span>
               </button>
               <div class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i><span class="shot-url">formularyiq.inpharmd.com</span></div>
@@ -268,6 +302,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">Real Estate &middot; Asset Performance</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>Product design + build</span>
             </div>
             <h3>RedRiver One <span class="wcard-sub">NOI Optimization for Real Assets</span></h3>
             <p class="wcard-summary">An NOI-optimization strategy for real-estate portfolios, given clear positioning and a product experience people can navigate.</p>
@@ -276,7 +311,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>product, designed and shipped end-to-end with an AI-assisted build.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>Product designer + builder</dd></div>
               <div><dt>Scope</dt><dd>Positioning, product UX, front end, AI-assisted delivery</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -309,6 +343,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">E-Commerce &middot; Medical Supplies</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI/UX, storefront</span>
             </div>
             <h3>Pulse Healthcare <span class="wcard-sub">Medical Supplies Storefront</span></h3>
             <p class="wcard-summary">A medical-supplies storefront with department-led browsing and trust cues that carry from the product page through to checkout.</p>
@@ -317,7 +352,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>audiences, clinics and individual shoppers, served by one catalogue and one checkout.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI/UX, responsive storefront</dd></div>
               <div><dt>Scope</dt><dd>Catalogue IA, product pages, trust and compliance cues, responsive checkout</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -333,7 +367,7 @@
             </div>
             </div>
             <div class="wcard-shot">
-              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: Pulse Healthcare — Medical Supplies Commerce">
+              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: Pulse Healthcare — Medical Supplies Storefront">
                 <span class="shot-open-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg> Explore screen</span>
               </button>
               <div class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i><span class="shot-url">pulsehealthcare.com.au</span></div>
@@ -350,6 +384,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">Developer Platform</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI Lead</span>
             </div>
             <h3>RunCode.io <span class="wcard-sub">Cloud Development Workspace</span></h3>
             <p class="wcard-summary">A cloud developer workspace where a new user goes from signup to a running environment in one click, with modular dashboards for everything after.</p>
@@ -358,7 +393,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>developers on the platform. HackerNoon Startup of the Year 2023.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI Lead</dd></div>
               <div><dt>Scope</dt><dd>One-click workspace flow, modular dashboards, dev tooling, marketing site</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -374,7 +408,7 @@
             </div>
             </div>
             <div class="wcard-shot">
-              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: RunCode.io — Cloud Dev Platform">
+              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: RunCode.io — Cloud Development Workspace">
                 <span class="shot-open-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg> Explore screen</span>
               </button>
               <div class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i><span class="shot-url">runcode.io</span></div>
@@ -391,6 +425,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">AI Legal-Tech</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>Product UX</span>
             </div>
             <h3>Veridx.ai <span class="wcard-sub">Plaintiff Attorney Portal</span></h3>
             <p class="wcard-summary">An AI case-analysis workspace for plaintiff attorneys, structured so a data-dense case reads in a clear hierarchy for every role.</p>
@@ -399,7 +434,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>every AI action stays linked to its evidence, its audit trail and its token cost.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>Product UX</dd></div>
               <div><dt>Scope</dt><dd>Case-analysis UX, role-based views, audit action trails, token metering</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -432,6 +466,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">AI MedTech</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI/UX + HTML/CSS handoff</span>
             </div>
             <h3>EzMedTech.ai <span class="wcard-sub">Connected Care Platform</span></h3>
             <p class="wcard-summary">A connected-care dashboard that gives each role its own review queue and a clear next step, backed by monthly care insights.</p>
@@ -440,7 +475,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>role views, patient, staff and doctor, shipped as production HTML/CSS.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI/UX + HTML/CSS handoff</dd></div>
               <div><dt>Scope</dt><dd>Care modules, review queues, clinical data, monthly insights</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -473,15 +507,15 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">Workforce &amp; Sales</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI designer &rarr; UI Lead</span>
             </div>
-            <h3>Pietrack <span class="wcard-sub">Workforce Management Suite</span></h3>
+            <h3>PieTrack <span class="wcard-sub">Workforce Management Suite</span></h3>
             <p class="wcard-summary">HR, projects and sales in one workspace, with a desktop client that tracks time against the same tasks and companies.</p>
             <div class="wcard-outcome">
               <strong class="wcard-outcome-n">1</strong>
               <div class="wcard-outcome-t"><span>Outcome</span><p>product from a pile of modules, with a five-step onboarding engineers could build against.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI designer &rarr; UI Lead</dd></div>
               <div><dt>Scope</dt><dd>HRM, project management, sales, desktop time tracker, enterprise UX</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -491,18 +525,18 @@
                    loading="lazy" decoding="async"
                    onerror="this.closest('.wcard-brand').remove()">
             </div>
-            <a class="wcard-link" href="https://pietrack.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit website: Pietrack (opens in a new tab)">
+            <a class="wcard-link" href="https://pietrack.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit website: PieTrack (opens in a new tab)">
               Visit website <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
             </a>
             </div>
             </div>
             <div class="wcard-shot">
-              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: Pietrack — Workforce Management">
+              <button class="shot-open" type="button" aria-haspopup="dialog" aria-controls="workLightbox" aria-label="Explore screen: PieTrack — Workforce Management Suite">
                 <span class="shot-open-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></svg> Explore screen</span>
               </button>
               <div class="shot-chrome" aria-hidden="true"><i></i><i></i><i></i><span class="shot-url">pietrack.com/time-tracking</span></div>
               <div class="shot-body is-fit" style="--shot-bg:#036FA5">
-                <img class="shot-img" src="assets/img/screens/pietrack/pietrack_screen.png" alt="Pietrack — desktop time-tracking client onboarding and login" loading="lazy" onerror="this.remove()">
+                <img class="shot-img" src="assets/img/screens/pietrack/pietrack_screen.png" alt="PieTrack — desktop time-tracking client onboarding and login" loading="lazy" onerror="this.remove()">
                 <div class="shot-ph"><span class="shot-ph-chip">Screen placeholder</span><span class="shot-ph-file">assets/img/screens/pietrack/pietrack_screen.png</span><span class="shot-ph-hint">Drop your real screen here — it replaces this automatically.</span></div>
               </div>
             </div>
@@ -514,6 +548,7 @@
             <div class="wcard-copy">
             <div class="wcard-head">
               <span class="domain">AI Career &amp; Skills Platform</span>
+              <span class="wcard-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.7 3.7-5.6 7.2-5.6s6.300 1.900 7.200 5.600"/></svg><span class="wcard-role-k">Role</span>UI designer + front end</span>
             </div>
             <h3>Refactored.ai <span class="wcard-sub">AI-Powered Career Solutions Platform</span></h3>
             <p class="wcard-summary">A career and skills platform for learners, organisations and hiring teams, designed in Adobe XD and shipped as a Bootstrap front end.</p>
@@ -522,7 +557,6 @@
               <div class="wcard-outcome-t"><span>Outcome</span><p>paths, learner, organisation and hiring, behind a single signup.</p></div>
             </div>
             <dl class="wcard-ledger">
-              <div><dt>Role</dt><dd>UI designer + front end</dd></div>
               <div><dt>Scope</dt><dd>Onboarding, learner, organisation and hiring dashboards, Adobe XD to Bootstrap</dd></div>
             </dl>
             <div class="wcard-footer">
@@ -587,6 +621,16 @@
        missing, and the mock takes over rather than leaving a hole.
        Every claim in the copy below is readable in one of the three screens on
        its card — that is the bar. Don't add a number you can't point at. -->
+  <a class="seam" hidden href="#mobile" data-glyph="phone" data-label="Mobile product">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>03 / 09</b> Now, change the scale.</span>
+        <strong class="seam-q">What if all that had to fit in one hand?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">See the thinking on a smaller screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band mob-sec" id="mobile">
     <div class="wrap">
       <div class="shead reveal">
@@ -766,12 +810,22 @@
   </section>
 
   <!-- EXPERIENCE — CAREER DIAL -->
+  <a class="seam" hidden href="#experience" data-glyph="clock" data-label="Experience">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>04 / 09</b> Good instincts take time.</span>
+        <strong class="seam-q">Where did the perspective come from?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Turn back the dial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band-alt clock-sec" id="experience" style="--steps:6">
     <div class="wrap clock-head reveal">
       <span class="eyebrow"><span class="dot">◆</span> Experience</span>
-      <h2>Where I've built.</h2>
+      <h2>Where I’ve built.</h2>
       <p>11+ years on one dial. The hour hand marks the chapter I was in; the minute hand marks what I was actually learning to do.</p>
-      <span class="hint"><i></i> Scroll to advance the dial</span>
+      <span class="hint"><i></i> <span class="hint-d">Scroll to advance the dial</span><span class="hint-m">The dial follows as you read</span></span>
     </div>
 
     <div class="clock-track" id="clockTrack">
@@ -863,6 +917,23 @@
         </div>
 
         <div class="deck">
+          <!-- phones/tablets: once the dial scrolls away it docks here as a slim pinned bar -->
+          <div class="dial-dock" id="dialDock">
+            <button class="dock-bar" id="dockBar" type="button" aria-expanded="false" aria-controls="dockMenu">
+              <svg class="dock-dial" viewBox="0 0 48 48" aria-hidden="true">
+                <circle class="dd-face" cx="24" cy="24" r="22"/>
+                <path class="dd-track" id="dockTrack" fill="none"/>
+                <path class="dd-prog" id="dockProg" fill="none"/>
+                <line class="dd-h" id="dockHour" x1="24" y1="26.5" x2="24" y2="13.5"/>
+                <line class="dd-m" id="dockMin" x1="24" y1="27.5" x2="24" y2="8.5"/>
+                <circle class="dd-hub" cx="24" cy="24" r="2.3"/>
+              </svg>
+              <span class="dock-txt" id="dockTxt"><span class="dock-when" id="dockWhen"></span><span class="dock-role" id="dockRole"></span></span>
+              <span class="dock-idx"><span id="dockIdx"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+              <span class="dock-segs" id="dockSegs" aria-hidden="true"></span>
+            </button>
+            <div class="dock-menu" id="dockMenu" role="group" aria-label="Jump to career chapter" hidden></div>
+          </div>
           <div class="rail" id="dialRail" role="group" aria-label="Jump to career chapter"></div>
           <div class="panes" id="dialPanes"></div>
         </div>
@@ -873,6 +944,16 @@
   </section>
 
   <!-- CAPABILITIES -->
+  <a class="seam" hidden href="#capabilities" data-glyph="squiggle" data-label="Capabilities">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>05 / 09</b> Experience becomes a way of working.</span>
+        <strong class="seam-q">What happens before the pixels?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Get inside my process <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band cap-sec" id="capabilities">
     <div class="cap-bg" aria-hidden="true">
       <div class="cap-amb"></div>
@@ -887,73 +968,87 @@
       <div class="shead reveal">
         <span class="eyebrow"><span class="dot">◆</span> Capabilities</span>
         <h2>How I work.</h2>
-        <p>From first research through production front-end — I don't hand off a picture, I hand off a system.</p>
+        <p>Four steps, from first research to a live front end.</p>
       </div>
       <div class="process reveal">
         <div class="pstep">
           <span class="pnum">01 · Understand</span>
-          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.4-4.4"/></svg></span>
-          <h3>Interrogate the domain</h3>
-          <p>Shadow clinicians, ops leads, developers. Map where trust breaks — that's where design earns its keep.</p>
+          <span class="pico pico--talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="10" r="3"/><path d="M2.8 20c0-3.3 2.5-5.6 5.7-5.6s5.7 2.3 5.7 5.6"/><path class="pi-a" d="M14 3.5h7v5h-3.6l-2 2v-2H14z"/></svg></span>
+          <h3>Understand the users</h3>
+          <p>I talk to the people who’ll use the product and find what slows them down.</p>
         </div>
         <div class="pstep">
-          <span class="pnum">02 · Structure</span>
-          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg></span>
-          <h3>Architect the information</h3>
-          <p>Flows, hierarchy and system tokens before any visual polish. Data-dense doesn't have to mean dense.</p>
+          <span class="pnum">02 · Plan</span>
+          <span class="pico pico--plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.2"/><path class="pi-a" pathLength="1" d="M3 9h18"/><path class="pi-b" pathLength="1" d="M9.5 9v11"/><path class="pi-c" pathLength="1" d="M13 13h5M13 16.5h3"/></svg></span>
+          <h3>Plan the structure</h3>
+          <p>User flows and page layout come first, so data-heavy screens stay simple.</p>
         </div>
         <div class="pstep">
-          <span class="pnum">03 · Prototype</span>
-          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/></svg></span>
-          <h3>Test against reality</h3>
-          <p>Usability sessions with real tasks and real data. AI outputs get tested for the failure case, not the demo case.</p>
+          <span class="pnum">03 · Test</span>
+          <span class="pico pico--test"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="pi-a" d="M9 3v2.4M3 9h2.4M4.8 4.8l1.7 1.7"/><path class="pi-b" d="M9.5 9.5l10.5 4-4.6 1.7-1.7 4.6z"/></svg></span>
+          <h3>Test with real users</h3>
+          <p>Prototypes tried on real tasks — including when the AI gets it wrong.</p>
         </div>
         <div class="pstep">
-          <span class="pnum">04 · Ship</span>
-          <span class="pico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V5.5a1.5 1.5 0 0 1 1.5-1.5H9M20 9V5.5A1.5 1.5 0 0 0 18.5 4H15M4 15v3.5A1.5 1.5 0 0 0 5.5 20H9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15"/></svg></span>
-          <h3>Hand off in code</h3>
-          <p>Production HTML/CSS and token specs, not redlines. Design QA until what ships matches what was designed.</p>
+          <span class="pnum">04 · Build</span>
+          <span class="pico pico--code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path class="pi-a" d="M8 7.5l-4.5 4.5L8 16.5"/><path class="pi-b" d="M16 7.5l4.5 4.5-4.5 4.5"/><path class="pi-c" d="M13.6 5l-3.2 14"/></svg></span>
+          <h3>Build it in code</h3>
+          <p>I code the front end myself, so what goes live matches the design.</p>
         </div>
       </div>
 
       <div class="cap-panel skills-panel reveal">
         <div class="cap-bar" aria-hidden="true"><i></i><i></i><i></i><span>what I do</span></div>
-        <div class="cap-tiles">
-          <div class="captile" style="--i:0"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span>UI/UX Design</span></div>
-          <div class="captile" style="--i:1"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="13" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></span><span>Enterprise UX</span></div>
-          <div class="captile" style="--i:2"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/></svg></span><span>AI / ML UX</span></div>
-          <div class="captile" style="--i:3"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20h16"/><path d="M6 20v-6M12 20V5M18 20v-9"/></svg></span><span>Dashboards</span></div>
-          <div class="captile" style="--i:4"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l12 8-5 1.6L15.5 18 13 19l-2.4-5.4L6 17z"/></svg></span><span>Interaction</span></div>
-          <div class="captile" style="--i:5"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12a8 8 0 0 1 13-6.2M20 12a8 8 0 0 1-13 6.2"/><path d="M17 3v3h-3M7 21v-3h3"/></svg></span><span>Human-in-Loop</span></div>
-          <div class="captile" style="--i:6"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6" fill="currentColor" stroke="none"/></svg></span><span>Design Systems</span></div>
-          <div class="captile" style="--i:7"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg></span><span>Prototyping</span></div>
-          <div class="captile" style="--i:8"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg></span><span>Front-End</span></div>
-          <div class="captile" style="--i:9"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="4.4" r="1.7"/><path d="M4 8.5h16M12 8.5v6M8 20l4-5.5 4 5.5"/></svg></span><span>Accessibility</span></div>
-          <div class="captile" style="--i:10"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.4-4.4"/></svg></span><span>Usability</span></div>
-          <div class="captile" style="--i:11"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M6 8.4V13a3 3 0 0 0 3 3h6a3 3 0 0 1 3 2.6"/></svg></span><span>Journey Maps</span></div>
-          <div class="captile" style="--i:12"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="4" rx="1"/><rect x="3" y="16" width="6" height="4" rx="1"/><rect x="15" y="16" width="6" height="4" rx="1"/><path d="M12 7v3M6 16v-2h12v2"/></svg></span><span>Information Architecture</span></div>
+        <div class="cap-group"><span>tools &amp; languages</span></div>
+        <div class="cap-tiles cap-tools">
+          <div class="captile" style="--i:0"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/figma.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Figma</span></div>
+          <div class="captile" style="--i:1"><span class="captile-ic captile-ic--brand"><img class="cap-logo cap-logo--light" src="assets/img/tools/penpot.svg" width="22" height="22" alt="" loading="lazy" decoding="async"><img class="cap-logo cap-logo--dark" src="assets/img/tools/penpot-dark.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Penpot</span></div>
+          <div class="captile" style="--i:2"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/html5.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>HTML5</span></div>
+          <div class="captile" style="--i:3"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/css3.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span data-short="CSS / SCSS">CSS3 / SCSS</span></div>
+          <div class="captile" style="--i:4"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/tailwind.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Tailwind</span></div>
+          <div class="captile" style="--i:5"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/bootstrap.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Bootstrap</span></div>
+          <div class="captile" style="--i:6"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/figma-make.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Figma Make</span></div>
+          <div class="captile" style="--i:7"><span class="captile-ic captile-ic--brand"><img class="cap-logo" src="assets/img/tools/claude.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>Claude</span></div>
+          <div class="captile" style="--i:8"><span class="captile-ic captile-ic--brand"><img class="cap-logo cap-logo--light" src="assets/img/tools/google-ai-studio.svg" width="22" height="22" alt="" loading="lazy" decoding="async"><img class="cap-logo cap-logo--dark" src="assets/img/tools/google-ai-studio-dark.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span data-short="AI Studio">Google AI Studio</span></div>
+          <div class="captile" style="--i:9"><span class="captile-ic captile-ic--brand"><img class="cap-logo cap-logo--light" src="assets/img/tools/chatgpt.svg" width="22" height="22" alt="" loading="lazy" decoding="async"><img class="cap-logo cap-logo--dark" src="assets/img/tools/chatgpt-dark.svg" width="22" height="22" alt="" loading="lazy" decoding="async"></span><span>ChatGPT</span></div>
+        </div>
+        <div class="cap-group"><span>skills</span></div>
+        <div class="cap-tiles cap-skills">
+          <div class="captile" style="--i:10"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span>UI/UX Design</span></div>
+          <div class="captile" style="--i:11"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="13" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg></span><span>Enterprise UX</span></div>
+          <div class="captile" style="--i:12"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/></svg></span><span>AI / ML UX</span></div>
           <div class="captile" style="--i:13"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span>AI Decision-Support UX</span></div>
-          <div class="captile" style="--i:14"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.8L18 9.4l-4.4 1.6L12 16l-1.6-5L6 9.4l4.4-1.6z"/><path d="M18.5 15l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z"/></svg></span><span>Generative AI</span></div>
-          <div class="captile" style="--i:15"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></span><span>Prompt-Driven UX</span></div>
-          <div class="captile" style="--i:16"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M17.8 12h3.2M5.2 5.2l2.3 2.3M16.5 16.5l2.3 2.3M18.8 5.2l-2.3 2.3M7.5 16.5l-2.3 2.3"/></svg></span><span>Automation Flows</span></div>
-          <div class="captile" style="--i:17"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M7 14l3-3 3 2 4-5"/></svg></span><span>Data Visualization</span></div>
-          <div class="captile" style="--i:18"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 16.5l8 4 8-4"/></svg></span><span>Component Libraries</span></div>
-          <div class="captile" style="--i:19"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span><span>Design-to-Code Handoff</span></div>
-          <div class="captile" style="--i:20"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M8.5 13l2 2 4-4"/></svg></span><span>Design QA</span></div>
-          <div class="captile" style="--i:21"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Figma"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"/></svg></span><span>Figma</span></div>
-          <div class="captile" style="--i:22"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Penpot"><path d="M7.654 0 5.13 3.554v2.01L2.934 6.608l-.02-.009v13.109l8.563 4.045L12 24l.523-.247 8.563-4.045V6.6l-.017.008-2.196-1.045V3.555l-.077-.108L16.349.001l-2.524 3.554v.004L11.989.973l-1.823 2.566-.065-.091zm.447 2.065.976 1.374H6.232l.964-1.358zm8.694 0 .976 1.374h-2.845l.965-1.358zm-4.36.971.976 1.375h-2.845l.965-1.359zM5.962 4.132h1.35v4.544l-1.35-.638Zm2.042 0h1.343v5.506l-1.343-.635zm6.652 0h1.35V9l-1.35.637V4.132zm2.042 0h1.343v3.905l-1.343.634zm-6.402.972h1.35v5.62l-1.35-.638zm2.042 0h1.343v4.993l-1.343.634zm6.534 1.493 1.188.486-1.188.561zM5.13 6.6v1.047l-1.187-.561ZM3.96 8.251l7.517 3.55v10.795l-7.516-3.55zm16.08 0v10.794l-7.517 3.55V11.802z"/></svg></span><span>Penpot</span></div>
-          <div class="captile" style="--i:23"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="HTML5"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/></svg></span><span>HTML5</span></div>
-          <div class="captile" style="--i:24"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="CSS3 / SCSS"><path d="M0 0v20.16A3.84 3.84 0 0 0 3.84 24h16.32A3.84 3.84 0 0 0 24 20.16V3.84A3.84 3.84 0 0 0 20.16 0Zm14.256 13.08c1.56 0 2.28 1.08 2.304 2.64h-1.608c.024-.288-.048-.6-.144-.84-.096-.192-.288-.264-.552-.264-.456 0-.696.264-.696.84-.024.576.288.888.768 1.08.72.288 1.608.744 1.92 1.296q.432.648.432 1.656c0 1.608-.912 2.592-2.496 2.592-1.656 0-2.4-1.032-2.424-2.688h1.68c0 .792.264 1.176.792 1.176.264 0 .456-.072.552-.24.192-.312.24-1.176-.048-1.512-.312-.408-.912-.6-1.32-.816q-.828-.396-1.224-.936c-.24-.36-.36-.888-.36-1.536 0-1.44.936-2.472 2.424-2.448m5.4 0c1.584 0 2.304 1.08 2.328 2.64h-1.608c0-.288-.048-.6-.168-.84-.096-.192-.264-.264-.528-.264-.48 0-.72.264-.72.84s.288.888.792 1.08c.696.288 1.608.744 1.92 1.296.264.432.408.984.408 1.656.024 1.608-.888 2.592-2.472 2.592-1.68 0-2.424-1.056-2.448-2.688h1.68c0 .744.264 1.176.792 1.176.264 0 .456-.072.552-.24.216-.312.264-1.176-.048-1.512-.288-.408-.888-.6-1.32-.816-.552-.264-.96-.576-1.2-.936s-.36-.888-.36-1.536c-.024-1.44.912-2.472 2.4-2.448m-11.031.018c.711-.006 1.419.198 1.839.63.432.432.672 1.128.648 1.992H9.336c.024-.456-.096-.792-.432-.96-.312-.144-.768-.048-.888.24-.12.264-.192.576-.168.864v3.504c0 .744.264 1.128.768 1.128a.65.65 0 0 0 .552-.264c.168-.24.192-.552.168-.84h1.776c.096 1.632-.984 2.712-2.568 2.688-1.536 0-2.496-.864-2.472-2.472v-4.032c0-.816.24-1.44.696-1.848.432-.408 1.146-.624 1.857-.63"/></svg></span><span>CSS3 / SCSS</span></div>
-          <div class="captile" style="--i:25"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Tailwind"><path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z"/></svg></span><span>Tailwind</span></div>
-          <div class="captile" style="--i:26"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Bootstrap"><path d="M11.77 11.24H9.956V8.202h2.152c1.17 0 1.834.522 1.834 1.466 0 1.008-.773 1.572-2.174 1.572zm.324 1.206H9.957v3.348h2.231c1.459 0 2.232-.585 2.232-1.685s-.795-1.663-2.326-1.663zM24 11.39v1.218c-1.128.108-1.817.944-2.226 2.268-.407 1.319-.463 2.937-.42 4.186.045 1.3-.968 2.5-2.337 2.5H4.985c-1.37 0-2.383-1.2-2.337-2.5.043-1.249-.013-2.867-.42-4.186-.41-1.324-1.1-2.16-2.228-2.268V11.39c1.128-.108 1.819-.944 2.227-2.268.408-1.319.464-2.937.42-4.186-.045-1.3.968-2.5 2.338-2.5h14.032c1.37 0 2.382 1.2 2.337 2.5-.043 1.249.013 2.867.42 4.186.409 1.324 1.098 2.16 2.226 2.268zm-7.927 2.817c0-1.354-.953-2.333-2.368-2.488v-.057c1.04-.169 1.856-1.135 1.856-2.213 0-1.537-1.213-2.538-3.062-2.538h-4.16v10.172h4.181c2.218 0 3.553-1.086 3.553-2.876z"/></svg></span><span>Bootstrap</span></div>
-          <div class="captile" style="--i:27"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Figma Make"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"/></svg></span><span>Figma Make</span></div>
-          <div class="captile" style="--i:28"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Claude"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg></span><span>Claude</span></div>
-          <div class="captile" style="--i:29"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="Google AI Studio"><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></span><span>Google AI Studio</span></div>
-          <div class="captile" style="--i:30"><span class="captile-ic"><svg class="bic" viewBox="0 0 24 24" role="img" aria-label="ChatGPT"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg></span><span>ChatGPT</span></div>
+          <div class="captile" style="--i:14"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><path d="M7 14l3-3 3 2 4-5"/></svg></span><span>Data Visualisation</span></div>
+          <div class="captile" style="--i:15"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6" fill="currentColor" stroke="none"/></svg></span><span>Design Systems</span></div>
+          <div class="captile" style="--i:16"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M8.5 13l2 2 4-4"/></svg></span><span>Design QA</span></div>
+          <div class="captile" style="--i:17"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20h16"/><path d="M6 20v-6M12 20V5M18 20v-9"/></svg></span><span>Dashboards</span></div>
+          <div class="captile" style="--i:18"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg></span><span>Front-End</span></div>
+          <div class="captile" style="--i:19"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></span><span>Prompt-Driven UX</span></div>
+          <div class="captile" style="--i:20"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l12 8-5 1.6L15.5 18 13 19l-2.4-5.4L6 17z"/></svg></span><span>Interaction</span></div>
+          <div class="captile" style="--i:21"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12a8 8 0 0 1 13-6.2M20 12a8 8 0 0 1-13 6.2"/><path d="M17 3v3h-3M7 21v-3h3"/></svg></span><span>Human-in-the-Loop</span></div>
+          <div class="captile" style="--i:22"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4M4 16.5l8 4 8-4"/></svg></span><span>Component Libraries</span></div>
+          <div class="captile" style="--i:23"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg></span><span>Prototyping</span></div>
+          <div class="captile" style="--i:24"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.8L18 9.4l-4.4 1.6L12 16l-1.6-5L6 9.4l4.4-1.6z"/><path d="M18.5 15l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z"/></svg></span><span>Generative AI</span></div>
+          <div class="captile" style="--i:25"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M6 8.4V13a3 3 0 0 0 3 3h6a3 3 0 0 1 3 2.6"/></svg></span><span>Journey Maps</span></div>
+          <div class="captile" style="--i:26"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="4" rx="1"/><rect x="3" y="16" width="6" height="4" rx="1"/><rect x="15" y="16" width="6" height="4" rx="1"/><path d="M12 7v3M6 16v-2h12v2"/></svg></span><span>Information Architecture</span></div>
+          <div class="captile" style="--i:27"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.4-4.4"/></svg></span><span>Usability</span></div>
+          <div class="captile" style="--i:28"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M17.8 12h3.2M5.2 5.2l2.3 2.3M16.5 16.5l2.3 2.3M18.8 5.2l-2.3 2.3M7.5 16.5l-2.3 2.3"/></svg></span><span>Automation Flows</span></div>
+          <div class="captile" style="--i:29"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="4.4" r="1.7"/><path d="M4 8.5h16M12 8.5v6M8 20l4-5.5 4 5.5"/></svg></span><span>Accessibility</span></div>
+          <div class="captile" style="--i:30"><span class="captile-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span><span>Design-to-Code Handoff</span></div>
         </div>
       </div>
     </div>
   </section>
+  <a class="seam" hidden href="#about" data-glyph="star" data-label="Recognition">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>06 / 09</b> Intent meets impact.</span>
+        <strong class="seam-q">And when the work gets noticed?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">A little recognition along the way <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band band-alt rec-sec" id="about">
     <div class="rec-bg" aria-hidden="true">
       <div class="rec-spot"></div>
@@ -970,9 +1065,9 @@
         <article class="rec-card reveal">
           <span class="rec-kicker">★ Most Innovative Startup</span>
           <h3 class="rec-name">RunCode.io</h3>
-          <p class="rec-desc">Contributed to the product experience for a platform recognized by Telangana IT Minister KTR.</p>
+          <p class="rec-desc">Contributed to the product experience for a platform recognised by Telangana IT Minister KTR.</p>
           <div class="rec-meta">
-            <span class="rec-issuer">Recognized by<br>Telangana IT Minister · KTR</span>
+            <span class="rec-issuer">Recognised by<br>Telangana IT Minister · KTR</span>
             <span class="rec-badge">National</span>
           </div>
           <span class="rec-sheen" aria-hidden="true"></span>
@@ -981,7 +1076,7 @@
         <article class="rec-card reveal">
           <span class="rec-kicker">★ Startup of the Year 2023</span>
           <h3 class="rec-name">HackerNoon — RunCode.io</h3>
-          <p class="rec-desc">Helped design the user-centered experiences that contributed to the award.</p>
+          <p class="rec-desc">Helped design the user-centred experiences that contributed to the award.</p>
           <div class="rec-meta">
             <span class="rec-issuer">Awarded by<br>HackerNoon</span>
             <span class="rec-badge">2023</span>
@@ -993,6 +1088,16 @@
   </section>
 
   <!-- TESTIMONIALS -->
+  <a class="seam" hidden href="#feedback" data-glyph="bubble" data-label="Testimonials">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>07 / 09</b> There is another side to the story.</span>
+        <strong class="seam-q">What was it like to build together?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Hear it from the people in the room <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band" id="feedback">
     <div class="af" id="af">
       <div class="af-scene">
@@ -1002,14 +1107,19 @@
           <div class="af-cloud c2"></div>
           <div class="af-cloud c3"></div>
           <div class="af-cloud c4"></div>
+          <i class="af-streak" style="--y:14%;--d:3.6s;--dl:-1.2s;--o:.45"></i>
+          <i class="af-streak" style="--y:33%;--d:5.2s;--dl:-3.4s;--o:.3"></i>
+          <i class="af-streak" style="--y:58%;--d:2.9s;--dl:-.4s;--o:.5"></i>
+          <i class="af-streak" style="--y:76%;--d:4.4s;--dl:-2.6s;--o:.35"></i>
+          <i class="af-streak" style="--y:91%;--d:3.3s;--dl:-1.9s;--o:.4"></i>
         </div>
 
         <div class="wrap">
           <div class="af-top reveal">
             <div class="af-top-l">
               <span class="eyebrow"><span class="dot">◆</span> Feedback</span>
-              <h2>What leaders I've worked with say.</h2>
-              <p class="af-intro">Notes from founders, product and engineering leaders I've shipped with — <b>follow along, or pick a passenger</b>.</p>
+              <h2>What the people I’ve worked with say.</h2>
+              <p class="af-intro">Founders and engineering leaders I’ve built products with. <b>Pick a window to hear from each of them.</b></p>
               <button class="af-autoplay" type="button" hidden><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path class="af-ic-pause" d="M9 5v14m6-14v14"/><path class="af-ic-play" d="M8 5v14l11-7Z"/></svg><span>Pause testimonials</span></button>
             </div>
             <div class="af-quote" aria-live="off" aria-atomic="true">
@@ -1031,7 +1141,42 @@
           <div class="af-engine" aria-hidden="true"></div>
           <div class="af-navlight" aria-hidden="true"></div>
           <div class="af-fuse">
-            <div class="af-windows" role="tablist" aria-label="Passengers — client testimonials"></div>
+            <!-- phones/tablets: the whole aircraft in side profile, drawn once so
+                 it stays an aeroplane at any width (the desktop plane is built
+                 from CSS boxes that run off-screen and is hidden there) -->
+            <svg class="af-craft" viewBox="0 0 390 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="afcBody" x1="0" y1="0" x2="0" y2="1"><stop class="afc-b1" offset="0" stop-color="#2b3749"/><stop class="afc-b2" offset=".42" stop-color="#19222e"/><stop class="afc-b3" offset="1" stop-color="#0b1017"/></linearGradient>
+                <linearGradient id="afcFin" x1="0" y1="0" x2=".5" y2="1"><stop class="afc-f1" offset="0" stop-color="#2a3648"/><stop class="afc-f2" offset="1" stop-color="#0f151e"/></linearGradient>
+                <linearGradient id="afcWing" x1="1" y1="0" x2="0" y2="1"><stop class="afc-w1" offset="0" stop-color="#243041"/><stop class="afc-w2" offset="1" stop-color="#111924"/></linearGradient>
+                <linearGradient id="afcEng" x1="0" y1="0" x2="0" y2="1"><stop class="afc-e1" offset="0" stop-color="#27334a"/><stop class="afc-e2" offset=".55" stop-color="#141c26"/><stop class="afc-e3" offset="1" stop-color="#090d13"/></linearGradient>
+                <linearGradient id="afcGlass" x1="0" y1="0" x2="0" y2="1"><stop class="afc-g1" offset="0" stop-color="#e4f0ff"/><stop class="afc-g2" offset="1" stop-color="#7fa2cc"/></linearGradient>
+                <path id="afcHull" d="M8 78C30 71 62 60 98 60H296C334 60 366 77 380 97C385 105 378 113 364 117C346 122 326 126 300 126H130C90 126 40 106 8 86Z"/>
+                <clipPath id="afcClip"><use href="#afcHull"/></clipPath>
+              </defs>
+              <path class="afc-stab" d="M58 84 26 86 3 97 16 97Z"/>
+              <path class="afc-fin" d="M32 72 15 11Q14 6 19 6H39Q44 6 47 9L100 64Z"/>
+              <path class="afc-stripe" d="M19.4 20H57.6L64.3 27H21.4Z"/>
+              <use class="afc-hull" href="#afcHull"/>
+              <g clip-path="url(#afcClip)">
+                <path class="afc-sheen" d="M0 63H390"/>
+                <path class="afc-cheat" d="M0 117.5H390"/>
+                <path class="afc-belly" d="M0 126H390"/>
+              </g>
+              <rect class="afc-door" x="308" y="68" width="14" height="42" rx="6"/>
+              <path class="afc-door-h" d="M316 90h3.5"/>
+              <path class="afc-glass" d="M329 73.5 343.5 77 346 89H331Z"/>
+              <path class="afc-glass" d="M347.5 78 358 82.5Q363 85 365.5 89H350Z"/>
+              <path class="afc-wing" d="M250 118 178 122 99 184 89 170 86 171 95 190H121Z"/>
+              <path class="afc-flap" d="M196 128 124 184"/>
+              <path class="afc-pylon" d="M228 129 207 148H230L238 124Z"/>
+              <rect class="afc-eng" x="190" y="145" width="52" height="23" rx="11.5"/>
+              <path class="afc-eng-hi" d="M200 150.5H224"/>
+              <ellipse class="afc-intake" cx="237.5" cy="156.5" rx="3.6" ry="9"/>
+              <circle class="afc-nose" cx="379" cy="104" r="1.8"/>
+              <circle class="afc-nav" cx="96" cy="189" r="1.8"/>
+            </svg>
+            <div class="af-windows"role="tablist" aria-label="Passengers — client testimonials"></div>
             <div class="af-corail" role="tablist" aria-label="Companies"></div>
             <span class="af-door" aria-hidden="true"></span>
             <span class="af-cockpit" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -1039,16 +1184,21 @@
           </div>
         </div>
 
+        <!-- five windows are taken; the sixth seat is the reader's -->
         <div class="wrap">
-          <div class="af-status reveal">
-            <div class="af-st-top">
-              <span class="af-st-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/></svg></span>
-              <span class="af-st-title">En route to smarter workflows</span>
+          <div class="af-pass reveal">
+            <div class="af-pass-main">
+              <div class="af-pass-txt">
+                <span class="af-pass-k">Boarding pass<span class="af-pass-k2"> · Next passenger</span></span>
+                <strong class="af-pass-t">Seat 6A is open. <em>It could be yours.</em></strong>
+                <p class="af-pass-d">Let’s build your product together.</p>
+              </div>
+              <a class="btn btn-primary af-pass-go" href="mailto:san.nowpada@gmail.com"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm-.5 1.5L12 13l8.5-5.5"/></svg> Get in touch</a>
             </div>
-            <p class="af-st-sub">All systems operational</p>
-            <div class="af-st-bar" aria-hidden="true">
-              <i></i>
-              <span class="af-st-plane"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5l-9-3.2V6.4a1.4 1.4 0 10-2.8 0v5.9L2 15.5v1.7l7.2-2.2v3.4l-2 1.4v1.3l3.4-.9 3.4.9v-1.3l-2-1.4v-3.4l7 2.2z"/></svg></span>
+            <div class="af-pass-stub" aria-hidden="true">
+              <span class="af-pass-sk">Seat</span>
+              <b class="af-pass-seat">6A</b>
+              <i class="af-pass-bars"></i>
             </div>
           </div>
         </div>
@@ -1057,6 +1207,16 @@
   </section>
 
   <!-- FAQ -->
+  <a class="seam" hidden href="#faq" data-glyph="question" data-label="Questions &amp; answers">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>08 / 09</b> Your turn to be curious.</span>
+        <strong class="seam-q">Still have a question in mind?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Start with the ones I hear most <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band band-alt" id="faq">
     <div class="wrap">
       <div class="shead reveal">
@@ -1071,11 +1231,11 @@
           </div>
           <div class="faq-item">
             <button class="faq-q" id="fq2" aria-expanded="false" aria-controls="fa2"><span class="faq-idx">02</span><span class="faq-qt">You design and build the front end — how does that work?</span><span class="ic" aria-hidden="true"></span></button>
-            <div class="faq-a" id="fa2" role="region" aria-labelledby="fq2"><div class="faq-a-in"><p>I design in Figma and then implement production HTML/CSS (Tailwind or Bootstrap) myself. Handoffs arrive already validated in the browser, edge cases get caught early, and engineering starts from something real — which cut design-to-dev turnaround by ~20–25% on the teams I've led.</p></div></div>
+            <div class="faq-a" id="fa2" role="region" aria-labelledby="fq2"><div class="faq-a-in"><p>I design in Figma and then implement production HTML/CSS (Tailwind or Bootstrap) myself. Handoffs arrive already validated in the browser, edge cases get caught early, and engineering starts from something real — which cut design-to-dev turnaround by ~20–25% on the teams I’ve led.</p></div></div>
           </div>
           <div class="faq-item">
-            <button class="faq-q" id="fq3" aria-expanded="false" aria-controls="fa3"><span class="faq-idx">03</span><span class="faq-qt">What's your experience with AI products?</span><span class="ic" aria-hidden="true"></span></button>
-            <div class="faq-a" id="fa3" role="region" aria-labelledby="fq3"><div class="faq-a-in"><p>Most of my recent work is AI decision-support: human-in-the-loop review, automated actions and recommendations turned into dashboards experts can actually trust — at Brightcone.ai, and in clinical decision support for InpharmD's Formulary IQ.</p></div></div>
+            <button class="faq-q" id="fq3" aria-expanded="false" aria-controls="fa3"><span class="faq-idx">03</span><span class="faq-qt">What’s your experience with AI products?</span><span class="ic" aria-hidden="true"></span></button>
+            <div class="faq-a" id="fa3" role="region" aria-labelledby="fq3"><div class="faq-a-in"><p>Most of my recent work is AI decision-support: human-in-the-loop review, automated actions and recommendations turned into dashboards experts can actually trust — at Brightcone.ai, and in clinical decision support for InpharmD’s Formulary IQ.</p></div></div>
           </div>
           <div class="faq-item">
             <button class="faq-q" id="fq4" aria-expanded="false" aria-controls="fa4"><span class="faq-idx">04</span><span class="faq-qt">What does your process look like?</span><span class="ic" aria-hidden="true"></span></button>
@@ -1083,11 +1243,11 @@
           </div>
           <div class="faq-item">
             <button class="faq-q" id="fq5" aria-expanded="false" aria-controls="fa5"><span class="faq-idx">05</span><span class="faq-qt">Are you open to remote or relocation?</span><span class="ic" aria-hidden="true"></span></button>
-            <div class="faq-a" id="fa5" role="region" aria-labelledby="fq5"><div class="faq-a-in"><p>I'm based in Hyderabad and work comfortably with distributed teams across time zones. Remote-first is ideal; I'll consider relocation for the right team.</p></div></div>
+            <div class="faq-a" id="fa5" role="region" aria-labelledby="fq5"><div class="faq-a-in"><p>I’m based in Hyderabad and work comfortably with distributed teams across time zones. Remote-first is ideal; I’ll consider relocation for the right team.</p></div></div>
           </div>
           <div class="faq-item">
             <button class="faq-q" id="fq6" aria-expanded="false" aria-controls="fa6"><span class="faq-idx">06</span><span class="faq-qt">Can I see more work or case studies?</span><span class="ic" aria-hidden="true"></span></button>
-            <div class="faq-a" id="fa6" role="region" aria-labelledby="fq6"><div class="faq-a-in"><p>Yes — a deeper Brightcone.ai case study is in the works, and there's more on my Behance. Happy to walk through project specifics and NDA-safe details on a call.</p></div></div>
+            <div class="faq-a" id="fa6" role="region" aria-labelledby="fq6"><div class="faq-a-in"><p>Yes — a deeper Brightcone.ai case study is in the works, and there’s more on my Behance. Happy to walk through project specifics and NDA-safe details on a call.</p></div></div>
           </div>
         </div>
       </div>
@@ -1098,9 +1258,9 @@
   <section class="band" id="contact" hidden>
     <div class="wrap">
       <div class="contact reveal">
-        <span class="eyebrow"><span class="dot">◆</span> Let's build something</span>
+        <span class="eyebrow"><span class="dot">◆</span> Let’s build something</span>
         <h2>Have an AI or SaaS product<br>that needs to feel effortless?</h2>
-        <p>I'm exploring senior &amp; principal design roles and select consulting. If you're building something ambitious, let's talk.</p>
+        <p>I’m exploring senior &amp; principal design roles and select consulting. If you’re building something ambitious, let’s talk.</p>
         <div class="actions">
           <a class="btn btn-primary" href="mailto:san.nowpada@gmail.com"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm-.5 1.5L12 13l8.5-5.5"/></svg>san.nowpada@gmail.com</a>
           <a class="btn btn-ghost" href="tel:+919989202735"><svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3Z"/></svg>+91 99892 02735</a>
@@ -1110,6 +1270,16 @@
   </section>
 
   <!-- SHORT VERSION -->
+  <a class="seam" hidden href="#short" data-glyph="person" data-label="About me">
+    <span class="wrap seam-in">
+      <span class="seam-copy">
+        <span class="seam-k"><b>09 / 09</b> Behind the work, a person.</span>
+        <strong class="seam-q">So, who is on the other side of the screen?</strong>
+      </span>
+      <span class="seam-go"><span class="seam-go-l">Meet the designer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14m-5-5 5 5 5-5"/></svg></span><span class="seam-glyph" aria-hidden="true"></span></span>
+    </span>
+  </a>
+
   <section class="band band-alt sv-sec" id="short" aria-labelledby="about-statement">
     <div class="nv-scene" aria-hidden="true"><svg class="nv-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A calm night landscape: a full moon over layered mountains and a winding river beneath a field of stars">
 <defs>
@@ -1325,17 +1495,17 @@
     </div>
     <div class="wrap">
       <div class="nv-manifesto reveal">
-        <p class="nv-manifesto-label"><span>About me</span><i aria-hidden="true"></i><span>The purpose behind the pixels</span></p>
+        <p class="nv-manifesto-label"><span data-seam-anchor>About me</span><i aria-hidden="true"></i><span>The purpose behind the pixels</span></p>
         <h2 id="about-statement" class="nv-statement">
           <span class="nv-st-line"><span class="nv-w" style="--i:0"><span>Designing</span></span> <span class="nv-w" style="--i:1"><span>meaningful</span></span> <span class="nv-w" style="--i:2"><span>experiences.</span></span></span>
           <span class="nv-st-line"><span class="nv-w" style="--i:3"><span>Solving</span></span> <span class="nv-w" style="--i:4"><span class="nv-marked">real problems<svg class="nv-handline" viewBox="0 0 600 28" fill="none" preserveAspectRatio="none" aria-hidden="true"><path d="M5 17C140 1 368 2 592 12M42 25C202 12 413 13 549 20" pathLength="1"/></svg></span></span><span class="nv-w" style="--i:4"><span class="nv-statement-period">.</span></span></span>
         </h2>
-        <p class="nv-lead">I make complex products feel effortless. From research to design systems to hand-coded <span class="nw">front-end</span> and <span class="nw">AI&#8209;assisted React</span>, I carry the work all the way through &mdash; so what ships is easier to use, <strong>and easier to trust.</strong></p>
+        <p class="nv-lead">I make complex products feel effortless. From research to design systems to hand-coded <span class="nw">front end</span> and <span class="nw">AI&#8209;assisted React</span>, I carry the work all the way through &mdash; so what ships is easier to use, <strong>and easier to trust.</strong></p>
       </div>
 
       <article class="pf pf--refined reveal" aria-label="Profile and contact">
         <figure class="pf-photo">
-          <img src="assets/img/profile-portrait.jpg" alt="Santharao Nowpada, Senior UI/UX Designer" width="480" height="600" decoding="async" loading="lazy">
+          <img src="assets/img/profile-portrait-hd.jpg" alt="Santharao Nowpada, Senior UI/UX Designer" width="1122" height="1402" decoding="async" loading="lazy">
           <figcaption class="pf-photo-note">
             <span>Design</span>
             <span>for a better</span>
@@ -1354,7 +1524,7 @@
           </div>
           <div class="pf-panel" id="pf-panel-profile" role="region" aria-labelledby="pf-profile-name">
           <div class="pf-head">
-            <span class="sv-avail"><i aria-hidden="true"></i>Open to senior &amp; principal roles</span>
+            <span class="sv-avail"><i aria-hidden="true"></i>Open to Senior &amp; Principal roles</span>
             <div class="pf-social">
               <a class="pf-brand is-li" href="https://www.linkedin.com/in/santharao-nowpada" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn (opens in a new tab)"><span class="pf-brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM5 10h3v10H5V10Zm5 0h3v1.4c.7-1.1 1.8-1.7 3.2-1.7 2.8 0 3.8 1.7 3.8 4.5V20h-3v-5.1c0-1.5-.3-2.5-1.8-2.5-1.6 0-2.2 1.1-2.2 2.7V20h-3V10Z"/></svg></span><span class="pf-brand-label">LinkedIn</span></a>
               <a class="pf-brand is-be" href="https://behance.net/santha75" target="_blank" rel="noopener" title="Behance" aria-label="Behance (opens in a new tab)"><span class="pf-brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5H8a3 3 0 0 1 0 6H2.5Zm0 6H8a3.5 3.5 0 0 1 0 7H2.5Zm13-5h6M14 15h8a4 4 0 0 0-8 0v1a4 4 0 0 0 7.4 2"/></svg></span><span class="pf-brand-label">Behance</span></a>
@@ -1415,7 +1585,7 @@
           </div>
           <div class="pf-actions">
             <div class="nv-cta pf-cta">
-              <a class="btn btn-primary" href="mailto:san.nowpada@gmail.com">Let's talk <svg class="pf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+              <a class="btn btn-primary" href="mailto:san.nowpada@gmail.com">Let’s talk <svg class="pf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
               <a class="btn btn-ghost" href="#work">See selected work
                 <svg class="pf-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
               </a>
@@ -1468,8 +1638,8 @@
     <nav class="guide-links" aria-label="Portfolio sections">
         <a href="#top"><span>00</span>Back to the top<i aria-hidden="true">&#8599;</i></a>
         <a href="#clients"><span>01</span>Clients &amp; teams<i aria-hidden="true">&#8599;</i></a>
-        <a href="#work"><span>02</span>Selected Work<i aria-hidden="true">&#8599;</i></a>
-        <a href="#mobile"><span>03</span>Mobile Product<i aria-hidden="true">&#8599;</i></a>
+        <a href="#work"><span>02</span>Selected work<i aria-hidden="true">&#8599;</i></a>
+        <a href="#mobile"><span>03</span>Mobile product<i aria-hidden="true">&#8599;</i></a>
         <a href="#experience"><span>04</span>Experience<i aria-hidden="true">&#8599;</i></a>
         <a href="#capabilities"><span>05</span>Capabilities<i aria-hidden="true">&#8599;</i></a>
         <a href="#about"><span>06</span>Recognition<i aria-hidden="true">&#8599;</i></a>
@@ -1481,12 +1651,13 @@
   </div>
   <button class="guide-toggle" id="guideToggle" type="button" aria-expanded="false" aria-controls="guidePanel" aria-label="Explore portfolio sections">
     <span class="guide-avatar"><img src="assets/img/profile-avatar.jpg" alt="" width="38" height="38"></span>
-    <span class="guide-toggle-copy"><span>Explore with me</span><strong id="guideCurrent">Selected Work</strong></span>
+    <span class="guide-toggle-copy"><span>Explore with me</span><strong id="guideCurrent">Selected work</strong></span>
     <svg class="guide-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg>
   </button>
 </aside>
 
 <script src="assets/js/main.js"></script>
 <script src="assets/js/hero-profile.js"></script>
+<!-- <script src="assets/js/journey.js"></script> -->
 </body>
 </html>

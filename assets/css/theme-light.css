@@ -1,0 +1,597 @@
+/* ============================================================
+   Light mode. Loaded last so it wins the cascade without touching
+   the dark rules. The palette is the dark theme turned over, not a
+   new one: cool slate paper where the slate-navy was, navy ink
+   where the cool inks were, the same slate-blue hairlines, and lime
+   still the only colour. Lime cannot carry text on paper (1.3:1),
+   so it stays on fills (primary button, underline, stickers) and
+   --accent-text, the same hue taken down to 5:1, does the reading.
+   The theme is set on <html data-theme> by the inline script in the
+   head (before first paint) and flipped by #themeToggle.
+   ============================================================ */
+
+/* ---------- toggle (both themes) ---------- */
+.theme-toggle{
+  position:relative;flex:0 0 auto;width:42px;height:42px;padding:0;cursor:pointer;
+  display:grid;place-items:center;overflow:hidden;
+  border:1px solid var(--line-strong);border-radius:var(--button-radius);background:transparent;color:var(--fg-muted);
+  transition:border-color .2s,color .2s,background .2s;
+}
+.theme-toggle:hover{border-color:var(--fg-muted);color:var(--fg)}
+.theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.theme-toggle svg{grid-area:1/1;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .5s var(--ease),opacity .3s ease}
+/* dark shows the sun (where the click takes you), light shows the moon */
+.theme-toggle .tt-moon{opacity:0;transform:rotate(-70deg) scale(.4)}
+:root[data-theme="light"] .theme-toggle .tt-sun{opacity:0;transform:rotate(70deg) scale(.4)}
+:root[data-theme="light"] .theme-toggle .tt-moon{opacity:1;transform:none}
+@media (max-width:640px){.theme-toggle{width:40px;height:40px}}
+@media (max-width:360px){.theme-toggle{width:36px;height:36px}}
+@media (prefers-reduced-motion:reduce){.theme-toggle svg{transition:none}}
+
+/* ---------- tokens ---------- */
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#EEF2F7;
+  --bg-2:#E6EBF2;
+  --surface:#F6F8FB;
+  --surface-2:#FFFFFF;
+  --line:rgba(28,52,88,0.11);
+  --line-strong:rgba(28,52,88,0.22);
+  --fg:#0B1320;
+  --fg-muted:#334155;
+  --fg-dim:#4A586C;
+  --accent-text:#4A7300;
+  --accent-glow:rgba(150,205,40,0.34);
+}
+:root{--accent-text:var(--accent)}
+
+:root[data-theme="light"] body{
+  background:
+    radial-gradient(min(1200px,110vw) min(720px,70vw) at 82% -6%, rgba(184,239,67,.10), transparent 60%),
+    linear-gradient(180deg,#F4F7FB 0%,#EEF2F7 46%,#E5EBF3 100%);
+  background-attachment:fixed;
+}
+:root[data-theme="light"] ::selection{background:#B8EF43;color:#0A0B06}
+@media (max-width:860px), (hover:none){
+  :root[data-theme="light"] body{background-attachment:scroll}
+}
+
+/* ---------- header ---------- */
+:root[data-theme="light"] header.scrolled{background:rgba(244,247,251,.86)}
+:root[data-theme="light"] .brand .mark{filter:saturate(.95) contrast(1.02);box-shadow:0 0 0 1px rgba(74,115,0,.45)}
+:root[data-theme="light"] .nav-open .nav-toggle{border-color:rgba(74,115,0,.5);background:rgba(184,239,67,.22);color:var(--accent-text)}
+@media (max-width:980px){
+  :root[data-theme="light"] header.nav-open{background:rgba(244,247,251,.97)}
+  :root[data-theme="light"] .nav-links{background:#F4F7FB;box-shadow:0 40px 60px -30px rgba(20,40,70,.35)}
+  :root[data-theme="light"] .nav-links .nav-x-go,
+  :root[data-theme="light"] .nav-links a:active{color:var(--accent-text)}
+}
+:root[data-theme="light"] .btn-primary:hover{box-shadow:0 12px 28px -10px rgba(74,115,0,.55)}
+
+/* ---------- hero ---------- */
+:root[data-theme="light"] .hero-grid{opacity:.8}
+:root[data-theme="light"] .hero[data-hero="portrait"] .hero-grid::after{
+  background-image:linear-gradient(rgba(74,115,0,.42) 1px,transparent 1px),linear-gradient(90deg,rgba(74,115,0,.42) 1px,transparent 1px);
+}
+:root[data-theme="light"] .hero-glow{opacity:.42}
+@media (max-width:640px){:root[data-theme="light"] .hero-glow{opacity:.35}}
+:root[data-theme="light"] .hero-pill{background:rgba(255,255,255,.55)}
+:root[data-theme="light"] .hero-pill .live{background:#6FA30A}
+:root[data-theme="light"] .hero-for b:not(:last-child)::after{background:#6FA30A}
+
+/* line three and the numbers: navy outline, navy fill, and a shine deep enough to read on paper */
+:root[data-theme="light"] .hero[data-hero="portrait"] .hl-outline .hw>span{
+  -webkit-text-stroke-color:rgba(11,19,32,.92);
+  background:
+    linear-gradient(100deg,transparent 20%,rgba(122,184,0,.95) 50%,transparent 80%) no-repeat -160% 0 / 70% 100%,
+    linear-gradient(var(--fg),var(--fg)) no-repeat 0 0 / var(--fill,0%) 100%;
+  -webkit-background-clip:text;background-clip:text;
+}
+:root[data-theme="light"] .hero[data-hero="portrait"]:hover .hl-outline .hw>span{
+  background-size:70% 100%,100% 100%;-webkit-text-stroke-color:rgba(74,115,0,.95);
+}
+/* phones: line three is plain solid text (see hero-profile.css), so drop the clipped fill here too */
+@media(max-width:640px){
+  :root[data-theme="light"] .hero[data-hero="portrait"] .hl-outline .hw>span,
+  :root[data-theme="light"] .hero[data-hero="portrait"]:hover .hl-outline .hw>span{background:none;-webkit-background-clip:border-box;background-clip:border-box}
+}
+:root[data-theme="light"].js .hs-n span{-webkit-text-stroke-color:rgba(11,19,32,.62)}
+:root[data-theme="light"].js .hs.is-inked .hs-n span{-webkit-text-stroke-color:transparent}
+:root[data-theme="light"] .hs-n em{color:var(--accent-text)}
+@media(hover:hover){
+  :root[data-theme="light"] .hs:hover .hs-n{--hs-ink:var(--accent-text)}
+}
+
+/* Keep the portrait clean in both themes, with a simple keyline and no shadow. */
+:root[data-theme="light"] .hero[data-hero="portrait"] .hero-pic{
+  border-color:rgba(74,115,0,.55);
+  box-shadow:none;
+}
+:root[data-theme="light"] .hero[data-hero="portrait"] .hero-pic img{filter:none}
+:root[data-theme="light"] .hero[data-hero="portrait"] .hero-pic:hover,
+:root[data-theme="light"] .hero[data-hero="portrait"] .hero-pic:focus-visible{
+  border-color:var(--accent-text);
+  box-shadow:none;
+}
+:root[data-theme="light"] .hero[data-hero="portrait"].is-flying .hero-pic{border:1px dashed rgba(74,115,0,.55);box-shadow:none}
+
+/* stickers and cursor tags stay what they are: small dark or lime chips. On
+   paper they become the contrast notes, so their inks are pinned rather than
+   following the flipped tokens, and the arrows get a navy keyline. */
+:root[data-theme="light"] .portrait-stamp{color:#B0BAC8;border-color:rgba(11,19,32,.2);box-shadow:0 10px 22px -12px rgba(20,40,70,.6)}
+:root[data-theme="light"] .cursor-tag svg{stroke:#0B1320;stroke-width:.7;stroke-linejoin:round;filter:drop-shadow(0 2px 4px rgba(20,40,70,.35))}
+:root[data-theme="light"] .cursor-tag b{box-shadow:0 8px 18px -10px rgba(20,40,70,.6)}
+:root[data-theme="light"] .ct-b{color:#1a2a3d}
+:root[data-theme="light"] .ct-b b{color:#F4F7FB}
+:root[data-theme="light"] .hero[data-hero="portrait"] .ct-d{color:#0c131d}
+
+/* proof strip */
+:root[data-theme="light"] .hero-proof{border-color:rgba(74,115,0,.34);background:rgba(184,239,67,.2)}
+:root[data-theme="light"] .hero-proof:hover{border-color:rgba(74,115,0,.6);background:rgba(184,239,67,.32)}
+:root[data-theme="light"] .hero-proof-n,
+:root[data-theme="light"] .hero-proof-go{color:var(--accent-text)}
+
+/* ---------- what stays dark ----------
+   Only three things keep the dark tokens in light mode: the about sky (#short
+   runs its own day/night clock), the screenshot lightbox (a media viewer) and
+   the portrait clone while it flies to the guide. Everything else is paper. */
+:root[data-theme="light"] :is(#short,.work-lightbox,.portrait-flight){
+  color-scheme:dark;
+  --bg:#05080D;--bg-2:#090D15;--surface:#0C1119;--surface-2:#121926;
+  --line:rgba(150,180,220,0.10);--line-strong:rgba(150,180,220,0.18);
+  --fg:#F4F7FB;--fg-muted:#B0BAC8;--fg-dim:#8A94A2;
+  --accent-text:var(--accent);--accent-glow:rgba(184,239,67,0.30);
+  color:var(--fg);
+}
+/* Client marks are light-on-dark files. At rest on paper they are printed in one
+   navy ink (--mark-ink: brightness(0) keeps the alpha, the rest tints it to
+   #0B1D33). In focus they show their own colours: six of the twelve carry white
+   lettering that would vanish on white, so those get --mark-flip, which turns
+   lightness over and rotates the hue back, leaving the brand colour where it
+   was and the white lettering as ink. The other six are shown untouched. */
+:root[data-theme="light"]{
+  --mark-ink:brightness(0) saturate(100%) invert(9%) sepia(32%) saturate(1800%) hue-rotate(184deg) brightness(96%);
+  --mark-flip:invert(1) hue-rotate(180deg) saturate(1.15);
+}
+
+/* ---------- products & teams (the globe band) ----------
+   The globe itself is repainted in daylight by createNightGlobe (main.js reads
+   html[data-theme] every frame). Here: the graticule behind it goes slate, the
+   client chips become white glass with the marks knocked down to navy ink, and
+   the Impact/Toolkit card turns from smoked glass into a white card. The chip
+   in focus shows its mark in the brand's own colours and lifts on a deeper
+   slate shadow. No lime keyline: the brand colour is the highlight. */
+:root[data-theme="light"] .clients-band{
+  background:
+    radial-gradient(80% 120% at 50% 108%, rgba(120,160,210,.20), transparent 62%),
+    linear-gradient(180deg,#F4F7FB 0%,#E9EEF5 100%);
+}
+:root[data-theme="light"] .cli-grat path{stroke:rgba(28,52,88,.12)}
+:root[data-theme="light"] .cli-grat path[stroke-dasharray]{stroke:rgba(28,52,88,.30)}
+:root[data-theme="light"] .cli-grat circle{fill:rgba(28,52,88,.34)}
+:root[data-theme="light"] .cli-grat circle[fill="none"]{fill:none;stroke:rgba(28,52,88,.5)}
+:root[data-theme="light"] .cli-grat path[stroke^="rgba(184"]{stroke:rgba(74,115,0,.6)}
+:root[data-theme="light"] .cli-grat circle[fill^="rgba(184"]{fill:#6FA30A}
+:root[data-theme="light"] .cli-grat circle[stroke^="rgba(184"]{stroke:#6FA30A}
+:root[data-theme="light"] .clients-band .orb canvas{opacity:1;filter:none}
+
+:root[data-theme="light"] .logo-marquee .logo{
+  background:rgba(255,255,255,.78);border-color:rgba(28,52,88,.16);
+  box-shadow:0 14px 28px -20px rgba(20,40,70,.55),inset 0 1px 0 #fff;
+  transition:border-color .25s,color .25s,background .25s,box-shadow .25s,transform .25s var(--ease);
+}
+:root[data-theme="light"] .logo-mark{opacity:.6;filter:var(--mark-ink)}
+:root[data-theme="light"] .logo.has-mark:hover .logo-mark,
+:root[data-theme="light"] .logo.has-mark.is-active .logo-mark{opacity:1;filter:none}
+:root[data-theme="light"] .logo.has-mark:hover .logo-mark:is([src*="brightcone"],[src*="colaberry"],[src*="ezmedtech"],[src*="micropyramid"],[src*="veridx"],[src*="redriver_w"]),
+:root[data-theme="light"] .logo.has-mark.is-active .logo-mark:is([src*="brightcone"],[src*="colaberry"],[src*="ezmedtech"],[src*="micropyramid"],[src*="veridx"],[src*="redriver_w"]){filter:var(--mark-flip)}
+:root[data-theme="light"] .logo-marquee .logo:hover,
+:root[data-theme="light"] .logo-marquee .logo.is-active{
+  background:#fff;border-color:rgba(28,52,88,.26);
+  box-shadow:0 22px 34px -18px rgba(20,40,70,.5),0 2px 6px -2px rgba(20,40,70,.18),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .logo.is-active small{color:var(--accent-text)}
+:root[data-theme="light"] .swipe-hint span{background:rgba(255,255,255,.94);border-color:rgba(74,115,0,.4);color:var(--accent-text);
+  box-shadow:0 16px 30px -18px rgba(20,40,70,.6)}
+:root[data-theme="light"] .logo-marquee:focus-visible{box-shadow:0 0 0 2px rgba(74,115,0,.55)}
+
+:root[data-theme="light"] .clients-band .orb-hud{
+  border-color:rgba(28,52,88,.14);
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(255,255,255,.80));
+  box-shadow:0 40px 70px -44px rgba(20,40,70,.6),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .clients-band .hud-active{border-bottom-color:rgba(28,52,88,.12)}
+:root[data-theme="light"] .clients-band .hud-cols .hud.hud-t{border-color:rgba(28,52,88,.12)}
+:root[data-theme="light"] .clients-band .hud-active b,
+:root[data-theme="light"] .hud-row b,
+:root[data-theme="light"] .hud-chips i:first-child svg{color:var(--accent-text)}
+:root[data-theme="light"] .hud-chips i{background:#F1F5FA}
+:root[data-theme="light"] .hud-t .hud-chips i:first-child{border-color:rgba(74,115,0,.4);background:rgba(184,239,67,.2)}
+
+/* ---------- work deck: white product cards ----------
+   The card is a sheet of white on slate paper; the product screen inside it
+   keeps its own colours. Lime becomes deep lime wherever it was a line or a
+   word, and stays lime only as the spotlight wash. Cards going under the deck
+   fade toward the paper instead of into black. */
+:root[data-theme="light"] #work::before{background:radial-gradient(circle, rgba(28,52,88,.13) 1px, transparent 1.5px) 0 0/30px 30px}
+:root[data-theme="light"] .wcard{
+  background:linear-gradient(180deg,#FFFFFF,#F3F6FA);
+  box-shadow:0 0 0 1px rgba(28,52,88,.10),0 34px 60px -34px rgba(20,40,70,.42),0 8px 22px -14px rgba(20,40,70,.22),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .wcard::before{background:linear-gradient(180deg,rgba(208,218,231,.82),rgba(208,218,231,.36))}
+:root[data-theme="light"] .wcard::after{
+  opacity:.7;
+  background:
+    radial-gradient(300px circle at var(--mx) var(--my),rgba(111,163,10,calc(.95 * var(--spot))),transparent 70%),
+    conic-gradient(from var(--ba),
+      rgba(111,163,10,0) 0deg, rgba(111,163,10,.6) 72deg,
+      rgba(111,163,10,0) 176deg, rgba(111,163,10,.4) 300deg,
+      rgba(111,163,10,0) 360deg);
+}
+:root[data-theme="light"] .wcard.is-lit::after{opacity:1}
+:root[data-theme="light"] .wcard-in::before{background:radial-gradient(560px circle at var(--mx) var(--my),rgba(184,239,67,.2),transparent 62%)}
+:root[data-theme="light"] .wcard .domain{color:var(--accent-text)}
+:root[data-theme="light"] .wcard-outcome{border-left-color:#6FA30A}
+:root[data-theme="light"] .workstack.is-live .wcard-outcome{border-left-color:transparent}
+:root[data-theme="light"] .workstack.is-live .wcard-outcome::before{background:#6FA30A}
+:root[data-theme="light"] .wcard-outcome-n{color:var(--accent-text);text-shadow:none}
+:root[data-theme="light"] .wcard-stats>div::before{background:#6FA30A}
+:root[data-theme="light"] .wcard-role{background:rgba(255,255,255,.6)}
+:root[data-theme="light"] .wcard-role svg{color:var(--accent-text);background:rgba(184,239,67,.3)}
+:root[data-theme="light"] .wcard-brand-k i{background:linear-gradient(90deg,rgba(74,115,0,.7),rgba(74,115,0,.15))}
+:root[data-theme="light"] .wcard-logo{filter:none;opacity:.92}
+:root[data-theme="light"] .wcard-logo:is([src*="brightcone"],[src*="colaberry"],[src*="ezmedtech"],[src*="micropyramid"],[src*="veridx"],[src*="redriver_w"]){filter:var(--mark-flip)}
+:root[data-theme="light"] .wcard:hover .wcard-logo{opacity:1}
+:root[data-theme="light"] .wcard .wcard-link{color:var(--accent-text);border-color:rgba(74,115,0,.34);background:rgba(184,239,67,.18)}
+:root[data-theme="light"] .wcard .wcard-link:hover{background:rgba(184,239,67,.36);border-color:rgba(74,115,0,.6)}
+:root[data-theme="light"] .wcard-shot{box-shadow:-26px 30px 60px -42px rgba(20,40,70,.5),inset 0 1px 0 #fff}
+:root[data-theme="light"] .shot-chrome{background:#EEF2F7}
+:root[data-theme="light"] .shot-chrome i:nth-child(1){background:#ff5f57}
+:root[data-theme="light"] .shot-chrome i:nth-child(2){background:#febc2e}
+:root[data-theme="light"] .shot-chrome i:nth-child(3){background:#28c840}
+:root[data-theme="light"] .shot-url{background:rgba(28,52,88,.07)}
+:root[data-theme="light"] .shot-ph{background:
+  repeating-linear-gradient(135deg,transparent 0 16px,rgba(28,52,88,.03) 16px 17px),
+  linear-gradient(180deg,var(--surface),var(--bg-2))}
+:root[data-theme="light"] .shot-ph::before{background:rgba(28,52,88,.06);box-shadow:0 34px 0 -6px rgba(28,52,88,.05),0 60px 0 -10px rgba(28,52,88,.04)}
+:root[data-theme="light"] .shot-ph-chip{color:var(--accent-text);border-color:rgba(74,115,0,.34);background:rgba(184,239,67,.2)}
+:root[data-theme="light"] .wcard .shot-open-hint{color:#0B1320;border-color:rgba(28,52,88,.2);background:rgba(255,255,255,.94);
+  box-shadow:0 10px 26px -10px rgba(20,40,70,.45)}
+:root[data-theme="light"] .wcard .shot-open-hint svg{color:var(--accent-text)}
+:root[data-theme="light"] .brief-ico{background:rgba(28,52,88,.06)}
+:root[data-theme="light"] .brief-ico.is-solution{color:var(--accent-text);background:rgba(184,239,67,.3);
+  box-shadow:inset 0 0 0 1px rgba(74,115,0,.3)}
+/* the phone role badge on the screen pairs with the hint: same white pill */
+:root[data-theme="light"] .wcard .wcard-shot .wcard-role.shot-role{color:#0B1320;border-color:rgba(28,52,88,.2);
+  background:rgba(255,255,255,.94);box-shadow:0 10px 26px -10px rgba(20,40,70,.45)}
+:root[data-theme="light"] .wcard .wcard-shot .wcard-role.shot-role svg{color:var(--accent-text);background:rgba(184,239,67,.3)}
+:root[data-theme="light"] .wcard .wcard-shot .wcard-role.shot-role .wcard-role-k{color:#5A6B82;border-right-color:rgba(28,52,88,.2)}
+:root[data-theme="light"] .wcard .shot-open:hover .shot-open-hint,
+:root[data-theme="light"] .wcard .shot-open.is-tracking .shot-open-hint{background:#fff;border-color:#6FA30A}
+
+/* explore-more strip */
+:root[data-theme="light"] .work-more{
+  background:linear-gradient(180deg,#FFFFFF,#F3F6FA);
+  box-shadow:0 22px 44px -32px rgba(20,40,70,.5),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .work-more::before{background:radial-gradient(380px circle at var(--mx) var(--my),rgba(184,239,67,.3),transparent 60%)}
+:root[data-theme="light"] .work-more::after{background:radial-gradient(circle,rgba(28,52,88,.16) 1px,transparent 1.5px) 0 0/22px 22px}
+:root[data-theme="light"] .work-more:hover,
+:root[data-theme="light"] .work-more:focus-visible{border-color:rgba(74,115,0,.5);
+  box-shadow:0 30px 56px -32px rgba(20,40,70,.55),0 0 0 1px rgba(111,163,10,.25),0 0 60px -24px rgba(150,205,40,.6)}
+:root[data-theme="light"] .work-more:focus-visible{outline-color:var(--accent-text)}
+:root[data-theme="light"] .wm-fan i{box-shadow:0 12px 24px -12px rgba(20,40,70,.55)}
+:root[data-theme="light"] .wm-fan i img{filter:saturate(.9)}
+:root[data-theme="light"] .work-more:hover .wm-fan i{border-color:rgba(74,115,0,.5)}
+:root[data-theme="light"] .wm-fan-badge{box-shadow:0 8px 18px -8px rgba(74,115,0,.6),0 0 0 3px #fff}
+:root[data-theme="light"] .wm-k i{background:#6FA30A}
+:root[data-theme="light"] .wm-t em{color:var(--accent-text)}
+:root[data-theme="light"] .wm-t em::after{background:#6FA30A}
+:root[data-theme="light"] .wm-cta{color:var(--accent-text);border-color:rgba(74,115,0,.36);background:rgba(184,239,67,.2)}
+:root[data-theme="light"] .wm-cta svg{background:rgba(184,239,67,.45)}
+:root[data-theme="light"] .work-more:hover .wm-cta{background:var(--accent);border-color:#8FCB1E;color:var(--accent-ink)}
+:root[data-theme="light"] .work-more:hover .wm-cta svg{background:var(--accent-ink);color:var(--accent)}
+@media (hover:none){
+  :root[data-theme="light"] .wm-cta{background:var(--accent);border-color:#8FCB1E;color:var(--accent-ink)}
+  :root[data-theme="light"] .wm-cta svg{background:var(--accent-ink);color:var(--accent)}
+}
+
+/* ---------- mobile apps: white cards, a daylight studio for the phone ----------
+   The handset stays what it is, dark hardware; everything around it turns. */
+:root[data-theme="light"] .mob-card{
+  background:linear-gradient(180deg,#FFFFFF,#F5F7FA);
+  box-shadow:0 40px 70px -48px rgba(20,40,70,.55),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .mob-status i{background:#6FA30A;box-shadow:0 0 0 3px rgba(111,163,10,.2)}
+:root[data-theme="light"] .mob-stage{
+  background:
+    radial-gradient(120% 86% at 50% 4%, rgba(184,239,67,.22), transparent 62%),
+    linear-gradient(180deg,#EAEFF6,#D9E2ED);
+}
+:root[data-theme="light"] .mob-stage::before{background:linear-gradient(180deg,rgba(217,226,237,0),rgba(233,238,245,.6) 58%,rgba(250,251,253,.96))}
+:root[data-theme="light"] .mob-stage::after{opacity:.9}
+:root[data-theme="light"] .phone{border-color:rgba(11,19,32,.5);box-shadow:0 34px 60px -26px rgba(20,40,70,.75),inset 0 1px 0 rgba(255,255,255,.14)}
+:root[data-theme="light"] .mob-switch button:hover{background:rgba(11,19,32,.05)}
+:root[data-theme="light"] .mob-switch button.on{color:var(--accent-text);background:rgba(184,239,67,.24);border-color:rgba(74,115,0,.36)}
+:root[data-theme="light"] .mob-copy .domain,
+:root[data-theme="light"] .mob-pm dt,
+:root[data-theme="light"] .mob-stats b,
+:root[data-theme="light"] .mob-xref{color:var(--accent-text)}
+:root[data-theme="light"] .mob-pm{border-left-color:rgba(111,163,10,.6)}
+:root[data-theme="light"] .mob-stats{background:#F4F7FB}
+:root[data-theme="light"] .mob-xref{border-bottom-color:rgba(74,115,0,.4)}
+:root[data-theme="light"] .mob-craft{background:rgba(255,255,255,.66);box-shadow:0 30px 50px -44px rgba(20,40,70,.5)}
+
+/* ---------- recognition: white award cards ---------- */
+:root[data-theme="light"] .rec-spot{background:radial-gradient(58% 58% at 50% 26%,rgba(184,239,67,.26),rgba(184,239,67,.08) 45%,transparent 72%)}
+:root[data-theme="light"] .rec-grid{
+  background:linear-gradient(rgba(28,52,88,.07) 1px,transparent 1px) 0 0/100% 46px,
+    linear-gradient(90deg,rgba(28,52,88,.07) 1px,transparent 1px) 0 0/46px 100%}
+:root[data-theme="light"] .rec-card{
+  border-color:rgba(28,52,88,.14);
+  background:radial-gradient(130% 90% at 12% -10%,rgba(184,239,67,.22),transparent 55%),
+    linear-gradient(180deg,#FFFFFF,#F3F6FA);
+  box-shadow:0 34px 70px -50px rgba(20,40,70,.6),inset 0 1px 0 #fff;
+}
+:root[data-theme="light"] .rec-card::before{background:linear-gradient(90deg,transparent,#6FA30A,transparent);opacity:.7}
+:root[data-theme="light"] .rec-card:hover{border-color:rgba(74,115,0,.5);
+  box-shadow:0 44px 80px -46px rgba(20,40,70,.6),0 0 0 1px rgba(111,163,10,.25),0 24px 60px -36px rgba(150,205,40,.7)}
+:root[data-theme="light"] .rec-index{-webkit-text-stroke-color:rgba(28,52,88,.10)}
+:root[data-theme="light"] .rec-seal{filter:drop-shadow(0 6px 14px rgba(74,115,0,.28))}
+:root[data-theme="light"] .rec-kicker,
+:root[data-theme="light"] .rec-badge{color:var(--accent-text)}
+:root[data-theme="light"] .rec-badge{border-color:rgba(74,115,0,.36);background:rgba(184,239,67,.22)}
+:root[data-theme="light"] .rec-sheen::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent)}
+
+/* ---------- feedback: the night flight becomes a day flight ----------
+   Same aircraft, daylight livery: white fuselage, navy tail with the lime
+   stripe, silver wing. The portholes stay dark glass, as they read from
+   outside, so the headshots keep their ground. */
+:root[data-theme="light"] .af-scene{background:radial-gradient(120% 90% at 78% 6%, #FFFFFF 0%, #EAF0F8 40%, #D3DFEE 100%)}
+:root[data-theme="light"] .af-stars{display:none}
+:root[data-theme="light"] .af-cloud{filter:blur(22px);background:radial-gradient(closest-side, rgba(255,255,255,1), transparent 72%)}
+:root[data-theme="light"] .af-streak{background:linear-gradient(90deg,transparent,rgba(28,52,88,.34),transparent)}
+:root[data-theme="light"] .af-cloud.c1{opacity:.95}
+:root[data-theme="light"] .af-cloud.c2{opacity:.9}
+:root[data-theme="light"] .af-cloud.c3{opacity:.95}
+:root[data-theme="light"] .af-cloud.c4{opacity:.8}
+:root[data-theme="light"] .af-top .eyebrow,
+:root[data-theme="light"] .af-intro b,
+:root[data-theme="light"] .af-qtext b{color:var(--accent-text)}
+:root[data-theme="light"] .af-autoplay{background:rgba(255,255,255,.7)}
+:root[data-theme="light"] .af-autoplay:hover{border-color:var(--accent-text)}
+:root[data-theme="light"] .af-qbody{border-left-color:#6FA30A}
+:root[data-theme="light"] .af-li{background:rgba(255,255,255,.5)}
+:root[data-theme="light"] .af-li:hover{color:var(--accent-text);border-color:rgba(74,115,0,.45);background:rgba(184,239,67,.22)}
+
+:root[data-theme="light"] .af-tail{background:linear-gradient(196deg,#22344E 0%,#13203A 46%,#0B1320 100%);box-shadow:inset 1px 1px 0 rgba(255,255,255,.18)}
+:root[data-theme="light"] .af-tail::before{box-shadow:none}
+:root[data-theme="light"] .af-tail::after{opacity:.3}
+:root[data-theme="light"] .af-wing{background:linear-gradient(170deg,#E3EAF2 0%,#B5C3D4 70%)}
+:root[data-theme="light"] .af-wing::after{background:rgba(28,52,88,.22)}
+:root[data-theme="light"] .af-engine{
+  background:linear-gradient(180deg,#FFFFFF 0%,#DDE5EE 55%,#A9B7C8 100%);
+  border-color:rgba(28,52,88,.22);
+  box-shadow:inset 0 2px 0 #fff,0 26px 40px -24px rgba(20,40,70,.6)}
+:root[data-theme="light"] .af-engine::before{border-color:#6FA30A;opacity:1;box-shadow:inset 0 0 0 3px rgba(11,19,32,.75)}
+:root[data-theme="light"] .af-engine::after{background:rgba(28,52,88,.14)}
+:root[data-theme="light"] .af-navlight{background:#6FA30A;box-shadow:0 0 12px 3px rgba(111,163,10,.45)}
+:root[data-theme="light"] .af-fuse{
+  background:
+    repeating-linear-gradient(90deg, rgba(28,52,88,.07) 0 1px, transparent 1px 190px),
+    linear-gradient(180deg,#FFFFFF 0%,#F7F9FC 34%,#E8EDF4 72%,#CBD6E4 100%);
+  border-top-color:#fff;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -46px 80px -44px rgba(28,52,88,.38),
+             0 0 0 1px rgba(28,52,88,.10),0 56px 100px -60px rgba(20,40,70,.7)}
+:root[data-theme="light"] .afc-b1{stop-color:#FFFFFF}
+:root[data-theme="light"] .afc-b2{stop-color:#F4F7FB}
+:root[data-theme="light"] .afc-b3{stop-color:#C3CFDE}
+:root[data-theme="light"] .afc-f1{stop-color:#22344E}
+:root[data-theme="light"] .afc-f2{stop-color:#0B1320}
+:root[data-theme="light"] .afc-w1{stop-color:#EEF2F7}
+:root[data-theme="light"] .afc-w2{stop-color:#AEBDCF}
+:root[data-theme="light"] .afc-e1{stop-color:#FFFFFF}
+:root[data-theme="light"] .afc-e2{stop-color:#DDE5EE}
+:root[data-theme="light"] .afc-e3{stop-color:#A9B7C8}
+:root[data-theme="light"] .afc-g1{stop-color:#0B1320}
+:root[data-theme="light"] .afc-g2{stop-color:#2A3C58}
+:root[data-theme="light"] .afc-hull{stroke:rgba(28,52,88,.30);filter:drop-shadow(0 14px 16px rgba(20,40,70,.22))}
+:root[data-theme="light"] .afc-fin{stroke:rgba(11,19,32,.5)}
+:root[data-theme="light"] .afc-stab{fill:#9FAFC3;stroke:rgba(28,52,88,.34)}
+:root[data-theme="light"] .afc-stripe{filter:none}
+:root[data-theme="light"] .afc-sheen{stroke:#fff}
+:root[data-theme="light"] .afc-cheat{stroke:#6FA30A;opacity:.9}
+:root[data-theme="light"] .afc-belly{stroke:rgb(28,52,88);opacity:.10}
+:root[data-theme="light"] .afc-door{stroke:rgba(28,52,88,.34)}
+:root[data-theme="light"] .afc-door-h{stroke:rgba(28,52,88,.5)}
+:root[data-theme="light"] .afc-glass{filter:none}
+:root[data-theme="light"] .afc-wing{stroke:rgba(28,52,88,.34)}
+:root[data-theme="light"] .afc-flap{stroke:rgba(28,52,88,.24)}
+:root[data-theme="light"] .afc-pylon{fill:#93A4B9}
+:root[data-theme="light"] .afc-eng{stroke:rgba(28,52,88,.34)}
+:root[data-theme="light"] .afc-eng-hi{stroke:#fff}
+:root[data-theme="light"] .afc-intake{fill:#0B1320;stroke:#6FA30A;filter:none}
+:root[data-theme="light"] .afc-nose{fill:#fff;stroke:rgba(28,52,88,.35);stroke-width:.6;filter:none}
+:root[data-theme="light"] .afc-nav{fill:#6FA30A;filter:none}
+:root[data-theme="light"] .af-fuse::before{border-top-color:rgba(28,52,88,.30)}
+:root[data-theme="light"] .af-fuse::after{border-top-color:rgba(28,52,88,.18)}
+:root[data-theme="light"] .af-door{border-color:rgba(28,52,88,.28)}
+:root[data-theme="light"] .af-door::after{background:rgba(28,52,88,.42)}
+:root[data-theme="light"] .af-cockpit i{background:linear-gradient(180deg,#0B1320,#2A3C58);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+:root[data-theme="light"] .af-noselight{background:#fff;box-shadow:0 0 0 2px rgba(28,52,88,.22),0 0 14px 3px rgba(255,255,255,.9)}
+:root[data-theme="light"] .af-port{border-color:rgba(28,52,88,.34);
+  box-shadow:inset 0 3px 10px rgba(0,0,0,.75),0 1px 0 #fff,0 0 0 4px rgba(28,52,88,.05)}
+:root[data-theme="light"] .af-win:hover .af-port{border-color:#6FA30A}
+:root[data-theme="light"] .af-win[aria-selected="true"] .af-port{border-color:var(--accent);
+  box-shadow:inset 0 3px 10px rgba(0,0,0,.6),0 0 0 2px rgba(74,115,0,.7),0 0 30px -2px rgba(150,205,40,.85)}
+:root[data-theme="light"] .af-win:focus-visible{outline-color:var(--accent-text)}
+:root[data-theme="light"] .af-win[aria-selected="true"] .af-rolelab i{background:#6FA30A;box-shadow:none}
+:root[data-theme="light"] .af-co[aria-selected="true"]{color:var(--accent-text)}
+:root[data-theme="light"] .af-co::after{background:#6FA30A;box-shadow:none}
+:root[data-theme="light"] .af-sep{color:#A3B0C1}
+/* ≤1024px the fuselage box hands over to the drawn aircraft (.af-craft): same
+   daylight livery, set on the SVG's gradient stops and part classes */
+@media (max-width:1024px){
+  :root[data-theme="light"] .af-fuse{background:none;box-shadow:none}
+  :root[data-theme="light"] .af-port{border-color:rgba(28,52,88,.42);
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 1px 0 #fff}
+  :root[data-theme="light"] .af-win[aria-selected="true"] .af-port{
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 0 1.5px rgba(74,115,0,.75),0 0 16px -1px rgba(150,205,40,.9)}
+}
+:root[data-theme="light"] .af-pass{border-color:rgba(28,52,88,.16);
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.8))}
+:root[data-theme="light"] .af-pass-t em,
+:root[data-theme="light"] .af-pass-seat{color:var(--accent-text)}
+:root[data-theme="light"] .af-pass-stub{border-left-color:rgba(28,52,88,.3)}
+:root[data-theme="light"] .tnote code{color:var(--accent-text);background:rgba(184,239,67,.24)}
+
+/* ---------- floating section guide: a white pill ---------- */
+:root[data-theme="light"] .guide-toggle{border-color:rgba(28,52,88,.18);background:rgba(255,255,255,.95);
+  box-shadow:0 16px 40px -16px rgba(20,40,70,.5),inset 0 1px 0 #fff}
+:root[data-theme="light"] .guide-toggle:hover{border-color:rgba(74,115,0,.55);background:#fff}
+:root[data-theme="light"] .guide-avatar{background:conic-gradient(#6FA30A var(--guide-progress,0%),rgba(28,52,88,.16) 0)}
+:root[data-theme="light"] .guide-avatar img{border-color:#fff}
+:root[data-theme="light"] .section-guide.is-landed .guide-avatar::after{border-color:#6FA30A}
+:root[data-theme="light"] .guide-chevron,
+:root[data-theme="light"] .guide-panel-head>div>span{color:var(--accent-text)}
+:root[data-theme="light"] .guide-panel{background:rgba(255,255,255,.98);box-shadow:0 24px 70px -20px rgba(20,40,70,.5)}
+:root[data-theme="light"] .guide-links a:hover{background:rgba(11,19,32,.05)}
+:root[data-theme="light"] .guide-links a[aria-current="location"]{background:rgba(184,239,67,.24);border-color:rgba(74,115,0,.3);color:var(--accent-text)}
+:root[data-theme="light"] .guide-links a[aria-current="location"]>span{color:var(--accent-text)}
+
+/* ---------- shared bits on paper ---------- */
+:root[data-theme="light"] .eyebrow .dot,
+:root[data-theme="light"] .lime{color:var(--accent-text)}
+
+/* ---------- work ---------- */
+:root[data-theme="light"] .work-nav{background:rgba(255,255,255,.74);box-shadow:0 22px 44px -32px rgba(20,40,70,.55)}
+:root[data-theme="light"] .work-nav-list a:hover{background:rgba(11,19,32,.05)}
+:root[data-theme="light"] .work-nav-list a.is-active:hover{background:var(--accent)}
+:root[data-theme="light"] .work-nav::after{background:linear-gradient(180deg,#6FA30A,rgba(111,163,10,.3));opacity:.8}
+
+/* ---------- mobile ---------- */
+:root[data-theme="light"] .mob-sec::before{
+  background:
+    radial-gradient(900px 420px at 50% -10%, rgba(184,239,67,.12), transparent 66%),
+    linear-gradient(180deg, rgba(221,228,238,.95), rgba(238,242,247,0) 48%);
+}
+:root[data-theme="light"] .mob-craft .n{color:var(--accent-text)}
+
+/* the title bar rides over dark cards once it pins, so it has to be near-solid */
+:root[data-theme="light"] .work-nav{background:rgba(250,252,254,.94)}
+
+/* ---------- experience ---------- */
+:root[data-theme="light"] .xp-when .now,
+:root[data-theme="light"] .xp-co,
+:root[data-theme="light"] .pane-era{color:var(--accent-text)}
+:root[data-theme="light"] .pane-head{background:linear-gradient(90deg,rgba(184,239,67,.3),rgba(184,239,67,.06));border-color:rgba(74,115,0,.26);border-left-color:#6FA30A}
+:root[data-theme="light"] .pane-when{background:linear-gradient(180deg,#0B1320 0%,#2A3950 100%);-webkit-background-clip:text;background-clip:text}
+:root[data-theme="light"] .pane-thesis{border-left-color:#6FA30A;box-shadow:none}
+:root[data-theme="light"] .pane-list li::before{background:#6FA30A;opacity:1}
+
+/* ---------- capabilities ---------- */
+:root[data-theme="light"] .pnum,
+:root[data-theme="light"] .pico,
+:root[data-theme="light"] .captile-ic{color:var(--accent-text)}
+:root[data-theme="light"] .pico{--step-ring:rgba(74,115,0,.5);--step-halo:rgba(111,163,10,.14)}
+:root[data-theme="light"] .pstep:hover .pico{border-color:rgba(74,115,0,.5);color:#3A5C00}
+:root[data-theme="light"] .pstep::after{background:linear-gradient(90deg,#6FA30A,rgba(111,163,10,0))}
+:root[data-theme="light"] .captile-ic--brand{--brand-ring:#8FCB1E;--brand-halo:rgba(111,163,10,.16)}
+:root[data-theme="light"] .captile:hover{box-shadow:0 22px 40px -30px rgba(20,40,70,.6),0 0 0 1px rgba(74,115,0,.35)}
+:root[data-theme="light"] .cap-panel.in .captile .captile-ic{animation-name:iconglowLight}
+:root[data-theme="light"] .cap-panel.in .captile .captile-ic--brand{animation-name:brandglow}
+@keyframes iconglowLight{0%,4%,16%,100%{background:var(--surface);border-color:var(--line-strong);color:var(--accent-text);transform:none}
+  8%,12%{background:var(--accent);border-color:#8FCB1E;color:var(--accent-ink);transform:rotate(-6deg) scale(1.1)}}
+
+/* ---------- recognition / faq / legacy cards ---------- */
+:root[data-theme="light"] .card .domain,
+:root[data-theme="light"] .award .star,
+:root[data-theme="light"] .faq-q:hover .faq-idx,
+:root[data-theme="light"] .faq-item.open .faq-idx{color:var(--accent-text)}
+
+/* experience stage: the cinematic black vignette becomes a faint slate one, and
+   the role pane turns from smoked glass into a white card */
+:root[data-theme="light"] .clock-stage::before{background:radial-gradient(120% 92% at 50% 46%,transparent 60%,rgba(28,52,88,.10) 100%)}
+:root[data-theme="light"] .clock-stage::after{opacity:.03}
+:root[data-theme="light"] .pane{
+  background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.62));
+  border-color:rgba(28,52,88,.12);
+  box-shadow:0 40px 70px -50px rgba(20,40,70,.55),inset 0 1px 0 #fff;
+}
+/* phones: chapters are a plain ruled list, not cards */
+@media (max-width:980px){
+  :root[data-theme="light"] .pane{background:none;box-shadow:none}
+}
+:root[data-theme="light"] .rail button.on span{background:#6FA30A;box-shadow:none}
+
+/* ---------- experience: the dial in daylight ----------
+   The watch turns from a black face in gunmetal to a white face in polished
+   steel. The SVG carries its colours as attributes, which CSS outranks, so the
+   gradients are re-stopped here and the JS-built ticks, brackets and labels are
+   matched by the attribute values main.js gives them. Hour hand stays the lime
+   one (taken down to deep lime so it holds on white); the minute hand goes
+   from silver to navy; the hub stays a dark jewel. */
+:root[data-theme="light"] #gFace stop:nth-child(1){stop-color:#FFFFFF}
+:root[data-theme="light"] #gFace stop:nth-child(2){stop-color:#F3F6FA}
+:root[data-theme="light"] #gFace stop:nth-child(3){stop-color:#DCE4EE}
+:root[data-theme="light"] #gBezel stop:nth-child(1){stop-color:#FFFFFF}
+:root[data-theme="light"] #gBezel stop:nth-child(2){stop-color:#9FAEC1}
+:root[data-theme="light"] #gBezel stop:nth-child(3){stop-color:#F1F5FA}
+:root[data-theme="light"] #gBezel stop:nth-child(4){stop-color:#8C9CB2}
+:root[data-theme="light"] #gBezel stop:nth-child(5){stop-color:#DDE5EE}
+:root[data-theme="light"] #gHour stop:nth-child(1){stop-color:#3A5C00}
+:root[data-theme="light"] #gHour stop:nth-child(2){stop-color:#6FA30A}
+:root[data-theme="light"] #gHour stop:nth-child(3){stop-color:#B8EF43}
+:root[data-theme="light"] #gHour stop:nth-child(4){stop-color:#5E8D06}
+:root[data-theme="light"] #gHour stop:nth-child(5){stop-color:#35540A}
+:root[data-theme="light"] #gMin stop:nth-child(1){stop-color:#0B1320}
+:root[data-theme="light"] #gMin stop:nth-child(2){stop-color:#2E4060}
+:root[data-theme="light"] #gMin stop:nth-child(3){stop-color:#4E6385}
+:root[data-theme="light"] #gMin stop:nth-child(4){stop-color:#0B1320}
+:root[data-theme="light"] #fHand feDropShadow{flood-color:#14284A;flood-opacity:.34}
+:root[data-theme="light"] #dialWrap svg>circle[stroke^="rgba(255"]{stroke:rgba(28,52,88,.10)}
+:root[data-theme="light"] #dialWrap svg>path[stroke^="rgba(255"]{stroke:rgba(255,255,255,.4)}
+:root[data-theme="light"] #dialTicks line{stroke:rgba(28,52,88,.16)}
+:root[data-theme="light"] #dialTicks line[stroke-width="1.6"]{stroke:rgba(11,19,32,.46)}
+:root[data-theme="light"] #dialTicks line[stroke-width="3"]{stroke:rgba(11,19,32,.82)}
+:root[data-theme="light"] #dialBrackets path{stroke:rgba(28,52,88,.20)}
+:root[data-theme="light"] #dialBrackets path[stroke^="var"]{stroke:#6FA30A}
+:root[data-theme="light"] #dialLabels text[fill="var(--accent)"]{fill:var(--accent-text);font-weight:600}
+:root[data-theme="light"] #dialProgress{stroke:#6FA30A;filter:none}
+:root[data-theme="light"] #handMin circle{fill:#6FA30A}
+:root[data-theme="light"] #handMin circle[fill="none"]{fill:none;stroke:#6FA30A;opacity:.6}
+:root[data-theme="light"] .fx-gloss{mix-blend-mode:normal;background:radial-gradient(circle at 32% 16%,rgba(255,255,255,.9),rgba(255,255,255,.2) 34%,transparent 58%)}
+:root[data-theme="light"] .fx-sweep{mix-blend-mode:multiply;opacity:.8;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(150,205,40,.22) 26deg,rgba(28,52,88,.07) 44deg,transparent 92deg,transparent 360deg)}
+:root[data-theme="light"] .fx-rim{box-shadow:inset 0 1px 0 #fff,inset 0 -18px 40px -22px rgba(28,52,88,.34),0 40px 80px -48px rgba(20,40,70,.75)}
+:root[data-theme="light"] .fx-shade{background:linear-gradient(115deg,transparent 42%,rgba(28,52,88,.14) 100%)}
+:root[data-theme="light"] .dial-col::before{background:radial-gradient(circle at 50% 50%,rgba(150,205,40,.20),transparent 60%)}
+/* docked mini dial (phones): white glass bar, white face, navy minute hand */
+:root[data-theme="light"] .dock-bar{background:rgba(255,255,255,.86);border-color:rgba(28,52,88,.14);
+  box-shadow:0 18px 36px -22px rgba(20,40,70,.55),inset 0 1px 0 #fff}
+:root[data-theme="light"] .dock-menu{background:rgba(255,255,255,.98);border-color:rgba(28,52,88,.14);box-shadow:0 30px 60px -24px rgba(20,40,70,.5)}
+:root[data-theme="light"] .dock-menu button.on{background:rgba(184,239,67,.26)}
+:root[data-theme="light"] .dock-menu button.on b,
+:root[data-theme="light"] .dock-when,
+:root[data-theme="light"] .pane-more,
+:root[data-theme="light"] .pane-fig b{color:var(--accent-text)}
+:root[data-theme="light"] .dd-face{fill:#fff;stroke:rgba(28,52,88,.30)}
+:root[data-theme="light"] .dd-track{stroke:rgba(28,52,88,.14)}
+:root[data-theme="light"] .dd-prog,
+:root[data-theme="light"] .dd-h{stroke:#6FA30A}
+:root[data-theme="light"] .dd-m{stroke:#0B1320}
+:root[data-theme="light"] .dd-hub{fill:#6FA30A}
+:root[data-theme="light"] .dock-segs i.on{background:#6FA30A}
+
+/* capabilities backdrop: same signal rings, drawn in slate and deep lime instead of light-on-black */
+:root[data-theme="light"] .cap-amb{
+  background:
+    radial-gradient(120% 85% at 50% -14%, rgba(70,120,180,.10), rgba(46,86,140,.03) 44%, transparent 60%),
+    linear-gradient(180deg, transparent 52%, rgba(28,52,88,.10) 100%)}
+:root[data-theme="light"] .cap-shells{
+  background:
+    radial-gradient(circle at 50% 50%, transparent 18%, rgba(111,163,10,.22) 21.4%, rgba(255,255,255,.7) 23.6%, transparent 27%),
+    radial-gradient(circle at 50% 50%, transparent 29%, rgba(60,100,150,.14) 32.4%, rgba(255,255,255,.6) 34.8%, transparent 38%),
+    radial-gradient(circle at 50% 50%, transparent 40%, rgba(60,100,150,.11) 43.2%, rgba(255,255,255,.5) 45.6%, transparent 49%),
+    radial-gradient(circle at 50% 50%, transparent 51%, rgba(60,100,150,.08) 54.2%, rgba(255,255,255,.4) 56.6%, transparent 60%)}

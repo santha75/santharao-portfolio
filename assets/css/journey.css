@@ -1,0 +1,83 @@
+/* Section seams: every chapter ends on a question. A guide cursor sketches the next
+   chapter's subject in one line, carries that line across the fold onto the chapter's ◆
+   and selects its heading. Plain anchors without JS. */
+.seam{position:relative;z-index:3;display:block;padding:30px 0 44px;color:var(--fg);-webkit-tap-highlight-color:transparent}
+.seam:focus-visible{outline:2px solid var(--accent-text);outline-offset:-6px}
+.seam-in{display:flex;align-items:flex-start;justify-content:space-between;gap:40px}
+.seam-copy{display:block;min-width:0}
+.seam-k{display:block;font:500 10.5px 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-dim)}
+.seam-k b{margin-right:12px;font-weight:500;color:var(--accent-text)}
+.seam-q{display:block;margin-top:12px;font:600 clamp(24px,3vw,40px)/1.12 var(--font-display);letter-spacing:-.03em;text-wrap:balance}
+/* the question is drawn in outline and inks in word by word as it is read (journey.js) */
+.js .seam-q .sw{color:transparent;-webkit-text-stroke:1px rgba(244,247,251,.5);transition:color .5s var(--ease),-webkit-text-stroke-color .5s var(--ease)}
+.js .seam-q .sw.on{color:var(--fg);-webkit-text-stroke-color:transparent}
+.js .seam:is(:hover,:focus-visible) .seam-q .sw{color:var(--accent-text);-webkit-text-stroke-color:transparent}
+.seam-go{display:flex;align-items:flex-start;gap:16px;flex:0 0 auto;font:500 10.5px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-muted)}
+.seam-go-l{display:inline-flex;align-items:center;gap:8px;transition:color .3s,transform .45s var(--ease)}
+.seam-go-l svg{width:14px;height:14px;color:var(--accent-text);animation:seam-nudge 2.2s var(--ease) infinite}
+/* the sketch is drawn into this slot by journey.js; it only reserves the room */
+.seam-glyph{display:block;flex:0 0 auto;width:112px;height:112px}
+.seam:is(:hover,:focus-visible) .seam-go-l{color:var(--fg);transform:translateX(-4px)}
+.seam:is(:hover,:focus-visible) .st-ghost{stroke:var(--accent-text);opacity:.55}
+@keyframes seam-nudge{0%,100%{transform:none}50%{transform:translateY(4px)}}
+
+/* the line: a dotted route to trace over, the lime stroke, and the landing frame */
+.seam-thread{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;fill:none}
+.st-ghost{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:1.5 5;stroke-linecap:round;transition:stroke .3s,opacity .3s}
+.st-line{stroke:var(--accent-text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--p,0));filter:drop-shadow(0 0 7px var(--accent-glow))}
+.st-probe{visibility:hidden}
+.st-a2{stroke:var(--accent-text);stroke-width:1.2;opacity:calc(.25 + var(--p,0) * .75);transition:opacity .5s ease}
+.st-ring{stroke:var(--accent-text);stroke-width:1.2;opacity:0;transform-box:fill-box;transform-origin:center}
+.seam.is-docked .st-ring{animation:seam-dock .9s var(--ease)}
+.seam.is-docked .st-a2{opacity:0}
+@keyframes seam-dock{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(3.4)}}
+
+/* arrival: the cursor selects the next heading, the way a design tool would */
+.seam-sel{position:absolute;display:block;border:1px solid var(--accent-text);opacity:0;pointer-events:none}
+.seam-sel i{position:absolute;width:7px;height:7px;background:var(--bg);border:1px solid var(--accent-text)}
+.seam-sel i:nth-child(1){left:-4px;top:-4px}.seam-sel i:nth-child(2){right:-4px;top:-4px}
+.seam-sel i:nth-child(3){left:-4px;bottom:-4px}.seam-sel i:nth-child(4){right:-4px;bottom:-4px}
+.seam-sel b{position:absolute;left:calc(100% + 10px);bottom:-1px;padding:2px 7px;border-radius:4px;background:var(--accent);color:var(--accent-ink);font:500 10px 'JetBrains Mono',monospace;letter-spacing:.02em;white-space:nowrap}
+.seam.is-docked .seam-sel{animation:seam-select 2.6s var(--ease) both}
+@keyframes seam-select{0%{opacity:0;clip-path:inset(-6px 100% -6px -6px)}18%{opacity:1;clip-path:inset(-6px -120px -6px -6px)}78%{opacity:1;clip-path:inset(-6px -120px -6px -6px)}100%{opacity:0;clip-path:inset(-6px -120px -6px -6px)}}
+
+/* the guide: the same multiplayer cursor that floats round the hero portrait */
+.seam-cursor{position:absolute;left:0;top:0;z-index:1;display:flex;align-items:flex-start;pointer-events:none;color:var(--accent);opacity:0;transition:opacity .25s ease;will-change:transform}
+.seam-cursor.is-on{opacity:1}
+.seam-cursor svg{width:17px;height:17px;flex:0 0 auto;margin:-2px 0 0 -3px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+.seam-cursor b{opacity:0;transition:opacity .3s ease;margin:13px 0 0 -3px;padding:4px 9px;border-radius:3px 8px 8px 8px;background:var(--accent);color:var(--accent-ink);font:500 10.5px 'Inter',system-ui,sans-serif;letter-spacing:.01em;white-space:nowrap;box-shadow:0 8px 20px -8px rgba(0,0,0,.7)}
+.seam-cursor.is-tagged b{opacity:1}
+/* near the right edge the name tag hangs to the left of the pointer instead */
+.seam-cursor.is-flip b{position:absolute;right:calc(100% - 6px);top:4px;margin:0;border-radius:8px 3px 8px 8px}
+
+/* the next chapter's ◆ waits dim, then takes the hand-off */
+.js .seam-dot{display:inline-block;opacity:.3;transition:opacity .4s ease}
+.js .seam-dot.is-lit{opacity:1;animation:seam-lit .8s var(--ease)}
+@keyframes seam-lit{0%{transform:scale(.5) rotate(-90deg)}55%{transform:scale(1.7) rotate(0)}100%{transform:none}}
+
+/* a seam supplies the breathing room, so the chapter after it starts sooner */
+.seam+.band,.seam+.band-alt{padding-top:96px}
+.band:has(+.seam){padding-bottom:72px}
+.hero+.seam{margin-top:-34px;padding-top:0}
+
+:root[data-theme="light"] .seam-q .sw{-webkit-text-stroke-color:rgba(11,19,32,.55)}
+:root[data-theme="light"] .seam-cursor svg{color:#5E8C00;filter:drop-shadow(0 2px 5px rgba(20,40,70,.3))}
+:root[data-theme="light"] .seam-cursor b{box-shadow:0 8px 18px -8px rgba(20,40,70,.45)}
+
+@media(max-width:800px){
+  .seam{padding:22px 0 36px}
+  .seam-in{gap:20px}
+  .seam-go-l{display:none}
+  .seam-glyph{width:76px;height:76px}
+  .seam-sel b{display:none}
+  .seam+.band,.seam+.band-alt{padding-top:72px}
+  .band:has(+.seam){padding-bottom:52px}
+  .hero+.seam{margin-top:0;padding-top:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .js .seam-q .sw{color:var(--fg);-webkit-text-stroke-color:transparent}
+  .seam-cursor,.seam-sel{display:none}
+  .seam-go-l svg{animation:none}
+  .js .seam-dot{opacity:1}
+  .seam.is-docked .st-ring,.js .seam-dot.is-lit{animation:none}
+}

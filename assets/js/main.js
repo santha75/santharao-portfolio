@@ -58,13 +58,43 @@
     window.matchMedia('(min-width:981px)').addEventListener('change',e=>{ if(e.matches) set(false); });
   })();
 
-  // scroll reveal
+  /* ---------- THEME: dark by default, light on request ----------
+     The inline script in the head has already set html[data-theme] before
+     first paint; this only flips it, remembers the choice and keeps the
+     button's label and the browser chrome colour in step. */
+  (function(){
+    const btn=document.getElementById('themeToggle');
+    if(!btn) return;
+    const root=document.documentElement;
+    const chrome=document.querySelector('meta[name="theme-color"]');
+    const apply=t=>{
+      root.setAttribute('data-theme',t);
+      btn.setAttribute('aria-label',t==='light'?'Switch to dark mode':'Switch to light mode');
+      if(chrome) chrome.content=t==='light'?'#F4F7FB':'#05080D';
+    };
+    apply(root.getAttribute('data-theme')==='light'?'light':'dark');
+    btn.addEventListener('click',()=>{
+      const t=root.getAttribute('data-theme')==='light'?'dark':'light';
+      apply(t);
+      try{localStorage.setItem('theme',t)}catch(e){}
+    });
+  })();
+
+  // Large transformed sections and sticky 3D cards are expensive on phones.
+  const lightMotion=matchMedia('(max-width:860px), (hover:none)');
+  // Reveal once, before the reader reaches the content. Mobile stays visible.
   const io=new IntersectionObserver((entries)=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-  },{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
+  },{threshold:0,rootMargin:'120px 0px'});
   document.querySelectorAll('.reveal').forEach((el,i)=>{
+    if(lightMotion.matches){ el.classList.add('in'); return; }
     el.style.transitionDelay=(Math.min(i%6,5)*55)+'ms';
     io.observe(el);
+  });
+  lightMotion.addEventListener('change',()=>{
+    if(lightMotion.matches) document.querySelectorAll('.reveal').forEach(el=>{
+      el.classList.add('in'); el.style.transitionDelay=''; io.unobserve(el);
+    });
   });
 
   // "explore more" strip: pointer spotlight (CSS reads --mx/--my)
@@ -93,22 +123,25 @@
     // figures like "0→1" and word figures are left as they are
     const nums=new Map();
     cards.forEach(card=>{
-      const n=card.querySelector('.wcard-outcome-n');
-      if(!n || n.classList.contains('is-word')) return;
-      const text=n.textContent.trim();
-      const m=text.match(/^([^\d]*)(\d[\d,]*)([^\d]*)$/);
-      if(!m) return;
-      const end=parseInt(m[2].replace(/,/g,''),10);
-      if(!end) return;
-      n.textContent='';
-      const sr=document.createElement('span'); sr.className='sr'; sr.textContent=text;
-      const vis=document.createElement('span'); vis.setAttribute('aria-hidden','true'); vis.textContent=m[1]+'0'+m[3];
-      n.append(sr,vis);
-      nums.set(card,{vis,pre:m[1],end,suf:m[3],text});
+      // a case-band card (.has-case) carries three figures instead of one
+      card.querySelectorAll('.wcard-outcome-n,.wcard-stat-n').forEach(n=>{
+        if(n.classList.contains('is-word')) return;
+        const text=n.textContent.trim();
+        const m=text.match(/^([^\d]*)(\d[\d,]*)([^\d]*)$/);
+        if(!m) return;
+        const end=parseInt(m[2].replace(/,/g,''),10);
+        if(!end) return;
+        n.textContent='';
+        const sr=document.createElement('span'); sr.className='sr'; sr.textContent=text;
+        const vis=document.createElement('span'); vis.setAttribute('aria-hidden','true'); vis.textContent=m[1]+'0'+m[3];
+        n.append(sr,vis);
+        if(!nums.has(card)) nums.set(card,[]);
+        nums.get(card).push({vis,pre:m[1],end,suf:m[3],text});
+      });
     });
-    function countUp(card){
-      const d=nums.get(card); if(!d) return;
-      if(reduced.matches){ d.vis.textContent=d.text; return; }
+    function countUp(card){ (nums.get(card)||[]).forEach(countOne); }
+    function countOne(d){
+      if(reduced.matches || lightMotion.matches){ d.vis.textContent=d.text; return; }
       const t0=performance.now(), dur=900+Math.min(600,d.end*6);
       const frame=now=>{
         const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
@@ -122,8 +155,11 @@
         if(!en.isIntersecting) return;
         en.target.classList.add('is-seen'); countUp(en.target); seen.unobserve(en.target);
       });
-    },{threshold:.2});
-    cards.forEach(c=>seen.observe(c));
+    },{threshold:0,rootMargin:'120px 0px'});
+    cards.forEach(c=>{
+      if(lightMotion.matches){ c.classList.add('is-seen'); countUp(c); }
+      else seen.observe(c);
+    });
 
     // tall captures (most are full-page exports) get a slow scroll-through on
     // hover; the duration follows how much page sits below the fold
@@ -201,8 +237,6 @@
     const qwho=root.querySelector('.af-who');
     const qrole=root.querySelector('.af-role');
     const qli=root.querySelector('.af-li');
-    const barFill=root.querySelector('.af-st-bar i');
-    const barPlane=root.querySelector('.af-st-plane');
     const autoplay=root.querySelector('.af-autoplay');
     const quote=root.querySelector('.af-quote');
 
@@ -222,24 +256,24 @@
        head-and-shoulders crop; set it when a photo is framed differently).
        =================================================================== */
     const TESTIMONIALS=[
-      { quote:'Eleven years, and I never once had to explain the business problem twice. Santharao took PieTrack from a pile of modules to a product — one system our engineers could build against and our customers could actually learn — then did it again on RunCode, for <b>100,000+ developers</b>. He trained every designer we hired, and the standard he set outlasted him.',
+      { quote:'Santharao worked with us for eleven years, and I rarely had to explain a business problem to him twice. He turned PieTrack from a set of separate modules into one product that our engineers could build on and our customers could pick up quickly. He did the same for RunCode, which now serves <b>100,000+ developers</b>. He also trained most of the designers we hired after him.',
         name:'Aswani Kumar', role:'Founder & CEO', company:'MicroPyramid \u00b7 RunCode.io',
         li:'https://www.linkedin.com/in/ashwin1231/',
         photo:'assets/img/people/aswani-kumar.png',
         logo:'<svg class="lg" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1.5l4.5 9h-9zM3.7 7h4.6"/></svg>' },
-      { quote:'He gave our AI product a spine. Santharao turned a tangle of agent workflows into dashboards enterprise buyers actually trust — and built the design system underneath, so three verticals shipped without three redesigns. He <b>cut our design-to-dev handoff by about a quarter</b>.',
+      { quote:'Our agent workflows were hard to explain, even to ourselves. Santharao turned them into dashboards our enterprise customers could follow and trust. The design system he built meant we could launch three verticals without redesigning each time, and it <b>cut our design-to-dev handoff by about a quarter</b>.',
         name:'Naresh Vemparala', role:'Co-Founder & COO', company:'Brightcone.ai', li:'https://www.linkedin.com/in/naresh-vemparala/',
         photo:'assets/img/people/naresh.png',
         logo:'<svg class="lg" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1.5l4.5 9h-9z"/></svg>' },
-      { quote:'In clinical decision support the interface has to earn a pharmacist\'s trust before the model does. He got Formulary IQ\'s savings analysis down to something a committee could act on in one screen — then handed it over as <b>production HTML/CSS across three breakpoints</b>.',
+      { quote:'Pharmacists won’t use a tool they don’t trust, so the interface mattered as much as the model. Santharao got Formulary IQ’s savings analysis onto a single screen that a committee could read and act on. He then delivered it as <b>production-ready HTML/CSS across three breakpoints</b>, which saved my team a lot of time.',
         name:'Tulasee Rao Chintha', role:'CTO & Co-Founder', company:'InpharmD \u00b7 Yanthraa', li:'https://www.linkedin.com/in/tulaseeraochintha/',
         photo:'assets/img/people/tulasee.png',
         logo:'<svg class="lg" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1.5v9M1.5 6h9"/></svg>' },
-      { quote:'Worked across our US and India teams like the timezones didn\'t exist. He took R-Clinic\'s consultation flow apart and put it back together so clinicians and patients each got a view that made sense — then did the same for RedRiver One. <b>Senior, calm, and invested in outcomes</b> rather than pixels.',
+      { quote:'Santharao worked with our teams in the US and India, and the time difference was never a problem. He reworked R-Clinic’s consultation flow so that doctors and patients each see what they need, and later did the same for RedRiver One. He is <b>calm, experienced, and cares about the result</b> more than the pixels.',
         name:'Balaji Krishnammagaru', role:'Founder', company:'MedOnGo \u00b7 TECLEVER \u00b7 Jansankalp', li:'https://www.linkedin.com/in/krishnammagaru/',
         photo:'assets/img/people/balaji.png', photoPos:'center 50%',
         logo:'<svg class="lg" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1l5 5-5 5-5-5z"/></svg>' },
-      { quote:'A rare designer who hands an engineer validated, production HTML/CSS. On InnPro he\'d already caught the edge cases in the browser — three role-scoped apps, <b>80+ screens, and almost nothing bounced back</b> in review.',
+      { quote:'It’s rare to get production-ready HTML/CSS from a designer. With InnPro, Santharao had already tested the edge cases in the browser before handing over. We built three role-based apps and <b>80+ screens, and very little came back</b> in review.',
         name:'Srikanth Polineni', role:'Founder', company:'InnPro', li:'https://www.linkedin.com/in/srikanthpolineni/',
         photo:'assets/img/people/srikanth.png',
         logo:'<svg class="lg" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 10l5-8 5 8"/></svg>' }
@@ -282,9 +316,6 @@
         tab.setAttribute('aria-selected',String(active));
         tab.tabIndex=active?0:-1;
       });
-      const pct=((i+1)/TESTIMONIALS.length)*100;
-      if(barFill) barFill.style.width=pct+'%';
-      if(barPlane) barPlane.style.left=pct+'%';
       /* narrow screens: each rail is its own sideways scroller, so bring the
          selected window / company into the middle of it. Scrolls the rail only —
          scrollIntoView would also drag the page to the section on auto-advance. */
@@ -349,7 +380,34 @@
     vio.observe(root);
     document.addEventListener('visibilitychange',schedule);
 
-    idx=0; paint(0);
+    /* The quotes differ in length and, on phones, sit above the boarding pass
+       and the rest of the page: reserve the tallest one's height at the current
+       width so nothing below jumps on every auto-advance. */
+    const qbody=root.querySelector('.af-qbody');
+    let fitW=0;
+    function fitQuote(){
+      const w=qbody.getBoundingClientRect().width;
+      if(!w||Math.abs(w-fitW)<1) return;
+      fitW=w;
+      const probe=qbody.cloneNode(true);
+      probe.setAttribute('aria-hidden','true');
+      probe.style.cssText='position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;transition:none;width:'+w+'px';
+      root.appendChild(probe);
+      let max=0;
+      TESTIMONIALS.forEach(d=>{
+        probe.querySelector('.af-qtext').innerHTML=d.quote;
+        probe.querySelector('.af-who').textContent=d.name;
+        probe.querySelector('.af-role').textContent=d.role+' · '+d.company;
+        max=Math.max(max,probe.offsetHeight);
+      });
+      probe.remove();
+      quote.style.minHeight=Math.ceil(max)+'px';
+    }
+    let fitT=null;
+    window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitQuote,160);});
+    if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{fitW=0;fitQuote();});
+
+    idx=0; paint(0); fitQuote();
   })();
 
 
@@ -377,7 +435,7 @@
   (function(){
     const stack=document.getElementById('workstack'); if(!stack) return;
     const cards=[...stack.querySelectorAll('.wcard')]; if(!cards.length) return;
-    const reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+    const reduced=window.matchMedia('(prefers-reduced-motion:reduce), (max-width:860px), (hover:none)');
     const clamp=v=>Math.max(0,Math.min(1,v));
     const ease=v=>{ const p=clamp(v); return p*p*(3-2*p); };
     let wtop=150, metrics=[];
@@ -413,6 +471,11 @@
       }
     }
     function measure(){
+      if(reduced.matches){
+        cards.forEach(card=>card.style.removeProperty('--tall'));
+        metrics=[];
+        return;
+      }
       wtop=parseFloat(getComputedStyle(stack).getPropertyValue('--wtop'))||150;
       let top=parseFloat(getComputedStyle(stack).paddingTop)||0;
       metrics=cards.map(card=>{
@@ -425,7 +488,7 @@
       });
       onScroll();
     }
-    function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }
+    function onScroll(){ if(!reduced.matches && !ticking){ ticking=true; requestAnimationFrame(update); } }
     function motionChange(){
       cards.forEach(card=>{
         card.classList.remove('is-covered','is-moving');
@@ -481,7 +544,8 @@
       const x=ar.left - nr.left + ar.width/2;
       // hide the nub while the active pill is scrolled out of the bar (mobile overflow)
       const inView = x > 6 && x < nr.width - 6;
-      nav.style.setProperty('--tailx', x.toFixed(1)+'px');
+      // clamp: a hidden nub translated past the bar still widens the page on phones
+      nav.style.setProperty('--tailx', Math.max(0,Math.min(nr.width,x)).toFixed(1)+'px');
       tail.classList.toggle('is-on', inView);
       // stem length = the live distance down to whichever card is at the front
       const front=cards[Math.max(0,current)]||cards[0];
@@ -612,7 +676,11 @@
       dialog.querySelector('#workLightboxTitle').textContent=subtitle
         ? heading.firstChild.textContent.trim()+' \u2014 '+subtitle.textContent.trim()
         : heading.textContent;
-      dialog.querySelector('#workLightboxDescription').textContent=card.querySelector('.wcard-summary').textContent;
+      // Case-study cards use challenge/solution copy instead of a summary.
+      const description=dialog.querySelector('#workLightboxDescription');
+      description.textContent=card.querySelector('.wcard-summary')?.textContent
+        || [...card.querySelectorAll('.wcard-brief p')].map(p=>p.textContent).join(' ');
+      description.hidden=!description.textContent.trim();
       dialog.querySelector('#workLightboxDomain').textContent=card.querySelector('.domain').textContent;
       dialog.querySelector('#workLightboxCount').textContent=String(index+1).padStart(2,'0')+' / '+String(cards.length).padStart(2,'0');
       const sourceLink=card.querySelector('.wcard-link');
@@ -630,6 +698,14 @@
       });
     }
     cards.forEach((card,index)=>{
+      /* phones show the role as a badge on the project screen: a visual copy of
+         the head-row tag (which stays the one screen readers get) */
+      const role=card.querySelector('.wcard-head .wcard-role'), body=card.querySelector('.shot-body');
+      if(role && body && !body.querySelector('.shot-role')){
+        const tag=role.cloneNode(true);
+        tag.classList.add('shot-role'); tag.setAttribute('aria-hidden','true');
+        body.appendChild(tag); card.classList.add('has-shot-role');
+      }
       const button=card.querySelector('.shot-open'), source=card.querySelector('.shot-img');
       if(!button || !source) return;
       button.classList.add('is-ready');
@@ -669,15 +745,15 @@
     const REDUCE = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
     const ERAS = [
-      {name:'Micropyramid Informatics', span:'Apr 2013 — Sep 2024'},
-      {name:'Independent Engagements',  span:'Oct 2024 — Dec 2024'},
-      {name:'Yanthraa Information Systems', span:'Jan 2025 — Jul 2026'},
-      {name:'Medongo · R-Clinic', span:'2026'}
+      {name:'MicroPyramid Informatics', span:'Apr 2013 – Sep 2024'},
+      {name:'Independent Engagements',  span:'Oct 2024 – Dec 2024'},
+      {name:'Yanthraa Information Systems', span:'Jan 2025 – Jul 2026'},
+      {name:'MedOnGo · R-Clinic', span:'2026'}
     ];
 
     const CH = [
-      { era:0, mark:'2013', when:'2013 — 2016',
-        role:'Junior → UI Designer', co:'Micropyramid Informatics',
+      { era:0, mark:'2013', when:'2013 – 2016',
+        role:'Junior → UI Designer', co:'MicroPyramid Informatics',
         thesis:'Learning the craft, then learning to engineer it.',
         pts:[
           'Started on the production floor rebuilding screens until I understood why every edge sat where it sat — and learned the habit that still defines me: if I design it, I can build it in HTML and CSS.',
@@ -686,8 +762,8 @@
         tools:[['Ps','Photoshop'],['Ai','Illustrator'],['Bz','Balsamiq']],
         stack:[['H5','HTML5'],['C3','CSS3'],['Bs','Bootstrap'],['Sa','Sass'],['jQ','jQuery']] },
 
-      { era:0, mark:'2017', when:'2017 — 2019',
-        role:'Senior UI/UX Designer', co:'Micropyramid Informatics',
+      { era:0, mark:'2017', when:'2017 – 2019',
+        role:'Senior UI/UX Designer', co:'MicroPyramid Informatics',
         thesis:'Explaining design simply made me design simply.',
         pts:[
           'Began presenting to CTOs and product owners. Any rationale I couldn\u2019t say in one sentence turned out to be a design that didn\u2019t work.',
@@ -696,9 +772,10 @@
         tools:[['Sk','Sketch'],['XD','Adobe XD'],['Fg','Figma'],['In','InVision']],
         stack:[['H5','HTML5'],['C3','CSS3'],['Sa','Sass'],['Bs','Bootstrap']] },
 
-      { era:0, mark:'2020', when:'2020 — 2024',
-        role:'UI Lead', co:'Micropyramid Informatics',
+      { era:0, mark:'2020', when:'2020 – 2024',
+        role:'UI Lead', co:'MicroPyramid Informatics',
         thesis:'Owning the system, multiplying the team.',
+        figs:[['20%','faster design-to-dev'],['100k+','RunCode.io users'],['6','designers mentored']],
         pts:[
           'Built a scalable design system and component library — design-to-development turnaround down 20%, rework down with it.',
           'Mentored 6 designers to pixel-accurate delivery across desktop and responsive breakpoints.',
@@ -707,29 +784,30 @@
         tools:[['Fg','Figma'],['FJ','FigJam'],['Zp','Zeplin'],['Pp','Penpot']],
         stack:[['H5','HTML5'],['C3','CSS3'],['Tw','Tailwind'],['Bs','Bootstrap'],['Sa','Sass']] },
 
-      { era:1, mark:'2024', when:'Oct 2024 — Dec 2024',
+      { era:1, mark:'2024', when:'Oct 2024 – Dec 2024',
         role:'Consultant UI/UX Designer', co:'Independent engagements',
         thesis:'Design that had to survive contact with production.',
         pts:[
           'Converted Figma designs into responsive, pixel-perfect HTML/CSS for InnPro, a cloud hotel-management system — 3 modules, ~48 mobile screens.',
-          'Built a Bootstrap front end for a customizable e-commerce product across 3 breakpoints.'
+          'Built a Bootstrap front end for a customisable e-commerce product across 3 breakpoints.'
         ],
         tools:[['Fg','Figma']],
         stack:[['H5','HTML5'],['C3','CSS3'],['Bs','Bootstrap'],['jQ','jQuery']] },
 
-      { era:2, mark:'2025', when:'Jan 2025 — Jul 2026',
+      { era:2, mark:'2025', when:'Jan 2025 – Jul 2026',
         role:'UI/UX Designer / UI Lead', co:'Yanthraa Information Systems · part-time',
         thesis:'Making AI legible enough to act on.',
+        figs:[['~25%','faster design-to-dev handoff']],
         pts:[
-          'Lead end-to-end design for Brightcone.ai — automated actions, human-in-the-loop review and recommendations turned into dashboards that surface the decision in seconds.',
+          'Led end-to-end design for Brightcone.ai — automated actions, human-in-the-loop review and recommendations turned into dashboards that surface the decision in seconds.',
           'Built reusable tokens and patterns across product, marketing and sales: ~25% faster design-to-dev handoff.',
-          'Partner with leadership on investor and enterprise-sales storytelling.'
+          'Partnered with leadership on investor and enterprise-sales storytelling.'
         ],
         tools:[['Fg','Figma'],['FM','Figma Make'],['Pp','Penpot'],['Cl','Claude'],['AI','Google AI Studio']],
         stack:[['H5','HTML5'],['C3','CSS3'],['Tw','Tailwind']] },
 
       { era:3, mark:'2026', when:'2026',
-        role:'Consultant', co:'R-Clinic · Medongo',
+        role:'Consultant', co:'R-Clinic · MedOnGo',
         thesis:'Care workflows, with nothing in the way.',
         pts:[
           'Refined UI/UX across consultation, pre- and post-consultation modules for a telehealth platform.',
@@ -752,9 +830,9 @@
     /* ---- geometry ---- */
     const SPAN = (ARC1 - ARC0) / N;
     const slotA = i => ARC0 + SPAN * (i + 0.5);
-    const pt = (r,deg)=>{const a=(deg-90)*Math.PI/180;return [C+r*Math.cos(a), C+r*Math.sin(a)];};
-    const arcPath=(r,a0,a1)=>{
-      const [x0,y0]=pt(r,a0),[x1,y1]=pt(r,a1);
+    const pt = (r,deg,c=C)=>{const a=(deg-90)*Math.PI/180;return [c+r*Math.cos(a), c+r*Math.sin(a)];};
+    const arcPath=(r,a0,a1,c=C)=>{
+      const [x0,y0]=pt(r,a0,c),[x1,y1]=pt(r,a1,c);
       return `M${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${(a1-a0)>180?1:0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
     };
     const eraBounds = e => {
@@ -796,9 +874,23 @@
     });
 
     /* ---- build panes + rail ---- */
-    const chip=(a,cls)=>`<span class="mk"><b>${a[0]}</b>${a[1]}</span>`;
+    const toolLogos={
+      'Photoshop':'photoshop','Illustrator':'illustrator','Balsamiq':'balsamiq',
+      'Sketch':'sketch','Adobe XD':'adobe-xd','Figma':'figma','InVision':'invision',
+      'FigJam':'figjam','Zeplin':'zeplin','Penpot':'penpot','Figma Make':'figma-make',
+      'Claude':'claude','Google AI Studio':'google-ai-studio','HTML5':'html5',
+      'CSS3':'css3','Bootstrap':'bootstrap','Sass':'sass','jQuery':'jquery','Tailwind':'tailwind'
+    };
+    const themeLogos=new Set(['penpot','google-ai-studio']);
+    const toolNames=items=>items.map(([,name])=>{
+      const logo=toolLogos[name];
+      const icon=logo ? `<img class="kit-logo${themeLogos.has(logo)?' kit-logo--light':''}" src="assets/img/tools/${logo}.svg" width="18" height="18" alt="" decoding="async">${themeLogos.has(logo)?`<img class="kit-logo kit-logo--dark" src="assets/img/tools/${logo}-dark.svg" width="18" height="18" alt="" decoding="async">`:''}` : '';
+      return `<span class="kit-tool" title="${name}">${icon}<span class="kit-name">${name}</span></span>`;
+    }).join('');
+    const chev='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    const sameEra=i=>i>0 && CH[i-1].era===CH[i].era;
     panesEl.innerHTML = CH.map((c,i)=>`
-      <article class="pane" id="pane-${i}">
+      <article class="pane${sameEra(i)?' same-era':''}" id="pane-${i}">
         <div class="pane-k">
           <span class="pane-era">${c.co}</span>
           <span class="pane-idx">0${i+1}<i>&thinsp;/&thinsp;0${N}</i></span>
@@ -810,13 +902,15 @@
         <div class="pane-cols">
           <div class="pane-main">
             <p class="pane-thesis">${c.thesis}</p>
-            <ul class="pane-list">${c.pts.map(p=>`<li>${p}</li>`).join('')}</ul>
+            ${c.figs?`<div class="pane-figs">${c.figs.map(([n,l])=>`<span class="pane-fig"><b>${n}</b><span>${l}</span></span>`).join('')}</div>`:''}
+            <ul class="pane-list" id="pane-list-${i}">${c.pts.map(p=>`<li>${p}</li>`).join('')}</ul>
+            <button class="pane-more" type="button" aria-expanded="false" aria-controls="pane-list-${i}"><span>Read more</span>${chev}</button>
           </div>
           <aside class="pane-side">
-            <div class="kits">
-              <div class="kit"><span class="kit-lbl">Toolkit</span><div class="marks">${c.tools.map(chip).join('')}</div></div>
-              <div class="kit stack"><span class="kit-lbl">Build stack</span><div class="marks">${c.stack.map(chip).join('')}</div></div>
-            </div>
+            <dl class="kits">
+              <div class="kit"><dt class="kit-lbl"><span class="kl-full">Design tools</span><span class="kl-short">Design</span></dt><dd class="kit-tools">${toolNames(c.tools)}</dd></div>
+              <div class="kit"><dt class="kit-lbl"><span class="kl-full">Development</span><span class="kl-short">Build</span></dt><dd class="kit-tools">${toolNames(c.stack)}</dd></div>
+            </dl>
           </aside>
         </div>
       </article>`).join('');
@@ -830,6 +924,61 @@
     }).join('');
     const dots=[...railEl.children];
 
+    /* ---- "read more" on phones (bullets fold to two lines in CSS) ---- */
+    panes.forEach(p=>{
+      const b=p.querySelector('.pane-more');
+      b.addEventListener('click',()=>{
+        const open=p.classList.toggle('is-open');
+        b.setAttribute('aria-expanded',open);
+        b.firstElementChild.textContent=open?'Show less':'Read more';
+      });
+    });
+    /* no toggle where nothing is actually cut off */
+    const syncMore=()=>panes.forEach(p=>{
+      if(p.classList.contains('is-open')) return;
+      const cut=[...p.querySelectorAll('.pane-list li')].some(li=>li.scrollHeight>li.clientHeight+1);
+      p.querySelector('.pane-more').hidden=!cut;
+    });
+
+    /* ---- docked mini dial (≤980px): the full dial scrolls away, this carries on ---- */
+    const dock=document.getElementById('dialDock'), dockBar=document.getElementById('dockBar');
+    const dockMenu=document.getElementById('dockMenu'), dockTxt=document.getElementById('dockTxt');
+    const dockWhen=document.getElementById('dockWhen'), dockRole=document.getElementById('dockRole');
+    const dockIdx=document.getElementById('dockIdx');
+    const dHour=document.getElementById('dockHour'), dMin=document.getElementById('dockMin');
+    const dProg=document.getElementById('dockProg');
+    const DC=24, DR=18.5, HDR=68;
+    document.getElementById('dockTrack').setAttribute('d',arcPath(DR,ARC0,ARC1,DC));
+    const segsEl=document.getElementById('dockSegs');
+    segsEl.innerHTML=CH.map((c,i)=>`<i${i>0&&!sameEra(i)?' class="newera"':''}></i>`).join('');
+    const segs=[...segsEl.children];
+    dockMenu.innerHTML=CH.map((c,i)=>
+      `<button type="button" data-i="${i}"${i>0&&!sameEra(i)?' class="newera"':''}><b>${c.mark}</b><span>${c.role}<small>${c.co}</small></span></button>`).join('');
+    const menuBtns=[...dockMenu.children];
+    const setMenu=open=>{
+      dockMenu.hidden=!open;
+      dockBar.setAttribute('aria-expanded',open);
+    };
+    dockBar.addEventListener('click',()=>setMenu(dockMenu.hidden));
+    menuBtns.forEach(b=>b.addEventListener('click',()=>{
+      setMenu(false);
+      panes[+b.dataset.i].scrollIntoView({behavior:REDUCE?'auto':'smooth',block:'start'});
+    }));
+    document.addEventListener('click',e=>{ if(!dockMenu.hidden && !dock.contains(e.target)) setMenu(false); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !dockMenu.hidden){ setMenu(false); dockBar.focus(); } });
+    let dockOn=false;
+    function syncDock(){
+      let on=false;
+      if(isNarrow()){
+        const r=panesEl.getBoundingClientRect();
+        on = wrap.getBoundingClientRect().bottom < HDR+24 && r.bottom > HDR+190;
+      }
+      if(on===dockOn) return;
+      dockOn=on;
+      dock.classList.toggle('on',on);
+      if(!on) setMenu(false);
+    }
+
     /* ---- scroll → position ---- */
     const clamp=(v,a,b)=>v<a?a:v>b?b:v;
     const isNarrow=()=>window.innerWidth<=980;
@@ -837,11 +986,16 @@
     function readPos(){
       const vh=window.innerHeight;
       if(isNarrow()){
-        const r=panesEl.getBoundingClientRect();
-        const denom=r.height/N;
-        if(!(denom>0)) return 0;
-        const p=(vh*0.46 - r.top)/denom - 0.5;
-        return Number.isFinite(p)?clamp(p,0,N-1):0;
+        /* chapters are unequal in height here, so follow the one that is
+           actually under the reading line (just below the docked bar) */
+        const top=panesEl.getBoundingClientRect().top;
+        const line=Math.max(vh*0.36, HDR+150);
+        for(let i=0;i<N;i++){
+          const t=top+panes[i].offsetTop, h=panes[i].offsetHeight;
+          if(!(h>0)) return 0;
+          if(line < t+h || i===N-1) return clamp(i-0.5+(line-t)/h, 0, N-1);
+        }
+        return 0;
       }
       const r=track.getBoundingClientRect();
       const total=track.offsetHeight - vh;
@@ -902,11 +1056,21 @@
           b.setAttribute('stroke', e===era?'var(--accent)':'rgba(255,255,255,.16)');
           b.setAttribute('stroke-width', e===era?'4':'2.5');
         });
+        dockWhen.textContent=CH[idx].when;
+        dockRole.textContent=CH[idx].role;
+        dockIdx.textContent=`0${idx+1}/0${N}`;
+        dockBar.setAttribute('aria-label',`${CH[idx].when}, ${CH[idx].role}. Chapter ${idx+1} of ${N}. Jump to a chapter`);
+        segs.forEach((s,i)=>s.classList.toggle('on', i<=idx));
+        menuBtns.forEach((b,i)=>{ b.classList.toggle('on', i===idx); b.setAttribute('aria-current', i===idx?'true':'false'); });
+        if(dockOn){ dockTxt.classList.remove('swap'); void dockTxt.offsetWidth; dockTxt.classList.add('swap'); }
       }
+      syncDock();
     }
 
-    let last=performance.now();
+    let last=performance.now(), dialLive=false, dialFrame=0;
     function render(now){
+      dialFrame=0;
+      if(!dialLive || document.hidden) return;
       now=now||performance.now();
       const dt=Math.min(now-last,60); last=now;
       const k=REDUCE?1:1-Math.exp(-dt/95);
@@ -918,13 +1082,27 @@
       hMin.setAttribute('transform',`rotate(${(cur.m+drift).toFixed(3)} 320 320)`);
       hHour.setAttribute('transform',`rotate(${(cur.h+drift*0.5).toFixed(3)} 320 320)`);
       progEl.setAttribute('d', arcPath(266, ARC0, Math.max(ARC0+0.4,cur.t)));
+      if(dockOn){
+        dMin.setAttribute('transform',`rotate(${(cur.m+drift).toFixed(2)} ${DC} ${DC})`);
+        dHour.setAttribute('transform',`rotate(${(cur.h+drift*0.5).toFixed(2)} ${DC} ${DC})`);
+        dProg.setAttribute('d', arcPath(DR, ARC0, Math.max(ARC0+0.4,cur.t), DC));
+      }
       if(!REDUCE && !isNarrow()){
         const p=(cur.t-ARC0)/(ARC1-ARC0);
         wrap.style.setProperty('--ry', (-9 + p*5).toFixed(2)+'deg');
         wrap.style.setProperty('--rx', (4.5 - p*7).toFixed(2)+'deg');
       }
-      requestAnimationFrame(render);
+      dialFrame=requestAnimationFrame(render);
     }
+    function syncDial(){
+      if(dialLive && !document.hidden){
+        if(!dialFrame){ last=performance.now(); dialFrame=requestAnimationFrame(render); }
+      }else{ cancelAnimationFrame(dialFrame); dialFrame=0; }
+    }
+    new IntersectionObserver(entries=>{
+      dialLive=entries.some(entry=>entry.isIntersecting); syncDial();
+    },{rootMargin:'100px 0px'}).observe(track);   // the track, not the dial: on phones the dial scrolls away while the dock keeps running
+    document.addEventListener('visibilitychange',syncDial);
 
     dots.forEach(d=>d.addEventListener('click',()=>{
       const i=+d.dataset.i;
@@ -938,9 +1116,12 @@
     window.addEventListener('resize', ()=>{
       if(isNarrow()) panes.forEach(p=>{p.style.cssText='';});
       measurePanes();
+      syncMore();
       compute();
     });
-    compute(); render();
+    syncMore();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncMore);
+    compute();
   })();
 
 
@@ -973,37 +1154,37 @@
     const SITES=[
       { city:'Hyderabad', cc:'India',                proj:'Brightcone.ai',     lat:17.39, lon:78.49,
         logo:'assets/img/logos/brightcone.png', logoW:164,
-        stats:[['Decision time','−25%'],['Design handoff','−25%'],['Verticals shipped','3']],
+        stats:[['Decision time','−25%'],['Design handoff','−25%','Handoff'],['Verticals shipped','3','Verticals']],
         tools:['Figma','Figma Make','Claude','Tailwind'] },
       { city:'Hyderabad', cc:'India',                proj:'Yanthraa',          lat:17.42, lon:78.45,
         logo:'assets/img/logos/yanthraa.png', logoW:141,
-        stats:[['Surfaces','Product · Web · Sales'],['Handoff','−25%'],['Role','UI Lead']],
+        stats:[['Handoff','−25%'],['Surfaces','Product · Web · Sales','Surfaces','3'],['Role','UI Lead']],
         tools:['Figma','Figma Make','Penpot','Claude'] },
       { city:'Atlanta',   cc:'United States',        proj:'Formulary IQ',      lat:33.75, lon:-84.39,
         logo:'assets/img/logos/inpharmd.png', logoW:101,
-        stats:[['Breakpoints','3'],['Dashboard modules','6'],['Domain','Clinical']],
+        stats:[['Dashboard modules','6','Modules'],['Breakpoints','3'],['Domain','Clinical']],
         tools:['Figma','HTML5','CSS3','Tailwind'] },
       { city:'Mumbai',    cc:'India',                proj:'R-Clinic',          lat:19.08, lon:72.88,
         logo:'assets/img/logos/medongo.png', logoW:128,
-        stats:[['Consult modules','3'],['User roles','2'],['Domain','Telehealth']],
+        stats:[['Consult modules','3','Modules'],['User roles','2','Roles'],['Domain','Telehealth']],
         tools:['Figma','Claude','HTML5'] },
       { city:'Hyderabad', cc:'India',                proj:'RunCode.io',        lat:17.45, lon:78.34,
         logo:'assets/img/logos/colaberry.png', logoW:114,
-        stats:[['Users served','100K+'],['Award','2023']],
+        stats:[['Users served','100K+','Users'],['Award','2023']],
         tools:['Figma','Sass','Bootstrap','jQuery'] },
       { city:'Dubai',     cc:'United Arab Emirates', proj:'InnPro',            lat:25.20, lon:55.27,
         logo:'assets/img/logos/innpro.png', logoW:38, logoIcon:true,
-        stats:[['Mobile screens','48'],['Modules','3'],['Handoff','HTML/CSS']],
+        stats:[['Mobile screens','48','Screens'],['Modules','3'],['Handoff','HTML/CSS']],
         tools:['Figma','HTML5','Bootstrap'] },
       { city:'Dallas',    cc:'United States',        proj:'RedRiver One',      lat:32.78, lon:-96.80,
         logo:'assets/img/logos/redriver_w.png', logoW:172,
-        stats:[['Domain','Rental discovery'],['Market','Texas · DFW'],['Build','Responsive']],
+        stats:[['Domain','Rental discovery','Domain','Rentals'],['Market','Texas · DFW'],['Build','Responsive']],
         tools:['Figma','Claude Code','ChatGPT'] },
-      { city:'Bengaluru', cc:'India',                proj:'refactored.ai',     lat:12.97, lon:77.59,
+      { city:'Bengaluru', cc:'India',                proj:'Refactored.ai',     lat:12.97, lon:77.59,
         logo:'assets/img/logos/refactored.png', logoW:129,
-        stats:[['Design system','v2'],['Components','40+'],['Domain','Dev Tooling']],
+        stats:[['Components','40+'],['Design system','v2'],['Domain','Dev Tooling','Domain','Dev tools']],
         tools:['Figma','Claude','Tailwind'] },
-      { city:'Hyderabad', cc:'India',                proj:'Ezmedtech.ai',      lat:17.36, lon:78.52,
+      { city:'Hyderabad', cc:'India',                proj:'EzMedTech.ai',      lat:17.36, lon:78.52,
         logo:'assets/img/logos/ezmedtech.svg', logoW:122,
         stats:[['Care modules','5'],['Domain','MedTech'],['Handoff','HTML/CSS']],
         tools:['Figma','HTML5','CSS3'] },
@@ -1011,13 +1192,13 @@
         logo:'assets/img/logos/veridx.png', logoW:130,
         stats:[['Dashboards','Role-based'],['Domain','Legal-Tech'],['Data density','High']],
         tools:['Figma','HTML5','CSS3'] },
-      { city:'Hyderabad', cc:'India',                proj:'Pietrack',          lat:17.38, lon:78.41,
+      { city:'Hyderabad', cc:'India',                proj:'PieTrack',          lat:17.38, lon:78.41,
         logo:'assets/img/logos/micropyramid.svg', logoW:225,
-        stats:[['Enterprise modules','3'],['Breakpoints','3'],['Designers mentored','6']],
+        stats:[['Designers mentored','6','Mentored'],['Enterprise modules','3','Modules'],['Breakpoints','3']],
         tools:['Adobe XD','HTML5','CSS3','SCSS','Bootstrap'] },
       { city:'Sydney',    cc:'Australia',              proj:'Pulse Healthcare',  lat:-33.87, lon:151.21,
         logo:'assets/img/logos/pulse.png', logoW:66, logoIcon:true,
-        stats:[['Domain','Medical supplies'],['Region','Australia'],['Breakpoints','3']],
+        stats:[['Breakpoints','3'],['Region','Australia'],['Domain','Medical supplies','Domain','Med supplies']],
         tools:['Figma','Figma Make','AI Tools'] }
     ];
     /* short client tags used by the logo strip below (index-matched to SITES) */
@@ -1150,6 +1331,8 @@
       const dpr=Math.min(Math.max(window.devicePixelRatio||1,1), 2);
       const cw=host.clientWidth, ch=host.clientHeight;
       if(cw<8||ch<8) return;               // never let the container collapse produce R<1
+      // Assigning canvas dimensions clears it, even when the size is unchanged.
+      if(cw===W && ch===H && dpr===DPR) return;
       DPR=dpr; W=cw; H=ch;
       cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
       cv.style.width=W+'px'; cv.style.height=H+'px';
@@ -1186,9 +1369,15 @@
     ICON['ChatGPT']=ICO('<path d="M12 3.6l2.1 1.2a3 3 0 011.5 2.6v1.4l1.2.7a3 3 0 011.5 2.6v2.4l-2.1 1.2a3 3 0 01-3 0L12 14.9l-1.2.8a3 3 0 01-3 0L5.7 14.5v-2.4a3 3 0 011.5-2.6l1.2-.7V7.4a3 3 0 011.5-2.6z"/><path d="M12 9.4v5.5"/>');
     ICON['SCSS']=ICON['Sass'];
     const iconFor=t=>ICON[t]||ICO('<circle cx="12" cy="12" r="3.4"/>');
+    /* A stat row is [label, value, shortLabel?, shortValue?]. Phones lay the rows
+       out as a stat strip, so the short forms swap in there (CSS, .hud-f/.hud-s)
+       while screen readers keep the full wording. Word values get a smaller face. */
+    const NUMV=/^[−+-]?\d|^v\d/;
+    const duo=(full,short)=>short&&short!==full
+      ?`<i class="hud-f">${full}</i><i class="hud-s" aria-hidden="true">${short}</i>`:full;
     function paintHud(s){
       elStats.innerHTML=s.stats.map(r=>
-        `<div class="hud-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
+        `<div class="hud-row${NUMV.test(r[3]||r[1])?'':' is-word'}"><span>${duo(r[0],r[2])}</span><b>${duo(r[1],r[3])}</b></div>`).join('');
       elTools.innerHTML=`<div class="hud-chips">${s.tools.map(t=>`<i>${iconFor(t)}<u>${t}</u></i>`).join('')}</div>`;
     }
     let hudT=0;
@@ -1317,9 +1506,9 @@
     }
 
     /* ---- orbital dot rings ---- */
-    function ringPass(){
+    function ringPass(day){
       const d=Math.max(.5,0.85*(R/470));
-      ctx.fillStyle='rgba(184,239,67,.26)';
+      ctx.fillStyle=day?'rgba(74,115,0,.42)':'rgba(184,239,67,.26)';
       ctx.beginPath();
       for(let k=0;k<RINGS.length;k++){
         const rg=RINGS[k], rr=R*rg.rad, ca=rg.ca, sa=rg.sa;
@@ -1342,26 +1531,44 @@
       ctx.setTransform(DPR,0,0,DPR,0,0);
       ctx.clearRect(0,0,W,H);
       const kk=R/470;
+      /* Light mode turns the same globe over to daylight: a slate-paper sphere,
+         navy land and coasts, deep-lime markers. Additive ('lighter') passes do
+         nothing on paper, so the day branches paint source-over instead. Read
+         per frame, so the theme toggle needs no wiring. The loader stays night. */
+      const day=!BARE && document.documentElement.getAttribute('data-theme')==='light';
 
       /* stars (only outside the disc) */
-      ctx.globalCompositeOperation='lighter';
-      ctx.beginPath();
-      for(const s2 of STARS){
-        const px=s2.x*W, py=s2.y*H;
-        const dx=px-CX, dy=py-CY; if(dx*dx+dy*dy<R*R*1.05) continue;
-        const a=s2.a*(0.55+0.45*Math.sin(phase*s2.tw+s2.ph));
-        ctx.fillStyle='rgba(196,226,244,'+a.toFixed(3)+')';
-        ctx.moveTo(px+s2.r,py); ctx.arc(px,py,s2.r,0,6.2832);
+      if(!day){
+        ctx.globalCompositeOperation='lighter';
+        ctx.beginPath();
+        for(const s2 of STARS){
+          const px=s2.x*W, py=s2.y*H;
+          const dx=px-CX, dy=py-CY; if(dx*dx+dy*dy<R*R*1.05) continue;
+          const a=s2.a*(0.55+0.45*Math.sin(phase*s2.tw+s2.ph));
+          ctx.fillStyle='rgba(196,226,244,'+a.toFixed(3)+')';
+          ctx.moveTo(px+s2.r,py); ctx.arc(px,py,s2.r,0,6.2832);
+        }
+        ctx.fill();
+        ctx.globalCompositeOperation='source-over';
+      } else {
+        /* the sky the sphere sits in: a soft slate halo just off the limb */
+        let sky=ctx.createRadialGradient(CX,CY,R*.96,CX,CY,R*1.2);
+        sky.addColorStop(0,'rgba(70,112,170,.26)'); sky.addColorStop(.35,'rgba(90,135,190,.10)');
+        sky.addColorStop(1,'rgba(90,135,190,0)');
+        ctx.fillStyle=sky; ctx.beginPath(); ctx.arc(CX,CY,R*1.2,0,6.2832); ctx.fill();
       }
-      ctx.fill();
-      ctx.globalCompositeOperation='source-over';
 
       /* clip to the disc for the surface */
       ctx.save(); ctx.beginPath(); ctx.arc(CX,CY,R,0,6.2832); ctx.clip();
 
       let g=ctx.createRadialGradient(CX-R*.40,CY-R*.46,R*.04,CX,CY,R*1.06);
-      g.addColorStop(0,'#112c40'); g.addColorStop(.32,'#071a26'); g.addColorStop(.60,'#040e17');
-      g.addColorStop(.84,'#02080f'); g.addColorStop(1,'#010407');
+      if(day){
+        g.addColorStop(0,'#FFFFFF'); g.addColorStop(.32,'#EDF3FA'); g.addColorStop(.60,'#DAE5F1');
+        g.addColorStop(.84,'#C2D2E5'); g.addColorStop(1,'#A2B7D0');
+      } else {
+        g.addColorStop(0,'#112c40'); g.addColorStop(.32,'#071a26'); g.addColorStop(.60,'#040e17');
+        g.addColorStop(.84,'#02080f'); g.addColorStop(1,'#010407');
+      }
       ctx.fillStyle=g; ctx.fillRect(CX-R,CY-R,R*2,R*2);
 
       /* coastline path — front-facing segments only. (The old build also
@@ -1397,7 +1604,8 @@
       for(let b=0;b<LB;b++){
         const arr=lb[b]; if(!arr.length) continue;
         const z=(b+.5)/LB, lf=ss(0,0.22,z);
-        ctx.fillStyle='rgba(150,190,214,'+((0.05+0.42*z)*lf).toFixed(3)+')';
+        ctx.fillStyle=day ? 'rgba(30,56,96,'+((0.16+0.56*z)*lf).toFixed(3)+')'
+                          : 'rgba(150,190,214,'+((0.05+0.42*z)*lf).toFixed(3)+')';
         ctx.beginPath();
         const r=Math.max(.7,1.9*z*kk);
         for(let i=0;i<arr.length;i+=2){ ctx.moveTo(arr[i]+r,arr[i+1]); ctx.arc(arr[i],arr[i+1],r,0,6.2832); }
@@ -1405,9 +1613,9 @@
       }
 
       /* coastline: soft bloom + dotted amber */
-      ctx.strokeStyle='rgba(255,192,110,.13)'; ctx.lineWidth=Math.max(2.6,4.6*kk); ctx.stroke(cpath);
+      ctx.strokeStyle=day?'rgba(28,52,88,.07)':'rgba(255,192,110,.13)'; ctx.lineWidth=Math.max(2.6,4.6*kk); ctx.stroke(cpath);
       ctx.setLineDash([1.8*kk+0.5, 2.4*kk+0.6]);
-      ctx.strokeStyle='rgba(255,183,96,.62)'; ctx.lineWidth=Math.max(.9,1.15*kk); ctx.stroke(cpath);
+      ctx.strokeStyle=day?'rgba(22,44,78,.60)':'rgba(255,183,96,.62)'; ctx.lineWidth=Math.max(.9,1.15*kk); ctx.stroke(cpath);
       ctx.setLineDash([]);
 
       /* city lights, brightness-bucketed (28 levels → ~2% steps), all smooth */
@@ -1425,6 +1633,18 @@
           if(ff>0.01) flares.push([p[0],p[1],ff,L.s*kk]);
         }
       }
+      if(day){
+        /* by day the metros are ink, not light: the same clusters as navy dots,
+           no halo, no flare */
+        for(let b=0;b<B;b++){
+          if(!buck[b].length) continue;
+          const a=(b+.6)/B;
+          ctx.fillStyle='rgba(11,19,32,'+(0.10+0.52*a).toFixed(3)+')';
+          ctx.beginPath();
+          for(const q of buck[b]){ const r=Math.max(.6,q[2]*.92); ctx.moveTo(q[0]+r,q[1]); ctx.arc(q[0],q[1],r,0,6.2832); }
+          ctx.fill();
+        }
+      } else {
       ctx.fillStyle='rgba(255,206,138,.065)';
       ctx.beginPath();
       for(let b=0;b<B;b++) for(const q of buck[b]){
@@ -1450,6 +1670,7 @@
         ctx.moveTo(f[0],f[1]-l); ctx.lineTo(f[0],f[1]+l);
       }
       ctx.stroke();
+      }
 
       /* great-circle arc HOME → tracked site, opacity tied to frontness */
       const home=v3(HOME[0],HOME[1]), tgt=v3(SITES[trackedIdx].lat,SITES[trackedIdx].lon);
@@ -1463,13 +1684,14 @@
           const lift=1+0.17*Math.sin(Math.PI*t);
           pts.push(pr([(home[0]*k1+tgt[0]*k2)*lift,(home[1]*k1+tgt[1]*k2)*lift,(home[2]*k1+tgt[2]*k2)*lift]));
         }
-        ctx.lineWidth=1.5; ctx.strokeStyle='rgba(184,239,67,'+(0.42*arcA).toFixed(3)+')';
+        ctx.lineWidth=1.5; ctx.strokeStyle=day ? 'rgba(74,115,0,'+(0.72*arcA).toFixed(3)+')'
+                                               : 'rgba(184,239,67,'+(0.42*arcA).toFixed(3)+')';
         ctx.beginPath(); let up=false;
         for(const p of pts){ if(p[2]>-0.15){ up?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); up=true;} else up=false; }
         ctx.stroke();
         const tp=pts[Math.floor((phase*0.38%1)*64)];
         if(tp&&tp[2]>-0.15){
-          ctx.fillStyle='rgba(232,255,180,'+(0.95*arcA).toFixed(3)+')';
+          ctx.fillStyle=(day?'rgba(58,92,0,':'rgba(232,255,180,')+(0.95*arcA).toFixed(3)+')';
           ctx.beginPath(); ctx.arc(tp[0],tp[1],2.4,0,6.2832); ctx.fill();
         }
       }
@@ -1483,31 +1705,46 @@
         if(vis<0.02) return;
         const on=i===trackedIdx, al=(0.30+0.7*p[2])*vis;
         const gg=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],on?26:11);
-        gg.addColorStop(0,'rgba(184,239,67,'+((on?.62:.22)*al).toFixed(3)+')');
+        /* on paper the lime stays a fill and deep lime draws the lines */
+        const LINE=day?'rgba(74,115,0,':'rgba(184,239,67,';
+        gg.addColorStop(0,'rgba(184,239,67,'+((on?(day?.8:.62):(day?.4:.22))*al).toFixed(3)+')');
         gg.addColorStop(1,'rgba(184,239,67,0)');
         ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(p[0],p[1],on?26:11,0,6.2832); ctx.fill();
         if(on){
           trackPX=p[0]; trackPY=p[1]; trackVis=vis;
           /* pulse ring */
           const q=(phase%1.7)/1.7;
-          ctx.strokeStyle='rgba(184,239,67,'+(0.55*(1-q)*vis).toFixed(3)+')';
+          ctx.strokeStyle=LINE+((day?.7:.55)*(1-q)*vis).toFixed(3)+')';
           ctx.lineWidth=1.6; ctx.beginPath();
           ctx.arc(p[0],p[1],Math.max(.3,6+q*30),0,6.2832); ctx.stroke();
           /* crisp static ring */
-          ctx.strokeStyle='rgba(184,239,67,'+(0.9*vis).toFixed(3)+')';
+          ctx.strokeStyle=LINE+(0.9*vis).toFixed(3)+')';
           ctx.lineWidth=2; ctx.beginPath(); ctx.arc(p[0],p[1],Math.max(.3,6.5),0,6.2832); ctx.stroke();
           /* filled dot + white core */
           ctx.fillStyle='rgba(184,239,67,'+vis.toFixed(3)+')';
           ctx.beginPath(); ctx.arc(p[0],p[1],Math.max(.3,4.4),0,6.2832); ctx.fill();
-          ctx.fillStyle='rgba(245,255,220,'+vis.toFixed(3)+')';
+          ctx.fillStyle=(day?'rgba(11,19,32,':'rgba(245,255,220,')+vis.toFixed(3)+')';
           ctx.beginPath(); ctx.arc(p[0],p[1],Math.max(.3,1.7),0,6.2832); ctx.fill();
         } else {
-          ctx.fillStyle='rgba(184,239,67,'+al.toFixed(3)+')';
+          ctx.fillStyle=LINE+al.toFixed(3)+')';
           ctx.beginPath(); ctx.arc(p[0],p[1],Math.max(.3,2.3),0,6.2832); ctx.fill();
         }
       });
 
       ctx.restore();   // end disc clip
+
+      if(day){
+        /* rim: a white catch-light top-left turning to a slate edge, then the
+           orbit dots in deep lime. No additive atmosphere or sun flare. */
+        let rimD=ctx.createLinearGradient(CX-R*.7,CY-R*.8,CX+R*.7,CY+R*.8);
+        rimD.addColorStop(0,'rgba(255,255,255,.95)'); rimD.addColorStop(.4,'rgba(60,100,150,.30)');
+        rimD.addColorStop(1,'rgba(28,52,88,.34)');
+        ctx.strokeStyle=rimD; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.arc(CX,CY,Math.max(1,R-0.7),0,6.2832); ctx.stroke();
+        ringPass(day);
+        drawCaption();
+        return;
+      }
 
       /* atmosphere + rim + limb */
       ctx.globalCompositeOperation='lighter';
@@ -1552,12 +1789,28 @@
     function highlightLogos(idx){
       const nodes=document.querySelectorAll('#logoTrack .logo');
       for(const el of nodes) el.classList.toggle('is-active', +el.dataset.idx===idx);
-      if(actEl){ const s=SITES[idx]; actEl.innerHTML='Now showing · <b>'+s.proj+'</b> — '+s.city+', '+s.cc; }
+      if(actEl){ const s=SITES[idx]; actEl.innerHTML='<span class="ha-k">Now showing · </span><b>'+s.proj+'</b><span class="ha-k"> — </span><span class="ha-p">'+s.city+', '+s.cc+'</span>'; }
     }
+    /* The strip is a stepped carousel: the chosen client glides to the middle of
+       the row first, and only once it has arrived does the card under it fill
+       with that client's Impact + Toolkit. centerClient is handed over by
+       swipeStrip below (absent under reduced motion, where the row is static). */
+    let centerClient=null;
     function selectClient(idx){
-      activeIdx=((idx%SITES.length)+SITES.length)%SITES.length;
-      swapHud(SITES[activeIdx]);
+      const next=((idx%SITES.length)+SITES.length)%SITES.length;
+      const same=next===activeIdx;
+      activeIdx=next;
       highlightLogos(activeIdx);
+      if(!centerClient){ swapHud(SITES[activeIdx]); return; }
+      if(!same && elStats && elTools){
+        clearTimeout(hudT);
+        [elStats,elTools].forEach(e=>e.classList.add('out'));
+      }
+      centerClient(activeIdx,()=>{
+        if(!elStats||!elTools) return;
+        paintHud(SITES[activeIdx]);
+        [elStats,elTools].forEach(e=>e.classList.remove('out'));
+      });
     }
     function startAuto(){
       if(autoTimer||REDUCE) return;
@@ -1576,19 +1829,24 @@
           ? '<img class="logo-mark" style="--mark-w:'+(s.logoW||130)+'" src="'+s.logo+'" alt="'+s.proj+'" loading="lazy" decoding="async"'
             + ' onerror="this.parentNode.classList.remove(\'has-mark\');this.outerHTML=\''+s.proj+'\'">'+tag
           : s.proj+tag;
-        d.addEventListener('mouseenter',()=>{ paused=true; selectClient(i); });
+        /* click only — a hover-select would chain, since centring the chip slides
+           its neighbours under the resting cursor */
         d.addEventListener('click',()=>{ paused=true; selectClient(i); });
         track.appendChild(d);
       });
       build(); build();                              // two copies → seamless -50% loop
       const mq=document.getElementById('logoMarquee');
-      if(mq) mq.addEventListener('mouseleave',()=>{ paused=false; });
+      if(mq){
+        mq.addEventListener('mouseenter',()=>{ paused=true; });   // hovering the row holds the client
+        mq.addEventListener('mouseleave',()=>{ paused=false; });
+      }
     })();
 
     /* ---- clients: swipe / drag the strip, either direction ----
        The CSS keyframe hands the track over to rAF here so a finger (or a
-       mouse, or the arrow keys) can push the row forward and back, with the
-       flick carrying on and easing back into the ambient right-to-left drift. */
+       mouse, or the arrow keys) can push the row forward and back. There is no
+       ambient drift: the row steps, one centred client at a time, and a flick
+       carries on, then settles on whichever client lands nearest the middle. */
     (function swipeStrip(){
       if(BARE||REDUCE) return;
       const mq=document.getElementById('logoMarquee');
@@ -1598,27 +1856,60 @@
       track.classList.add('is-swipe');
 
       const GAP=parseFloat(getComputedStyle(track).columnGap)||14;
-      let period=0, speed=0;                        // one copy's width, and px/sec of drift
+      let period=0;                                 // one copy's width
+      let pos=0, vel=0, drag=null, moved=0, nudge=0, nudgeT=-1, hinted=false, resume=0;
+      let glide=null, needSnap=0, touch=false;      // needSnap: time after which the row re-centres
+      const now=()=>performance.now();
+      const chips=()=>track.querySelectorAll('.logo');
+      const wrap=d=>period>0 ? d-Math.round(d/period)*period : d;   // shortest way round the loop
+      /* how far the track must move to bring client idx to the middle of the row */
+      function offsetTo(idx){
+        const el=track.querySelector('.logo[data-idx="'+idx+'"]');
+        if(!el) return 0;
+        return wrap(mq.clientWidth/2 - (el.offsetLeft + el.offsetWidth/2) - pos);
+      }
+      function centre(idx,done,instant){
+        const d=offsetTo(idx);
+        if(instant){ pos+=d; glide=null; if(done) done(); return; }
+        glide={d, e:0, t0:now(), dur:Math.abs(d)<2 ? 0 : 640, done};
+      }
       function measure(){
         /* the track holds two copies; one loop = half the run plus the seam gap */
         period=(track.scrollWidth + GAP)/2;
-        speed=period/80;                            // same 80s-per-lap tempo as the keyframe
+        if(!drag && !glide) centre(activeIdx,null,true);   // keep the active client centred
       }
       measure();
       window.addEventListener('resize',measure,{passive:true});
       window.addEventListener('load',measure);
-
-      let pos=0, vel=0, drag=null, moved=0, nudge=0, nudgeT=-1, hinted=false, resume=0;
-      const now=()=>performance.now();
+      if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measure);
+      centerClient=centre;
 
       function frame(t){
         const dt=Math.min(64, t-(frame.prev||t)); frame.prev=t;
         if(!drag){
-          if(!paused && !document.hidden) pos -= speed*dt/1000;
+          if(glide){                                // selected client easing to the middle
+            const k=glide.dur ? Math.min(1,(t-glide.t0)/glide.dur) : 1;
+            const e=1-Math.pow(1-k,3);
+            pos += glide.d*(e-glide.e); glide.e=e;
+            if(k>=1){ const g=glide; glide=null; if(g.done) g.done(); }
+          }
           if(vel){                                  // flick momentum, decaying to nothing
             pos += vel*dt;
             vel *= Math.pow(0.0025, dt/1000);
-            if(Math.abs(vel)<0.004) vel=0;
+            if(Math.abs(vel)<0.03) vel=0;           // the centring glide takes over from here
+          }
+          /* a drag has come to rest: whichever client sits nearest the middle wins */
+          if(needSnap && !vel && t>=needSnap){
+            needSnap=0;
+            if(!glide){
+              let best=activeIdx, bd=Infinity;
+              const mid=mq.clientWidth/2 - pos;
+              for(const el of chips()){
+                const d=Math.abs(wrap(mid-(el.offsetLeft+el.offsetWidth/2)));
+                if(d<bd){ bd=d; best=+el.dataset.idx; }
+              }
+              selectClient(best);
+            }
           }
         }
         if(nudgeT>=0){                              // the one-time "it moves" demo
@@ -1628,7 +1919,8 @@
         }
         if(period>0){ while(pos<=-period) pos+=period; while(pos>0) pos-=period; }
         track.style.transform='translate3d('+(pos+nudge).toFixed(2)+'px,0,0)';
-        if(resume && t>resume){ resume=0; if(!mq.matches(':hover')) paused=false; }
+        /* touch leaves :hover stuck on the row, so it can't gate the restart there */
+        if(resume && t>resume){ resume=0; if(touch || !mq.matches(':hover')) paused=false; }
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
@@ -1636,7 +1928,8 @@
       /* ---- pointer drag (mouse, pen and touch through one path) ---- */
       function down(e){
         if(e.button>0) return;
-        drag={x:e.clientX, t:now()}; moved=0; vel=0;
+        drag={x:e.clientX, t:now()}; moved=0; vel=0; glide=null;
+        touch=e.pointerType==='touch';
         paused=true; dismissHint();
         mq.classList.add('is-dragging');
         try{ mq.setPointerCapture(e.pointerId); }catch(_){}
@@ -1655,6 +1948,7 @@
         try{ mq.releasePointerCapture(e.pointerId); }catch(_){}
         if(Math.abs(vel)>2.2) vel=2.2*Math.sign(vel);   // cap a violent flick
         mq.dataset.swiped = moved>6 ? '1' : '';
+        needSnap=1;
         resume=now()+1600;                          // let the auto-rotate settle back in
       }
       mq.addEventListener('pointerdown',down);
@@ -1670,7 +1964,7 @@
       mq.addEventListener('wheel',e=>{
         if(Math.abs(e.deltaX)<=Math.abs(e.deltaY)) return;   // vertical stays with the page
         e.preventDefault(); dismissHint();
-        pos-=e.deltaX; vel=0;
+        pos-=e.deltaX; vel=0; glide=null; needSnap=now()+220;   // once the swipe goes quiet
         paused=true; resume=now()+1200;
       },{passive:false});
 
@@ -1678,7 +1972,7 @@
       mq.addEventListener('keydown',e=>{
         if(e.key!=='ArrowLeft' && e.key!=='ArrowRight') return;
         e.preventDefault(); dismissHint();
-        vel=(e.key==='ArrowLeft'? 1 : -1)*1.1;
+        selectClient(activeIdx+(e.key==='ArrowLeft'? -1 : 1));
         paused=true; resume=now()+1600;
       });
 
@@ -1710,9 +2004,11 @@
        to a slow drift when one is front-and-centre (never fully stops, so it
        stays flicker-free) ---- */
     let last=performance.now(), live=true;
+    const frameInterval=matchMedia('(pointer:coarse)').matches ? 1000/30 : 0;
     const OMEGA_BASE = REDUCE?0 : (2*Math.PI/22);   // fast cruise ≈ 22s/rev
     function frame(now){
       if(BARE && !host.isConnected) return;
+      if(now-last<frameInterval){ requestAnimationFrame(frame); return; }
       const dt=Math.min(now-last,50)/1000; last=now;
       phase+=dt;
       if(capT<1) capT=Math.min(1, capT+dt/0.5);
@@ -1804,6 +2100,7 @@
       window.__orbResize=size;
     }
     let rz; window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(size,120);});
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(host);
     if('IntersectionObserver' in window){
       new IntersectionObserver(e=>{live=e[0].isIntersecting;},{threshold:0}).observe(host);
     }
